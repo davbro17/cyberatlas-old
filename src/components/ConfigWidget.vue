@@ -1,6 +1,6 @@
 <template>
   <div class="columns is-multiline">
-    <UploadWidget />
+    <UploadWidget v-bind:configOpen="isOpen" />
     <div class="column">
       <b-collapse aria-id="contentIDforWidget2" :open="true">
         <div
@@ -40,7 +40,7 @@ import UploadWidget from "./UploadWidget.vue";
 export default {
   data() {
     return {
-      isOpen: false
+      isOpen: true
     };
   },
   components: {

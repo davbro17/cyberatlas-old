@@ -1,5 +1,11 @@
 <template>
-  <div class="column" v-bind:class="{ 'is-half': isOpen, 'is-full': !isOpen }">
+  <div
+    class="column"
+    v-bind:class="{
+      'is-half': isOpen && configOpen,
+      'is-full': !isOpen || !configOpen
+    }"
+  >
     <b-collapse aria-id="contentIDforWidget" :open="true">
       <div
         class="panel-heading"
@@ -116,6 +122,9 @@
 import XLSX from "xlsx";
 
 export default {
+  props: {
+    configOpen: Boolean
+  },
   data() {
     return {
       isOpen: true,
