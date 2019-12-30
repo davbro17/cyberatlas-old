@@ -12,8 +12,8 @@
         </div>
       </div>
     </section>
-    <section class="container">
-      <div class="columns is-multiline is-1">
+    <section class="section">
+      <div class="columns is-multiline">
         <UploadWidget />
         <UploadWidget />
       </div>
