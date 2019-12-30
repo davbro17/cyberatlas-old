@@ -2,11 +2,11 @@
   <div id="app">
     <section class="hero is-info">
       <div class="hero-body">
-        <div class="container has-text-centered">
+        <div class="container has-text-centered is-info">
           <h1 class="title">
             CYBER ATLAS
           </h1>
-          <h2>
+          <h2 class="subtitle">
             Charting The Far Reaches Of Blue Space
           </h2>
         </div>

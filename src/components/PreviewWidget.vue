@@ -13,7 +13,9 @@
               Step 3: Preview and
             </div>
             <div class="level-item">
-              <button class="button is-info">Generate Diagram</button>
+              <button class="button is-info is-outlined">
+                Generate Diagram
+              </button>
             </div>
           </div>
           <div class="level-right">
