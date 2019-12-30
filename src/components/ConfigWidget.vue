@@ -27,6 +27,41 @@
             </div>
           </div>
         </div>
+        <div class="panel-block" style="display:block">
+          <div class="columns">
+            <div class="column is-narrow">
+              <button
+                class="button is-fullwidth is-info is-outlined"
+                style="margin-bottom:15px;"
+              >
+                Create a New Group
+              </button>
+              <b-select multiple native-size="4" v-model="selectedGroups">
+                <option value="empty" v-if="groups.length == 0"
+                  >&lt; No Groups Created Yet &gt;</option
+                >
+              </b-select>
+            </div>
+            <div class="column">
+              <div class="container has-text-centered">
+                <b-upload
+                  v-model="file"
+                  drag-drop
+                  v-if="!file && groups.length == 0"
+                >
+                  <section class="section">
+                    <div class="content has-text-centered">
+                      <p>
+                        <b-icon icon="upload" size="is-large"> </b-icon>
+                      </p>
+                      <p>OR Upload a Configuration File (example.json)</p>
+                    </div>
+                  </section>
+                </b-upload>
+              </div>
+            </div>
+          </div>
+        </div>
       </b-collapse>
     </div>
     <PreviewWidget />
@@ -40,7 +75,10 @@ import UploadWidget from "./UploadWidget.vue";
 export default {
   data() {
     return {
-      isOpen: true
+      isOpen: true,
+      groups: [],
+      selectedGroups: [],
+      file: null
     };
   },
   components: {

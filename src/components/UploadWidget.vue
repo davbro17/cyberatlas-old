@@ -35,7 +35,7 @@
         <div class="container has-text-centered table-container">
           <b-upload v-model="file" drag-drop v-if="!file">
             <section class="section">
-              <div class="content has-text-centered table-container">
+              <div class="content has-text-centered">
                 <p>
                   <b-icon icon="upload" size="is-large"> </b-icon>
                 </p>
