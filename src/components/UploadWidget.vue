@@ -11,7 +11,7 @@
         <div class="level">
           <div class="level-left">
             <div class="level-item">
-              Upload Scan File
+              Step 1: Upload Scan File
             </div>
           </div>
           <div class="level-right">
@@ -58,7 +58,7 @@
               </div>
               <div class="level-item">
                 <button class="is-button is-info" @click="exportExcel">
-                  <b-icon icon="download"/>
+                  <b-icon icon="download" />
                 </button>
               </div>
             </div>
@@ -74,11 +74,12 @@
                 </tr>
                 <tr v-if="customHeaders">
                   <td />
-                  <th 
+                  <th
                     v-for="(header, index) in altHeaders"
                     v-bind:key="header"
                     contenteditable="true"
-                    @focusout="updateHeader(index, $event.target.innerText)">
+                    @focusout="updateHeader(index, $event.target.innerText)"
+                  >
                     {{ header }}
                   </th>
                 </tr>
@@ -91,7 +92,13 @@
                     v-for="(entry, colindex) in row"
                     v-bind:key="colindex"
                     style="overflow:hidden"
-                    @focusout="updateDataCell(rowindex, colindex, $event.target.innerText)"
+                    @focusout="
+                      updateDataCell(
+                        rowindex,
+                        colindex,
+                        $event.target.innerText
+                      )
+                    "
                   >
                     {{ entry }}
                   </td>
@@ -133,17 +140,16 @@ export default {
       this.data[row].splice(col, 1, text);
     },
     swapHeaders: function() {
-      if(this.customHeaders){
+      if (this.customHeaders) {
         this.data.shift();
-      }
-      else{
+      } else {
         this.data.unshift(this.altHeaders);
       }
     },
     exportExcel: function() {
-      if(this.file){
+      if (this.file) {
         let tmp = this.data;
-        if(this.customHeaders){
+        if (this.customHeaders) {
           tmp.unshift(this.altHeaders);
         }
         let ws = XLSX.utils.aoa_to_sheet(tmp);
@@ -163,7 +169,10 @@ export default {
         var raw = new Uint8Array(reader.result);
         var wb = XLSX.read(raw, { type: "array" });
         var sheetList = wb.SheetNames;
-        var json = XLSX.utils.sheet_to_json(wb.Sheets[sheetList[0]], {defval: "", header:"A"});
+        var json = XLSX.utils.sheet_to_json(wb.Sheets[sheetList[0]], {
+          defval: "",
+          header: "A"
+        });
         var columnentries = json.map(function(obj) {
           return Object.keys(obj).length;
         });
@@ -184,7 +193,7 @@ export default {
         for (row in tmp) {
           data.push(tmp[row]);
         }
-        for ( column in tmp[0] ){
+        for (column in tmp[0]) {
           altHeaders.push(tmp[0][column]);
         }
       };
@@ -196,7 +205,7 @@ export default {
         this.loadExcel(e);
       }
     },
-    customHeaders: function(){
+    customHeaders: function() {
       this.swapHeaders();
     }
   }

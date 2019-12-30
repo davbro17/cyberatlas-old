@@ -13,21 +13,18 @@
       </div>
     </section>
     <section class="section">
-      <div class="columns is-multiline">
-        <UploadWidget />
-        <UploadWidget />
-      </div>
+      <ConfigWidget />
     </section>
   </div>
 </template>
 
 <script>
-import UploadWidget from "./components/UploadWidget.vue";
+import ConfigWidget from "./components/ConfigWidget.vue";
 
 export default {
   name: "app",
   components: {
-    UploadWidget
+    ConfigWidget
   }
 };
 </script>
