@@ -17,13 +17,13 @@
         <div class="level">
           <div class="level-left">
             <div class="level-item">
-              Step 1: Upload Scan File
+              <strong>Step 1: Upload Scan File</strong>
             </div>
           </div>
           <div class="level-right">
             <div class="level-item">
               <b-icon
-                :icon="isOpen ? 'angle-up' : 'angle-down'"
+                :icon="isOpen ? 'angle-down' : 'angle-up'"
                 size="is-small"
               >
               </b-icon>
@@ -33,7 +33,7 @@
       </div>
       <div class="panel-block">
         <div class="container has-text-centered table-container">
-          <b-upload v-model="file" drag-drop v-if="!file">
+          <b-upload v-model="file" drag-drop v-if="!file" type="is-info">
             <section class="section">
               <div class="content has-text-centered">
                 <p>

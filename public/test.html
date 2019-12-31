@@ -41,7 +41,7 @@
 			// Loads the stylesheet
 			if (stylesheet != null)
 			{
-				var xmlDoc = mxUtils.parseXml(stylesheet);
+                var xmlDoc = mxUtils.parseXml(stylesheet);
 				var dec = new mxCodec(xmlDoc);
 				dec.decode(xmlDoc.documentElement, graph.getStylesheet());
 			}

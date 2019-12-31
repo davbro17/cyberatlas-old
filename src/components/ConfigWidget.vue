@@ -13,13 +13,13 @@
           <div class="level">
             <div class="level-left">
               <div class="level-item">
-                Step 2: Filter Data and Configure Diagram
+                <strong>Step 2: Filter Data and Configure Diagram</strong>
               </div>
             </div>
             <div class="level-right">
               <div class="level-item">
                 <b-icon
-                  :icon="isOpen ? 'angle-up' : 'angle-down'"
+                  :icon="isOpen ? 'angle-down' : 'angle-up'"
                   size="is-small"
                 >
                 </b-icon>
@@ -48,13 +48,14 @@
                   v-model="file"
                   drag-drop
                   v-if="!file && groups.length == 0"
+                  type="is-info"
                 >
                   <section class="section">
                     <div class="content has-text-centered">
                       <p>
                         <b-icon icon="upload" size="is-large"> </b-icon>
                       </p>
-                      <p>OR Upload a Configuration File (example.json)</p>
+                      <p>OR Upload a Configuration File</p>
                     </div>
                   </section>
                 </b-upload>
@@ -78,7 +79,8 @@ export default {
       isOpen: true,
       groups: [],
       selectedGroups: [],
-      file: null
+      file: null,
+      displayedGroup: null
     };
   },
   components: {
