@@ -195,7 +195,6 @@ export default {
             tmp[i][j] = cols[j] || "";
           }
         }
-        console.log(json[0]);
         for (var column in json[0]) {
           columns.push(column);
         }
