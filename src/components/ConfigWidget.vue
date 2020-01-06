@@ -46,11 +46,11 @@
                     <strong>{{ column.label }}</strong>
                   </template>
                   <button
-                    class="button is-info is-fullwidth"
+                    class="button is-fullwidth"
                     :class="[
                       props.row.id == selected.id
-                        ? 'is-outlined'
-                        : 'is-inverted'
+                        ? 'is-outlined is-info'
+                        : 'is-inverted is-black'
                     ]"
                     style="justify-content:left"
                   >

@@ -16,7 +16,7 @@
         </select>
       </div>
       <span class="decision">
-        Object in the Network Diagram
+        Object in the Diagram
       </span>
       <span class="button is-info is-outlined" @click="createDiagramObject">
         <strong>Add</strong>
