@@ -219,3 +219,11 @@ export default {
   }
 };
 </script>
+<style>
+.upload {
+  width: 100%;
+}
+.upload-draggable {
+  width: 100%;
+}
+</style>

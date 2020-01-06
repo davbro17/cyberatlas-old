@@ -19,7 +19,18 @@ import {
   faUpload,
   faDownload,
   faSync,
-  faExternalLinkAlt
+  faExternalLinkAlt,
+  faPlusSquare,
+  faPlus,
+  faCloud,
+  faArrowUp,
+  faEthernet,
+  faCommentAlt,
+  faTh,
+  faNetworkWired,
+  faFilter,
+  faObjectGroup,
+  faEdit
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
@@ -40,14 +51,26 @@ library.add(
   faUpload,
   faDownload,
   faSync,
-  faExternalLinkAlt
+  faExternalLinkAlt,
+  faPlusSquare,
+  faPlus,
+  faCloud,
+  faArrowUp,
+  faEthernet,
+  faCommentAlt,
+  faTh,
+  faNetworkWired,
+  faFilter,
+  faObjectGroup,
+  faEdit
 );
 Vue.component("vue-fontawesome", FontAwesomeIcon);
 
 import Buefy from "buefy";
 Vue.use(Buefy, {
   defaultIconComponent: "vue-fontawesome",
-  defaultIconPack: "fas"
+  defaultIconPack: "fas",
+  defaultTooltipType: "is-info"
 });
 
 import "buefy/dist/buefy.css";

@@ -12,24 +12,40 @@
             </h1>
           </div>
           <h2 class="subtitle">
-            Charting The Far Reaches Of Blue Space
+            Charting The Far Reaches Of Cyberspace
           </h2>
         </div>
       </div>
     </section>
     <div style="padding:1.5rem 1.5rem;">
-      <ConfigWidget />
+      <div class="columns is-multiline">
+        <UploadWidget :configOpen.sync="configOpen" />
+        <ConfigWidget :isOpen.sync="configOpen" />
+        <PreviewWidget />
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import ConfigWidget from "./components/ConfigWidget.vue";
+import UploadWidget from "./components/UploadWidget.vue";
+import PreviewWidget from "./components/PreviewWidget.vue";
 
 export default {
   name: "app",
   components: {
-    ConfigWidget
+    UploadWidget,
+    ConfigWidget,
+    PreviewWidget
+  },
+  data() {
+    return {
+      data: [],
+      headers: [],
+      customHeaders: [],
+      configOpen: true
+    };
   }
 };
 </script>
