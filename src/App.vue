@@ -1,10 +1,10 @@
 <template>
   <div id="app">
     <section class="hero is-info">
-      <div class="hero-body" style="padding-top:20px;padding-bottom:25px">
+      <div class="hero-body" style="padding-top:5px;padding-bottom:10px">
         <div class="container has-text-centered is-info">
           <div class="level-item">
-            <figure class="image is-96x96 is-inline-block">
+            <figure class="image is-64x64 is-inline-block">
               <img src="./assets/cyberatlas.png" />
             </figure>
             <h1 class="title" style="margin-left:10px">
@@ -19,9 +19,12 @@
     </section>
     <div style="padding:1.5rem 1.5rem;">
       <div class="columns is-multiline">
-        <UploadWidget :configOpen.sync="configOpen" />
-        <ConfigWidget :isOpen.sync="configOpen" />
-        <PreviewWidget />
+        <UploadWidget :configOpen="configOpen" :data.sync="data" />
+        <ConfigWidget
+          :configs.sync="configs"
+          @toggleConfigPanel="configOpen = !configOpen"
+        />
+        <PreviewWidget :data="data" :configs="configs" />
       </div>
     </div>
   </div>
@@ -42,10 +45,17 @@ export default {
   data() {
     return {
       data: [],
-      headers: [],
       customHeaders: [],
+      headers: [],
+      configs: [],
       configOpen: true
     };
+  },
+  watch: {
+    widgetData() {
+      /*eslint no-console: ["error", {"allow": ["log"]}] */
+      console.log(this.widgetData.config.configs);
+    }
   }
 };
 </script>

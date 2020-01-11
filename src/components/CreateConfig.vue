@@ -22,9 +22,9 @@
         <strong>Add</strong>
       </span>
     </div>
-    <div class="container has-text-centered" style="margin-top:1em;">
+    <div class="container has-text-centered" style="margin-top:1.5em;">
       <b-upload v-model="file" drag-drop="" type="is-info">
-        <div class="content has-text-centered" width="100%">
+        <div class="content has-text-centered" width="100%" style="padding-bottom:2.3em">
           <p>
             <b-icon icon="upload" size="is-large"> </b-icon>
           </p>
@@ -74,11 +74,11 @@ export default {
   methods: {
     createDiagramObject() {
       /* eslint-disable no-console */
-      console.log(this.options[this.selected]);
+      //console.log(this.options[this.selected]);
       let tmp = {};
       Object.assign(tmp, this.options[this.selected]);
       tmp.id = Date.now();
-      console.log(tmp);
+      //console.log(tmp);
       this.configs.push(tmp);
     }
   }

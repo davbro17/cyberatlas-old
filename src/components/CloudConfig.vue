@@ -1,7 +1,19 @@
 <template>
   <div class="column is-narrow">
     <b-tabs type="is-boxed">
-      <b-tab-item label="Data" icon="filter"></b-tab-item>
+      <b-tab-item label="Data" icon="filter">
+        <div class="field">
+          <label class="label">
+              Object Name
+          </label>
+          <input
+            class="input is-info"
+            type="text"
+            placeholder="Cloud"
+            v-model="self.name"
+          />
+        </div>
+      </b-tab-item>
       <b-tab-item label="Style" icon="edit"></b-tab-item>
       <b-tab-item label="Layout" icon="object-group"></b-tab-item>
     </b-tabs>
@@ -10,7 +22,7 @@
 
 <script>
 export default {
-  props: ["configs"]
+  props: ["configs", "self"]
 };
 </script>
 

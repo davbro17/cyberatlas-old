@@ -7,7 +7,7 @@
             <strong>Step 3:</strong>
           </div>
           <div class="level-item">
-            <button class="button is-info is-outlined">
+            <button class="button is-info is-outlined" @click="preview">
               <span><strong>Preview</strong></span>
               <b-icon icon="sync" size="is-small" />
             </button>
@@ -51,6 +51,7 @@
 
 <script>
 export default {
+  props: ["data", "configs"],
   data() {
     return {
       isOpen: true,
@@ -78,6 +79,11 @@ export default {
       } else {
         this.isOpen = !this.isOpen;
       }
+    },
+    preview(){
+      /*eslint no-console: ["error", {"allow": ["log"]}] */
+      console.log(this.data);
+      console.log(this.configs);
     }
   },
   mounted: function() {

@@ -30,7 +30,8 @@ import {
   faNetworkWired,
   faFilter,
   faObjectGroup,
-  faEdit
+  faEdit,
+  faTimes
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
@@ -62,7 +63,8 @@ library.add(
   faNetworkWired,
   faFilter,
   faObjectGroup,
-  faEdit
+  faEdit,
+  faTimes
 );
 Vue.component("vue-fontawesome", FontAwesomeIcon);
 

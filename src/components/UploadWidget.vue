@@ -6,115 +6,103 @@
       'is-full': !isOpen || !configOpen
     }"
   >
-    <b-collapse aria-id="contentIDforWidget" :open="true">
-      <div
-        class="panel-heading"
-        slot="trigger"
-        role="button"
-        aria-controls="contentIDforWidget"
-        @click="isOpen = !isOpen"
-      >
-        <div class="level">
+    <div class="panel-heading pointer" @click="togglePanel">
+      <div class="level">
+        <div class="level-left">
+          <div class="level-item">
+            <strong>Step 1: Upload Scan File</strong>
+          </div>
+        </div>
+        <div class="level-right">
+          <div class="level-item">
+            <b-icon :icon="isOpen ? 'angle-down' : 'angle-up'" size="is-small">
+            </b-icon>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="panel-block"
+      v-bind:style="{ display: isOpen ? 'block' : 'none' }"
+    >
+      <div class="container has-text-centered table-container">
+        <b-upload v-model="file" drag-drop v-if="!file" type="is-info">
+          <section class="section">
+            <div class="content has-text-centered">
+              <p>
+                <b-icon icon="upload" size="is-large"> </b-icon>
+              </p>
+              <p>Drop your file here or click to upload</p>
+            </div>
+          </section>
+        </b-upload>
+        <div class="level" v-if="file">
           <div class="level-left">
             <div class="level-item">
-              <strong>Step 1: Upload Scan File</strong>
+              <span class="tag is-info is-medium">
+                {{ file.name.slice(0, 25) }}
+                <button
+                  class="delete is-small"
+                  type="button"
+                  @click="removeFile()"
+                />
+              </span>
             </div>
           </div>
           <div class="level-right">
             <div class="level-item">
-              <b-icon
-                :icon="isOpen ? 'angle-down' : 'angle-up'"
-                size="is-small"
-              >
-              </b-icon>
+              <b-checkbox v-model="customHeaders" type="is-info">
+                Headers
+              </b-checkbox>
+            </div>
+            <div class="level-item">
+              <button class="button is-info is-outlined" @click="exportExcel">
+                <b-icon icon="download" />
+              </button>
             </div>
           </div>
         </div>
-      </div>
-      <div class="panel-block">
-        <div class="container has-text-centered table-container">
-          <b-upload v-model="file" drag-drop v-if="!file" type="is-info">
-            <section class="section">
-              <div class="content has-text-centered">
-                <p>
-                  <b-icon icon="upload" size="is-large"> </b-icon>
-                </p>
-                <p>Drop your file here or click to upload</p>
-              </div>
-            </section>
-          </b-upload>
-          <div class="level" v-if="file">
-            <div class="level-left">
-              <div class="level-item">
-                <span class="tag is-info is-medium">
-                  {{ file.name.slice(0, 25) }}
-                  <button
-                    class="delete is-small"
-                    type="button"
-                    @click="removeFile()"
-                  />
-                </span>
-              </div>
-            </div>
-            <div class="level-right">
-              <div class="level-item">
-                <b-checkbox v-model="customHeaders" type="is-info">
-                  Headers
-                </b-checkbox>
-              </div>
-              <div class="level-item">
-                <button class="is-button is-info" @click="exportExcel">
-                  <b-icon icon="download" />
-                </button>
-              </div>
-            </div>
-          </div>
-          <div style="height:400px;overflow:auto;" v-if="file">
-            <table class="table is-bordered is-striped is-hoverable">
-              <thead>
-                <tr v-if="!customHeaders">
-                  <td />
-                  <th v-for="header in columns" v-bind:key="header">
-                    {{ header }}
-                  </th>
-                </tr>
-                <tr v-if="customHeaders">
-                  <td />
-                  <th
-                    v-for="(header, index) in altHeaders"
-                    v-bind:key="header"
-                    contenteditable="true"
-                    @focusout="updateHeader(index, $event.target.innerText)"
-                  >
-                    {{ header }}
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(row, rowindex) in data" v-bind:key="rowindex">
-                  <th>{{ rowindex + 1 }}</th>
-                  <td
-                    contenteditable="true"
-                    v-for="(entry, colindex) in row"
-                    v-bind:key="colindex"
-                    style="overflow:hidden"
-                    @focusout="
-                      updateDataCell(
-                        rowindex,
-                        colindex,
-                        $event.target.innerText
-                      )
-                    "
-                  >
-                    {{ entry }}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+        <div style="height:400px;overflow:auto;" v-if="file">
+          <table class="table is-bordered is-striped is-hoverable">
+            <thead>
+              <tr v-if="!customHeaders">
+                <td />
+                <th v-for="header in columns" v-bind:key="header">
+                  {{ header }}
+                </th>
+              </tr>
+              <tr v-if="customHeaders">
+                <td />
+                <th
+                  v-for="(header, index) in altHeaders"
+                  v-bind:key="header"
+                  contenteditable="true"
+                  @focusout="updateHeader(index, $event.target.innerText)"
+                >
+                  {{ header }}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(row, rowindex) in data" v-bind:key="rowindex">
+                <th>{{ rowindex + 1 }}</th>
+                <td
+                  contenteditable="true"
+                  v-for="(entry, colindex) in row"
+                  v-bind:key="colindex"
+                  style="overflow:hidden"
+                  @focusout="
+                    updateDataCell(rowindex, colindex, $event.target.innerText)
+                  "
+                >
+                  {{ entry }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
-    </b-collapse>
+    </div>
   </div>
 </template>
 
@@ -123,13 +111,13 @@ import XLSX from "xlsx";
 
 export default {
   props: {
-    configOpen: Boolean
+    configOpen: Boolean,
+    data: Array
   },
   data() {
     return {
       isOpen: true,
       file: null,
-      data: [],
       columns: [],
       altHeaders: [],
       customHeaders: false
@@ -205,6 +193,9 @@ export default {
           altHeaders.push(tmp[0][column]);
         }
       };
+    },
+    togglePanel() {
+      this.isOpen = !this.isOpen;
     }
   },
   watch: {
@@ -225,5 +216,8 @@ export default {
 }
 .upload-draggable {
   width: 100%;
+}
+.panel-heading.pointer {
+  cursor: pointer;
 }
 </style>
