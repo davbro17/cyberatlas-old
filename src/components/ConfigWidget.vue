@@ -48,8 +48,10 @@
                   style="justify-content:left;"
                 >
                   <b-icon :icon="props.row.icon" />
-                  <span style="margin-right=0.3em">
-                    <strong>{{ props.row.component === 'CreateConfig' ? props.row.name : props.row.name.slice(0,13) }}</strong>
+                  <span
+                    style="margin-right=0.3em; overflow:hidden; text-overflow:ellipsis; max-width: 165px;"
+                  >
+                    <strong>{{ props.row.name }}</strong>
                   </span>
                 </button>
               </b-table-column>

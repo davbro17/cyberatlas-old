@@ -1,9 +1,11 @@
 <template>
+  <!-- Add NEW OBJECT Interface -->
   <div class="column">
     <div class="field">
       <span class="decision">
         Create A New
       </span>
+      <!-- Dropdown Select -->
       <div class="select is-info">
         <select v-model="selected">
           <option
@@ -15,16 +17,22 @@
           </option>
         </select>
       </div>
-      <span class="decision">
-        Object in the Diagram
-      </span>
-      <span class="button is-info is-outlined" @click="createDiagramObject">
+      <!-- ADD Button -->
+      <span
+        class="button is-info is-outlined decision"
+        @click="createDiagramObject"
+      >
         <strong>Add</strong>
       </span>
     </div>
+    <!-- Drag N Drop Interface -->
     <div class="container has-text-centered" style="margin-top:1.5em;">
       <b-upload v-model="file" drag-drop="" type="is-info">
-        <div class="content has-text-centered" width="100%" style="padding-bottom:2.3em">
+        <div
+          class="content has-text-centered"
+          width="100%"
+          style="padding-bottom:2.28em"
+        >
           <p>
             <b-icon icon="upload" size="is-large"> </b-icon>
           </p>

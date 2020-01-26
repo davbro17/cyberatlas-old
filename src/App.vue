@@ -1,70 +1,105 @@
 <template>
   <div id="app">
-    <section class="hero is-info">
-      <div class="hero-body" style="padding-top:5px;padding-bottom:10px">
-        <div class="container has-text-centered is-info">
-          <div class="level-item">
-            <figure class="image is-64x64 is-inline-block">
-              <img src="./assets/cyberatlas.png" />
-            </figure>
-            <h1 class="title" style="margin-left:10px">
-              CYBER ATLAS
-            </h1>
-          </div>
-          <h2 class="subtitle">
-            Charting The Far Reaches Of Cyberspace
-          </h2>
+    <!-- Navigation Bar -->
+    <nav
+      class="navbar is-info add-space has-shadow"
+      role="navigation"
+      aria-label="main navigation"
+    >
+      <!-- CyberAtlas Logo -->
+      <div class="navbar-brand">
+        <figure class="image is-64x64">
+          <img src="./assets/cyberatlas.png" />
+        </figure>
+        <a class="navbar-item">
+          <h1 class="title" style=";color:#fff;">
+            CyberAtlas
+          </h1>
+        </a>
+      </div>
+      <div class="navbar-end">
+        <!-- Documentation Link Button -->
+        <div class="navbar-item">
+          <button class="button is-info is-medium">
+            <strong>
+              Documentation
+            </strong>
+          </button>
         </div>
       </div>
-    </section>
-    <div style="padding:1.5rem 1.5rem;">
-      <div class="columns is-multiline">
-        <UploadWidget :configOpen="configOpen" :data.sync="data" />
-        <ConfigWidget
-          :configs.sync="configs"
-          @toggleConfigPanel="configOpen = !configOpen"
-        />
-        <PreviewWidget :data="data" :configs="configs" />
-      </div>
+    </nav>
+    <!-- Main Application -->
+    <div class="columns is-multiline add-space">
+      <!-- Data Widget -->
+      <DataWidget :configOpen="configOpen" ref="dataWidget" />
+      <!-- Configuration Widget -->
+      <ConfigWidget
+        :configs.sync="configs"
+        @toggleConfigPanel="configOpen = !configOpen"
+      />
+      <!-- Preview Widget -->
+      <PreviewWidget :getData="sendData" :getConfigs="sendConfigs" />
     </div>
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="content has-text-centered">
+        <p>
+          <strong>CyberAtlas</strong> by
+          <!-- Personal Webpage Link -->
+          <a href="https://davbro.me">1LT David Brownfield</a>. The source code
+          is licensed
+          <!-- Source Code License -->
+          <a href="http://opensource.org/licenses/mit-license.php">MIT</a>. The
+          website content is licensed
+          <!-- Website License -->
+          <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/"
+            >CC BY NC SA 4.0</a
+          >.
+        </p>
+      </div>
+    </footer>
   </div>
 </template>
 
 <script>
 import ConfigWidget from "./components/ConfigWidget.vue";
-import UploadWidget from "./components/UploadWidget.vue";
+import DataWidget from "./components/DataWidget.vue";
 import PreviewWidget from "./components/PreviewWidget.vue";
 
 export default {
   name: "app",
   components: {
-    UploadWidget,
+    DataWidget,
     ConfigWidget,
     PreviewWidget
   },
   data() {
     return {
-      data: [],
-      customHeaders: [],
-      headers: [],
       configs: [],
       configOpen: true
     };
   },
-  watch: {
-    widgetData() {
+  methods: {
+    // @vuese
+    // Returns pointer to network data object, App.data
+    sendData() {
       /*eslint no-console: ["error", {"allow": ["log"]}] */
-      console.log(this.widgetData.config.configs);
+      return this.$refs.dataWidget.getData();
+    },
+    // @vuese
+    // Returns pointer to configurations object, App.configs
+    sendConfigs() {
+      return this.configs;
     }
   }
 };
 </script>
 
 <style>
-#app {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
+.add-space {
+  padding: 0.5em 1em;
+}
+p > a {
+  color: #167df0 !important;
 }
 </style>

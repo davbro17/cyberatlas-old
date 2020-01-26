@@ -6,6 +6,7 @@
       'is-full': !isOpen || !configOpen
     }"
   >
+    <!-- Panel Header -->
     <div class="panel-heading pointer" @click="togglePanel">
       <div class="level">
         <div class="level-left">
@@ -21,10 +22,12 @@
         </div>
       </div>
     </div>
+    <!-- Panel Body -->
     <div
       class="panel-block"
       v-bind:style="{ display: isOpen ? 'block' : 'none' }"
     >
+      <!-- Upload Widget -->
       <div class="container has-text-centered table-container">
         <b-upload v-model="file" drag-drop v-if="!file" type="is-info">
           <section class="section">
@@ -36,6 +39,7 @@
             </div>
           </section>
         </b-upload>
+        <!-- Toolbar -->
         <div class="level" v-if="file">
           <div class="level-left">
             <div class="level-item">
@@ -50,6 +54,7 @@
             </div>
           </div>
           <div class="level-right">
+            <!-- Custom Headers Checkbox -->
             <div class="level-item">
               <b-checkbox v-model="customHeaders" type="is-info">
                 Headers
@@ -62,6 +67,7 @@
             </div>
           </div>
         </div>
+        <!-- Excel Table -->
         <div style="height:400px;overflow:auto;" v-if="file">
           <table class="table is-bordered is-striped is-hoverable">
             <thead>
@@ -111,8 +117,7 @@ import XLSX from "xlsx";
 
 export default {
   props: {
-    configOpen: Boolean,
-    data: Array
+    configOpen: Boolean
   },
   data() {
     return {
@@ -120,7 +125,8 @@ export default {
       file: null,
       columns: [],
       altHeaders: [],
-      customHeaders: false
+      customHeaders: false,
+      data: []
     };
   },
   methods: {
@@ -196,6 +202,9 @@ export default {
     },
     togglePanel() {
       this.isOpen = !this.isOpen;
+    },
+    getData() {
+      return this.data;
     }
   },
   watch: {

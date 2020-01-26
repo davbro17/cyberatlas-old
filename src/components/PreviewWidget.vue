@@ -1,25 +1,28 @@
 <template>
   <div class="column is-full">
+    <!-- Panel Header -->
     <div class="panel-heading pointer" @click="togglePanel">
       <div class="level">
         <div class="level-left">
           <div class="level-item">
             <strong>Step 3:</strong>
           </div>
+          <!-- PREVIEW Button -->
           <div class="level-item">
-            <button class="button is-info is-outlined" @click="preview">
+            <a class="button is-info is-outlined" @click="preview">
               <span><strong>Preview</strong></span>
               <b-icon icon="sync" size="is-small" />
-            </button>
+            </a>
           </div>
           <div class="level-item">
             <strong>and</strong>
           </div>
+          <!-- GENERATE Button -->
           <div class="level-item">
-            <button class="button is-info is-outlined" @click="generateDiagram">
+            <a class="button is-info is-outlined" @click="generateDiagram">
               <span><strong>Generate Diagram</strong></span>
               <b-icon icon="external-link-alt" size="is-small" />
-            </button>
+            </a>
           </div>
         </div>
         <div class="level-right">
@@ -30,6 +33,7 @@
         </div>
       </div>
     </div>
+    <!-- Panel Box -->
     <div
       class="box"
       v-bind:style="{
@@ -38,6 +42,7 @@
         display: isOpen ? 'block' : 'none'
       }"
     >
+      <!-- DRAWIO IFRAME -->
       <div class="iframe-container">
         <iframe
           ref="preview"
@@ -50,8 +55,20 @@
 </template>
 
 <script>
+var testdata = `
+<mxGraphModel dx="1426" dy="536" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="ZZeIv4ZfNzZEC-vSkkao-1" value="Hello World" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+      <mxGeometry x="120" y="60" width="190" height="110" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>
+`;
+
 export default {
-  props: ["data", "configs"],
+  props: ["getData", "getConfigs"],
   data() {
     return {
       isOpen: true,
@@ -65,9 +82,7 @@ export default {
         this.toggleLock = true;
         var win = window.open("./drawio/index.html");
         win.onload = function() {
-          win.document.getElementById(
-            "mxfile"
-          ).innerHTML = `%3CmxGraphModel%20dx%3D%22894%22%20dy%3D%221207%22%20grid%3D%221%22%20gridSize%3D%2210%22%20guides%3D%221%22%20tooltips%3D%221%22%20connect%3D%221%22%20fold%3D%221%22%20page%3D%221%22%20pageScale%3D%221%22%20pageWidth%3D%22826%22%20pageHeight%3D%221169%22%20style%3D%22default-style2%22%20math%3D%220%22%3E%3Croot%3E%3CmxCell%20id%3D%220%22%2F%3E%3CmxCell%20id%3D%221%22%20parent%3D%220%22%2F%3E%3CmxCell%20id%3D%227%22%20value%3D%22%26lt%3Bp%20style%3D%26quot%3Bmargin%3A0px%3Bmargin-top%3A4px%3Btext-align%3Acenter%3B%26quot%3B%26gt%3B%26lt%3Bi%26gt%3B%26amp%3Blt%3B%26amp%3Blt%3BTest%26amp%3Bgt%3B%26amp%3Bgt%3B%26lt%3B%2Fi%26gt%3B%26lt%3Bbr%2F%26gt%3B%26lt%3Bb%26gt%3BInterface%26lt%3B%2Fb%26gt%3B%26lt%3B%2Fp%26gt%3B%26lt%3Bhr%2F%26gt%3B%26lt%3Bp%20style%3D%26quot%3Bmargin%3A0px%3Bmargin-left%3A4px%3B%26quot%3B%26gt%3B%2B%20field1%3A%20Type%26lt%3Bbr%2F%26gt%3B%2B%20field2%3A%20Type%26lt%3B%2Fp%26gt%3B%26lt%3Bhr%2F%26gt%3B%26lt%3Bp%20style%3D%26quot%3Bmargin%3A0px%3Bmargin-left%3A4px%3B%26quot%3B%26gt%3B%2B%20method1(Type)%3A%20Type%26lt%3Bbr%2F%26gt%3B%2B%20method2(Type%2C%20Type)%3A%20Type%26lt%3B%2Fp%26gt%3B%22%20style%3D%22verticalAlign%3Dtop%3Balign%3Dleft%3Boverflow%3Dfill%3BfontSize%3D12%3BfontFamily%3DHelvetica%3Bhtml%3D1%3Bred%22%20parent%3D%221%22%20vertex%3D%221%22%3E%3CmxGeometry%20x%3D%22270%22%20y%3D%2280%22%20width%3D%22190%22%20height%3D%22140%22%20as%3D%22geometry%22%2F%3E%3C%2FmxCell%3E%3CmxCell%20id%3D%228%22%20value%3D%22%26lt%3Bp%20style%3D%26quot%3Bmargin%3A0px%3Bmargin-top%3A4px%3Btext-align%3Acenter%3B%26quot%3B%26gt%3B%26lt%3Bi%26gt%3B%26amp%3Blt%3B%26amp%3Blt%3BInterface%26amp%3Bgt%3B%26amp%3Bgt%3B%26lt%3B%2Fi%26gt%3B%26lt%3Bbr%2F%26gt%3B%26lt%3Bb%26gt%3BInterface%26lt%3B%2Fb%26gt%3B%26lt%3B%2Fp%26gt%3B%26lt%3Bhr%2F%26gt%3B%26lt%3Bp%20style%3D%26quot%3Bmargin%3A0px%3Bmargin-left%3A4px%3B%26quot%3B%26gt%3B%2B%20field1%3A%20Type%26lt%3Bbr%2F%26gt%3B%2B%20field2%3A%20Type%26lt%3B%2Fp%26gt%3B%26lt%3Bhr%2F%26gt%3B%26lt%3Bp%20style%3D%26quot%3Bmargin%3A0px%3Bmargin-left%3A4px%3B%26quot%3B%26gt%3B%2B%20method1(Type)%3A%20Type%26lt%3Bbr%2F%26gt%3B%2B%20method2(Type%2C%20Type)%3A%20Type%26lt%3B%2Fp%26gt%3B%22%20style%3D%22verticalAlign%3Dtop%3Balign%3Dleft%3Boverflow%3Dfill%3BfontSize%3D12%3BfontFamily%3DHelvetica%3Bhtml%3D1%3Bblue%22%20parent%3D%221%22%20vertex%3D%221%22%3E%3CmxGeometry%20x%3D%2260%22%20y%3D%22390%22%20width%3D%22190%22%20height%3D%22140%22%20as%3D%22geometry%22%2F%3E%3C%2FmxCell%3E%3CmxCell%20id%3D%229%22%20value%3D%22Extends%22%20style%3D%22endArrow%3Dblock%3BendSize%3D16%3BendFill%3D0%3BedgeStyle%3DelbowEdgeStyle%3Belbow%3Dvertical%3Bblue%22%20parent%3D%221%22%20source%3D%227%22%20target%3D%228%22%20edge%3D%221%22%3E%3CmxGeometry%20as%3D%22geometry%22%3E%3CmxPoint%20as%3D%22sourcePoint%22%2F%3E%3CmxPoint%20x%3D%22160%22%20as%3D%22targetPoint%22%2F%3E%3C%2FmxGeometry%3E%3C%2FmxCell%3E%3CmxCell%20id%3D%2210%22%20value%3D%22%26lt%3Bp%20style%3D%26quot%3Bmargin%3A0px%3Bmargin-top%3A4px%3Btext-align%3Acenter%3B%26quot%3B%26gt%3B%26lt%3Bi%26gt%3B%26amp%3Blt%3B%26amp%3Blt%3BInterface%26amp%3Bgt%3B%26amp%3Bgt%3B%26lt%3B%2Fi%26gt%3B%26lt%3Bbr%2F%26gt%3B%26lt%3Bb%26gt%3BInterface%26lt%3B%2Fb%26gt%3B%26lt%3B%2Fp%26gt%3B%26lt%3Bhr%2F%26gt%3B%26lt%3Bp%20style%3D%26quot%3Bmargin%3A0px%3Bmargin-left%3A4px%3B%26quot%3B%26gt%3B%2B%20field1%3A%20Type%26lt%3Bbr%2F%26gt%3B%2B%20field2%3A%20Type%26lt%3B%2Fp%26gt%3B%26lt%3Bhr%2F%26gt%3B%26lt%3Bp%20style%3D%26quot%3Bmargin%3A0px%3Bmargin-left%3A4px%3B%26quot%3B%26gt%3B%2B%20method1(Type)%3A%20Type%26lt%3Bbr%2F%26gt%3B%2B%20method2(Type%2C%20Type)%3A%20Type%26lt%3B%2Fp%26gt%3B%22%20style%3D%22verticalAlign%3Dtop%3Balign%3Dleft%3Boverflow%3Dfill%3BfontSize%3D12%3BfontFamily%3DHelvetica%3Bhtml%3D1%3Bgreen%22%20parent%3D%221%22%20vertex%3D%221%22%3E%3CmxGeometry%20x%3D%22570%22%20y%3D%22370%22%20width%3D%22190%22%20height%3D%22140%22%20as%3D%22geometry%22%2F%3E%3C%2FmxCell%3E%3CmxCell%20id%3D%2211%22%20value%3D%22%22%20style%3D%22endArrow%3Dnone%3BedgeStyle%3DelbowEdgeStyle%3Belbow%3Dvertical%22%20parent%3D%221%22%20source%3D%227%22%20target%3D%2210%22%20edge%3D%221%22%3E%3CmxGeometry%20relative%3D%221%22%20as%3D%22geometry%22%2F%3E%3C%2FmxCell%3E%3C%2Froot%3E%3C%2FmxGraphModel%3E`;
+          win.document.getElementById("mxfile").innerHTML = encodeURI(testdata);
           win.createGraph();
           win.edit();
         };
@@ -80,10 +95,10 @@ export default {
         this.isOpen = !this.isOpen;
       }
     },
-    preview(){
+    preview() {
       /*eslint no-console: ["error", {"allow": ["log"]}] */
-      console.log(this.data);
-      console.log(this.configs);
+      console.log(this.getData());
+      console.log(this.getConfigs());
     }
   },
   mounted: function() {
