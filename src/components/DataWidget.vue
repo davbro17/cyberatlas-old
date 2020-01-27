@@ -68,19 +68,34 @@
           </div>
         </div>
         <!-- Excel Table -->
-        <div style="height:400px;overflow:auto;" v-if="file">
+        <div
+          style="height:400px;overflow:auto;"
+          v-if="data.customHeaders[data.sheetIndex]"
+        >
           <table class="table is-bordered is-striped is-hoverable">
+            <!-- Table Header -->
             <thead>
-              <tr v-if="!customHeaders">
-                <td />
-                <th v-for="header in columns" v-bind:key="header">
-                  {{ header }}
-                </th>
-              </tr>
-              <tr v-if="customHeaders">
+              <!-- Check if the Custom Headers are NOT enabled -->
+              <tr
+                v-if="
+                  !data.customHeaders[data.sheetIndex] ||
+                    !data.customHeaders[data.sheetIndex].length
+                "
+              >
                 <td />
                 <th
-                  v-for="(header, index) in altHeaders"
+                  v-for="(row, index) in data.sheets[data.sheetIndex][0]"
+                  v-bind:key="index"
+                >
+                  {{ data.headers[index] }}
+                </th>
+              </tr>
+              <!-- Custom Headers
+                The custom headers are the first row of the data -->
+              <tr v-else>
+                <td />
+                <th
+                  v-for="(header, index) in data.customHeaders[data.sheetIndex]"
                   v-bind:key="header"
                   contenteditable="true"
                   @focusout="updateHeader(index, $event.target.innerText)"
@@ -89,8 +104,12 @@
                 </th>
               </tr>
             </thead>
+            <!-- Table Body -->
             <tbody>
-              <tr v-for="(row, rowindex) in data" v-bind:key="rowindex">
+              <tr
+                v-for="(row, rowindex) in data.sheets[data.sheetIndex]"
+                v-bind:key="rowindex"
+              >
                 <th>{{ rowindex + 1 }}</th>
                 <td
                   contenteditable="true"
@@ -117,47 +136,77 @@ import XLSX from "xlsx";
 
 export default {
   props: {
-    configOpen: Boolean
+    configOpen: Boolean,
+    data: {
+      type: Object,
+      default() {
+        return {
+          sheets: [],
+          headers: [],
+          customHeaders: [],
+          sheetIndex: 0,
+          files: []
+        };
+      }
+    }
   },
   data() {
     return {
       isOpen: true,
       file: null,
-      columns: [],
-      altHeaders: [],
-      customHeaders: false,
-      data: []
+      customHeaders: false
     };
   },
   methods: {
+    // @vuese
+    // Removes current file data from Data Object
     removeFile: function() {
       this.file = null;
-      this.data.splice(0, this.data.length);
-      this.columns.splice(0, this.columns.length);
-      this.altHeaders.splice(0, this.altHeaders.length);
+      this.data.sheets.splice(0, this.data.sheets.length);
+      this.data.customHeaders.splice(0, this.data.headers.length);
     },
+    // @vuese
+    // Update a custom header
+    // @arg (index, text) [Number, String] : header index, replacement string
     updateHeader: function(index, text) {
-      this.altHeaders.splice(index, 1, text);
+      this.customHeaders[this.data.sheetIndex].splice(index, 1, text);
     },
+    // @vuese
+    // Update a data entry
+    // @arg (row, col, text) [Number, Number, String]: entry row, entry column, replacement string
     updateDataCell: function(row, col, text) {
-      this.data[row].splice(col, 1, text);
+      this.data.sheets[this.data.sheetIndex][row].splice(col, 1, text);
     },
+    // @vuese
+    // Swap the first row with the headers
     swapHeaders: function() {
+      let index = this.data.sheetIndex;
       if (this.customHeaders) {
-        this.data.shift();
+        let firstrow = this.data.sheets[index].shift();
+        this.data.customHeaders.splice(index, 1, firstrow);
       } else {
-        this.data.unshift(this.altHeaders);
+        let headers = this.data.customHeaders.splice(index, 1, []);
+        this.data.sheets[index].unshift(...headers);
       }
     },
+    // @vuese
+    // Downloads Data as Excel Sheet
     exportExcel: function() {
       if (this.file) {
-        let tmp = this.data;
-        if (this.customHeaders) {
-          tmp.unshift(this.altHeaders);
-        }
-        let ws = XLSX.utils.aoa_to_sheet(tmp);
+        let data = this.data.sheets;
+        let custom = this.data.customHeaders;
         let wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Test");
+        var ws;
+        for (let i = 0; i < custom.length; i++) {
+          if (custom[i].length) {
+            let tmp = [].concat(data[i]);
+            tmp.unshift(custom[i]);
+            ws = XLSX.utils.aoa_to_sheet(tmp);
+          } else {
+            ws = XLSX.utils.aoa_to_sheet(data[i]);
+          }
+          XLSX.utils.book_append_sheet(wb, ws, "Test");
+        }
         XLSX.writeFile(wb, this.file.name);
       }
     },
@@ -165,9 +214,9 @@ export default {
       /*eslint no-console: ["error", {"allow": ["log"]}] */
       var reader = new FileReader();
       reader.readAsArrayBuffer(e);
-      var columns = this.columns;
-      var data = this.data;
-      let altHeaders = this.altHeaders;
+      var headers = this.data.headers;
+      var data = this.data.sheets;
+      let customHeaders = this.data.customHeaders;
       reader.onload = function() {
         var raw = new Uint8Array(reader.result);
         var wb = XLSX.read(raw, { type: "array" });
@@ -189,22 +238,15 @@ export default {
             tmp[i][j] = cols[j] || "";
           }
         }
+        data.push(tmp);
         for (var column in json[0]) {
-          columns.push(column);
+          headers.push(column);
         }
-        for (row in tmp) {
-          data.push(tmp[row]);
-        }
-        for (column in tmp[0]) {
-          altHeaders.push(tmp[0][column]);
-        }
+        customHeaders.push([]);
       };
     },
     togglePanel() {
       this.isOpen = !this.isOpen;
-    },
-    getData() {
-      return this.data;
     }
   },
   watch: {
@@ -213,7 +255,7 @@ export default {
         this.loadExcel(e);
       }
     },
-    customHeaders: function() {
+    customHeaders() {
       this.swapHeaders();
     }
   }

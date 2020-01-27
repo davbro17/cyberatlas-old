@@ -31,10 +31,11 @@
     <!-- Main Application -->
     <div class="columns is-multiline add-space">
       <!-- Data Widget -->
-      <DataWidget :configOpen="configOpen" ref="dataWidget" />
+      <DataWidget :configOpen="configOpen" :data.sync="data" />
       <!-- Configuration Widget -->
       <ConfigWidget
         :configs.sync="configs"
+        :data="data"
         @toggleConfigPanel="configOpen = !configOpen"
       />
       <!-- Preview Widget -->
@@ -76,6 +77,13 @@ export default {
   data() {
     return {
       configs: [],
+      data: {
+        sheets: [],
+        headers: [],
+        customHeaders: [],
+        sheetIndex: 0,
+        files: []
+      },
       configOpen: true
     };
   },
@@ -84,7 +92,7 @@ export default {
     // Returns pointer to network data object, App.data
     sendData() {
       /*eslint no-console: ["error", {"allow": ["log"]}] */
-      return this.$refs.dataWidget.getData();
+      return this.data;
     },
     // @vuese
     // Returns pointer to configurations object, App.configs

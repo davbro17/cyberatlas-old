@@ -16,6 +16,7 @@
     "core-js": "^3.4.3",
     "font-awesome": "^4.7.0",
     "handsontable": "^7.3.0",
+    "ip-address": "^6.2.0",
     "vue": "^2.6.10",
     "vue-material-design-icons": "^4.4.0",
     "xlsx": "^0.15.3"
