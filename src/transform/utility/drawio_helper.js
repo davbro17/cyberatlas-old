@@ -14,15 +14,14 @@ function transformText(string) {
 
 function transformHTML(html) {
   let output = "";
-  if (html && html instanceof String) {
-    html
+  if (html) {
+    output += html
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;")
       .replace(/"/g, "&quot;")
       .replace(/'/g, "&apos;")
-      .replace(/\n/g, "")
-      .replace(/\s/g, "");
+      .replace(/\n/g, "");
   }
   return output;
 }

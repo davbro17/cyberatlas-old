@@ -87,12 +87,16 @@ export default {
   methods: {
     createDiagramObject() {
       /* eslint-disable no-console */
-      //console.log(this.options[this.selected]);
       let tmp = {};
       Object.assign(tmp, this.options[this.selected]);
       tmp.id = Date.now();
       tmp.title = tmp.name;
-      //console.log(tmp);
+      tmp.geometry = {
+        x: 10,
+        y: 10,
+        width: 200,
+        height: 100
+      };
       this.configs.push(tmp);
     }
   }

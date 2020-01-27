@@ -47,7 +47,7 @@
       <div class="iframe-container">
         <iframe
           ref="preview"
-          src="./drawio/index.html?preview=true"
+          src="./drawio/index.html"
           allowfullscreen
         ></iframe>
       </div>
@@ -98,10 +98,15 @@ export default {
       }
       console.log(this.getData());
       console.log(this.getConfigs());
+
+      let configs = this.getConfigs();
+      let data = this.getData();
+      let diagram = transform(configs, data, console.log);
+      this.iframe.createGraph(diagram);
     }
   },
   mounted: function() {
-    this.iframe = this.$refs.preview;
+    this.iframe = this.$refs.preview.contentWindow;
   }
 };
 </script>

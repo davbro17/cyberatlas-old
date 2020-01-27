@@ -48,11 +48,13 @@ let elementRules = {
       CyberAtlas() {
         return "Generated with CyberAtlas";
       },
-      Filename() {
+      Filename(data) {
         return data.files[0].name || "oof.txt";
       }
     };
-    return option in metaRules ? metaRules[option] : metaRules["CyberAtlas"];
+    return option in metaRules
+      ? metaRules[option](data)
+      : metaRules["CyberAtlas"](data);
   }
 };
 
@@ -81,12 +83,6 @@ function transformTextBox(textBox, data, state, unknownHandler) {
   console.log(value);
   style = "rounded=1;whiteSpace=wrap;html=1;";
   output += `<mxCell id="${id}" value="${value}" style="${style}" parent="${parent}" vertex="${vertex}">`;
-  textBox["geometry"] = {
-    x: 10,
-    y: 10,
-    width: 400,
-    height: 400
-  };
   output += transformGeometry(textBox.geometry);
   output += `</mxCell>`;
   return output;

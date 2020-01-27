@@ -37,7 +37,12 @@
           <div class="field-body">
             <div class="field">
               <p class="control is-expanded has-icons-left">
-                <input class="input is-info" type="text" placeholder="10" />
+                <input
+                  class="input is-info"
+                  type="text"
+                  placeholder="10"
+                  v-model="self.geometry.x"
+                />
               </p>
             </div>
           </div>
@@ -49,7 +54,12 @@
           <div class="field-body">
             <div class="field">
               <p class="control is-expanded has-icons-left">
-                <input class="input is-info" type="text" placeholder="10" />
+                <input
+                  class="input is-info"
+                  type="text"
+                  placeholder="10"
+                  v-model="self.geometry.y"
+                />
               </p>
             </div>
           </div>
@@ -61,7 +71,12 @@
           <div class="field-body">
             <div class="field">
               <p class="control is-expanded has-icons-left">
-                <input class="input is-info" type="text" placeholder="200" />
+                <input
+                  class="input is-info"
+                  type="text"
+                  placeholder="200"
+                  v-model="self.geometry.width"
+                />
               </p>
             </div>
           </div>
@@ -73,7 +88,12 @@
           <div class="field-body">
             <div class="field">
               <p class="control is-expanded has-icons-left">
-                <input class="input is-info" type="text" placeholder="100" />
+                <input
+                  class="input is-info"
+                  type="text"
+                  placeholder="100"
+                  v-model="self.geometry.height"
+                />
               </p>
             </div>
           </div>

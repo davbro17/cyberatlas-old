@@ -32,7 +32,6 @@
             class="textarea is-info"
             v-model="elem.input"
             :placeholder="elem.placeholder"
-            @focusout="print(elem.input)"
           ></textarea>
           <!-- Line Element -->
           <hr style="background-color:black;" v-if="elem.name === 'Line'" />
@@ -76,15 +75,7 @@ export default {
       if (!this.self.elements) {
         this.$set(this.self, "elements", []);
       }
-      let selected = elements[this.selected];
-      if (selected.name === "Metadata") {
-        selected["filename"] = this.data.files[0].name;
-      }
       this.self.elements.push(elements[this.selected]);
-    },
-    print(text) {
-      /*eslint no-console: ["error", {"allow": ["log"]}] */
-      console.log(text);
     }
   },
   mounted() {
