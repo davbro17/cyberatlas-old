@@ -56,17 +56,7 @@
 </template>
 
 <script>
-var testdata = `
-<mxGraphModel dx="1426" dy="536" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
-  <root>
-    <mxCell id="0"/>
-    <mxCell id="1" parent="0"/>
-    <mxCell id="ZZeIv4ZfNzZEC-vSkkao-1" value="Hello World" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-      <mxGeometry x="120" y="60" width="190" height="110" as="geometry"/>
-    </mxCell>
-  </root>
-</mxGraphModel>
-`;
+import transform from "../transform/transform.js";
 
 export default {
   props: ["getData", "getConfigs"],
@@ -78,13 +68,18 @@ export default {
     };
   },
   methods: {
+    // @vuese
+    // Generates a new diagram in a new tab with Drawio
     generateDiagram: function() {
       if (this.iframe) {
         this.toggleLock = true;
+        let configs = this.getConfigs();
+        let data = this.getData();
+        let diagram = transform(configs, data, console.log);
+        console.log(diagram);
         var win = window.open("./drawio/index.html");
         win.onload = function() {
-          win.document.getElementById("mxfile").innerHTML = encodeURI(testdata);
-          win.createGraph();
+          win.createGraph(diagram);
           win.edit();
         };
       }

@@ -93,6 +93,7 @@
           v-bind:is="selected.component"
           :configs.sync="configs"
           :self="this.selected"
+          :data="this.data"
         />
       </div>
     </div>

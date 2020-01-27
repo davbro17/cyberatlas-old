@@ -1,5 +1,5 @@
 <template>
-  <div class="column is-narrow">
+  <div class="column is-full-width">
     <!-- Tabs -->
     <b-tabs type="is-boxed">
       <!-- Data Tab -->
@@ -27,9 +27,58 @@
       </b-tab-item>
       <!-- Layout Tab -->
       <b-tab-item label="Layout" icon="object-group">
-        <slot name="layout">
-          <p>Still Under Construction</p>
-        </slot>
+        <div class="field">
+          <label class="label">Absolute Position</label>
+        </div>
+        <div class="field is-horizontal">
+          <div class="field-label is-normal">
+            <label class="label">x pos</label>
+          </div>
+          <div class="field-body">
+            <div class="field">
+              <p class="control is-expanded has-icons-left">
+                <input class="input is-info" type="text" placeholder="10" />
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="field is-horizontal">
+          <div class="field-label is-normal">
+            <label class="label">y pos</label>
+          </div>
+          <div class="field-body">
+            <div class="field">
+              <p class="control is-expanded has-icons-left">
+                <input class="input is-info" type="text" placeholder="10" />
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="field is-horizontal">
+          <div class="field-label is-normal">
+            <label class="label">width</label>
+          </div>
+          <div class="field-body">
+            <div class="field">
+              <p class="control is-expanded has-icons-left">
+                <input class="input is-info" type="text" placeholder="200" />
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="field is-horizontal">
+          <div class="field-label is-normal">
+            <label class="label">height</label>
+          </div>
+          <div class="field-body">
+            <div class="field">
+              <p class="control is-expanded has-icons-left">
+                <input class="input is-info" type="text" placeholder="100" />
+              </p>
+            </div>
+          </div>
+        </div>
+        <slot name="layout"> </slot>
       </b-tab-item>
     </b-tabs>
   </div>

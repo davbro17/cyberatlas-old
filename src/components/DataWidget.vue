@@ -253,6 +253,9 @@ export default {
     file: function(e) {
       if (this.file) {
         this.loadExcel(e);
+        this.data.files.push({
+          name: this.file.name
+        });
       }
     },
     customHeaders() {

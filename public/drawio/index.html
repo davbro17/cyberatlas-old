@@ -16,11 +16,11 @@
         console.log("LOADED");
       }
 
-      function createGraph()
+      function createGraph(input)
       {
         let stylesheet = sheet;
-        xml = document.getElementById("mxfile").innerText;
-        xml = decodeURIComponent(xml);
+        xml = input || decodeURIComponent(document.getElementById("mxfile").innerText);
+        document.getElementById("mxfile").innerText = encodeURIComponent(xml);
 
         // Removes all illegal control characters before parsing
         var checked = [];
