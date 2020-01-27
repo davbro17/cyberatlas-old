@@ -1,5 +1,6 @@
 <template>
   <div class="column">
+    <!-- Panel Heading -->
     <div class="panel-heading pointer" @click="togglePanel">
       <div class="level">
         <div class="level-left">
@@ -15,11 +16,13 @@
         </div>
       </div>
     </div>
+  <!-- Panel Body -->
     <div
       class="panel-block"
       v-bind:style="{ display: isOpen ? 'block' : 'none' }"
     >
       <div class="columns">
+        <!-- Config Select Interface -->
         <div class="column is-narrow">
           <b-table
             :data="configs"
@@ -51,7 +54,7 @@
                   <span
                     style="margin-right=0.3em; overflow:hidden; text-overflow:ellipsis; max-width: 165px;"
                   >
-                    <strong>{{ props.row.name }}</strong>
+                    <strong>{{ props.row.title }}</strong>
                   </span>
                 </button>
               </b-table-column>
@@ -79,6 +82,7 @@
             </template>
           </b-table>
         </div>
+        <!-- Configuration Area -->
         <component
           v-bind:is="selected.component"
           :configs.sync="configs"
@@ -90,8 +94,13 @@
 </template>
 
 <script>
-import CreateConfig from "./CreateConfig";
-import CloudConfig from "./CloudConfig";
+import CreateConfig from "./configs/CreateConfig.vue";
+import CloudConfig from "./configs/CloudConfig.vue";
+import SubnetConfig from "./configs/SubnetConfig.vue";
+import NetDeviceConfig from "./configs/NetDeviceConfig.vue";
+import NetworksConfig from "./configs/NetworksConfig.vue";
+import CollectionConfig from "./configs/CollectionConfig.vue";
+import TextBoxConfig from "./configs/TextBoxConfig.vue";
 
 export default {
   props: ["configs"],
@@ -106,7 +115,12 @@ export default {
   },
   components: {
     CreateConfig,
-    CloudConfig
+    CloudConfig,
+    SubnetConfig,
+    NetworksConfig,
+    CollectionConfig,
+    NetDeviceConfig,
+    TextBoxConfig
   },
   methods: {
     togglePanel() {
@@ -132,6 +146,7 @@ export default {
     if (this.configs.length == 0) {
       this.configs.push({
         name: "Create New Object!",
+        title: "Create New Object!",
         icon: "plus-square",
         component: "CreateConfig"
       });

@@ -51,11 +51,6 @@ export default {
       file: null,
       options: [
         {
-          name: "Cloud",
-          icon: "cloud",
-          component: "CloudConfig"
-        },
-        {
           name: "Subnet",
           icon: "network-wired",
           component: "SubnetConfig"
@@ -63,17 +58,27 @@ export default {
         {
           name: "Text Box",
           icon: "comment-alt",
-          component: "TextConfig"
+          component: "TextBoxConfig"
+        },
+        {
+          name: "Cloud",
+          icon: "cloud",
+          component: "CloudConfig"
+        },
+        {
+          name: "Network Device",
+          icon: "ethernet",
+          component: "NetDeviceConfig"
+        },
+        {
+          name: "Networks",
+          icon: "project-diagram",
+          component: "NetworksConfig"
         },
         {
           name: "Collection",
           icon: "th",
           component: "CollectionConfig"
-        },
-        {
-          name: "Net Device",
-          icon: "ethernet",
-          component: ""
         }
       ],
       selected: 0
@@ -86,6 +91,7 @@ export default {
       let tmp = {};
       Object.assign(tmp, this.options[this.selected]);
       tmp.id = Date.now();
+      tmp.title = tmp.name;
       //console.log(tmp);
       this.configs.push(tmp);
     }

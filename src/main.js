@@ -31,7 +31,8 @@ import {
   faFilter,
   faObjectGroup,
   faEdit,
-  faTimes
+  faTimes,
+  faProjectDiagram
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
@@ -64,7 +65,8 @@ library.add(
   faFilter,
   faObjectGroup,
   faEdit,
-  faTimes
+  faTimes,
+  faProjectDiagram
 );
 Vue.component("vue-fontawesome", FontAwesomeIcon);
 

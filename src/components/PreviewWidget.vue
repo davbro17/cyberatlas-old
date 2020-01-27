@@ -25,6 +25,7 @@
             </a>
           </div>
         </div>
+        <!-- Panel Icons -->
         <div class="level-right">
           <div class="level-item">
             <b-icon :icon="isOpen ? 'angle-down' : 'angle-up'" size="is-small">
@@ -97,6 +98,9 @@ export default {
     },
     preview() {
       /*eslint no-console: ["error", {"allow": ["log"]}] */
+      if (this.isOpen){
+        this.toggleLock = true;
+      }
       console.log(this.getData());
       console.log(this.getConfigs());
     }
