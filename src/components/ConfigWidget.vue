@@ -38,8 +38,8 @@
                 width="100"
                 centered
               >
-                <template slot="header" slot-scope="{ column }">
-                  <strong>{{ column.label }}</strong>
+                <template #header>
+                  <strong>Diagram Objects</strong>
                 </template>
                 <button
                   class="button is-fullwidth"
@@ -106,6 +106,8 @@ export default {
   props: ["configs"],
   data() {
     return {
+      // @vuese
+      // Currently Selected Configuration
       selected: {},
       column: [{ field: "name", label: "Diagram Objects", width: "40" }],
       file: null,
@@ -113,6 +115,8 @@ export default {
       isOpen: true
     };
   },
+  // @vuese
+  // All the configuration widgets for the Configuration Area of the <template>
   components: {
     CreateConfig,
     CloudConfig,

@@ -11,7 +11,7 @@
           <input
             class="input is-info"
             type="text"
-            placeholder="self.name"
+            :placeholder="self.name"
             v-model="self.title"
           />
         </div>
