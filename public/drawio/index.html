@@ -37,8 +37,11 @@
         }
 
         xml = checked.join('');
-
-        var div = document.createElement('div');
+        
+        var div = document.getElementById('diagram');
+        if (div != null) div.parentElement.removeChild(div);
+        div = document.createElement('div');
+        div.id = "diagram";
         div.style.width = '480px';
         div.style.height = '360px';
         div.style.position = 'relative';
