@@ -1,7 +1,11 @@
 <template>
   <div class="column is-full">
     <!-- Panel Header -->
-    <div class="panel-heading pointer" @click="togglePanel">
+    <div
+      class="panel-heading pointer"
+      style="padding:.25em .75em"
+      @click="togglePanel"
+    >
       <div class="level">
         <div class="level-left">
           <div class="level-item">
@@ -93,7 +97,7 @@ export default {
     },
     preview() {
       /*eslint no-console: ["error", {"allow": ["log"]}] */
-      if (this.isOpen){
+      if (this.isOpen) {
         this.toggleLock = true;
       }
       console.log(this.getData());

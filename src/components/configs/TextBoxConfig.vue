@@ -1,5 +1,6 @@
 <template>
   <TemplateConfig :self.sync="self">
+    <!-- Data Tab -->
     <template #data>
       <div class="field has-addons">
         <div class="control">
@@ -30,7 +31,7 @@
           <textarea
             v-if="elem.name === 'Text' || elem.name === 'HTML'"
             class="textarea is-info"
-            v-model="elem.input"
+            v-model="self.elements[index].input"
             :placeholder="elem.placeholder"
           ></textarea>
           <!-- Line Element -->
@@ -48,6 +49,21 @@
             </select>
           </div>
         </div>
+      </div>
+    </template>
+    <!-- Style Tab -->
+    <template #style>
+      <div class="field">
+        <label class="label">
+          Rounded Border
+        </label>
+        <b-switch
+          v-model="self.style.rounded"
+          type="is-info"
+          true-value="1"
+          false-value="0"
+        >
+        </b-switch>
       </div>
     </template>
   </TemplateConfig>
@@ -75,7 +91,8 @@ export default {
       if (!this.self.elements) {
         this.$set(this.self, "elements", []);
       }
-      this.self.elements.push(elements[this.selected]);
+      let elem = JSON.parse(JSON.stringify(elements[this.selected]));
+      this.self.elements.push(elem);
     }
   },
   mounted() {

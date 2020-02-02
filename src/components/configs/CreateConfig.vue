@@ -27,7 +27,7 @@
     </div>
     <!-- Drag N Drop Interface -->
     <div class="container has-text-centered" style="margin-top:1.5em;">
-      <b-upload v-model="file" drag-drop="" type="is-info">
+      <b-upload v-model="files" drag-drop multiple type="is-info">
         <div
           class="content has-text-centered"
           width="100%"
@@ -44,61 +44,151 @@
 </template>
 
 <script>
+import GenerateSchema from "generate-schema";
+import JSONschema from "jsonschema";
+
 export default {
   props: ["configs"],
   data() {
     return {
-      file: null,
+      files: [],
       options: [
         {
           name: "Subnet",
           icon: "network-wired",
-          component: "SubnetConfig"
+          component: "SubnetConfig",
+          id: Date.now(),
+          lines: [],
+          commands: [],
+          style: {
+            image: "mxgraph.citrix.thin_client",
+            bgcolor: "green"
+          },
+          geometry: {
+            x: 0,
+            y: 0,
+            width: 200,
+            height: 100
+          },
+          layout: {
+            margin: {
+              left: 0,
+              top: 0,
+              bottom: 0,
+              right: 0
+            },
+            device: {
+              columns: 6,
+              width: 70,
+              height: 70,
+              padding: 5
+            }
+          }
         },
         {
           name: "Text Box",
           icon: "comment-alt",
-          component: "TextBoxConfig"
+          component: "TextBoxConfig",
+          id: Date.now(),
+          elements: [],
+          geometry: {
+            x: 0,
+            y: 0,
+            width: 200,
+            height: 100
+          },
+          style: {
+            rounded: 1,
+            whitespace: "wrap",
+            html: 1
+          }
         },
         {
           name: "Cloud",
           icon: "cloud",
-          component: "CloudConfig"
+          component: "CloudConfig",
+          id: Date.now()
         },
         {
           name: "Network Device",
           icon: "ethernet",
-          component: "NetDeviceConfig"
+          component: "NetDeviceConfig",
+          id: Date.now()
         },
         {
           name: "Networks",
           icon: "project-diagram",
-          component: "NetworksConfig"
+          component: "NetworksConfig",
+          id: Date.now()
         },
         {
           name: "Collection",
           icon: "th",
-          component: "CollectionConfig"
+          component: "CollectionConfig",
+          id: Date.now()
         }
       ],
-      selected: 0
+      selected: 0,
+      schema: null
     };
   },
   methods: {
     createDiagramObject() {
       /* eslint-disable no-console */
-      let tmp = {};
-      Object.assign(tmp, this.options[this.selected]);
+      let tmp = JSON.parse(JSON.stringify(this.options[this.selected]));
       tmp.id = Date.now();
       tmp.title = tmp.name;
-      tmp.geometry = {
-        x: 10,
-        y: 10,
-        width: 200,
-        height: 100
-      };
       this.configs.push(tmp);
+    },
+    loadJSON(event) {
+      try {
+        let newConfigs = JSON.parse(event.target.result);
+        let validation = JSONschema.validate(newConfigs, this.schema);
+        if (validation.valid) {
+          for (let i = 0; i < newConfigs.length; i++) {
+            this.sanitizeConfig(newConfigs[i], i);
+          }
+        } else {
+          for (let i = 0; i < validation.errors.length; i++) {
+            let error = validation.errors[i];
+            console.log(`${error.property} ${error.message}`);
+          }
+        }
+      } catch {
+        console.log("JSON FILE ERROR!");
+      }
+    },
+    // @vuese
+    // Inspect new configuration for ID collision and fix collisions
+    // @arg config[OBJECT]
+    sanitizeConfig(config, offset) {
+      let check = this.configs.filter(c => c.id == config.id);
+      if (check.length) {
+        console.log("ID HIT!");
+        console.log(check);
+        console.log(config.id);
+        config.id = Date.now() + offset;
+      }
+      this.configs.push(config);
+    },
+    resetFiles() {
+      this.files.splice(0, this.files.length);
     }
+  },
+  watch: {
+    files() {
+      for (let i = 0; i < this.files.length; i++) {
+        let file = this.files[i];
+        let reader = new FileReader();
+        reader.onload = this.loadJSON;
+        reader.readAsText(file);
+        this.files.splice(i, 1);
+      }
+    }
+  },
+  mounted() {
+    // Generate JSON schema from this.options
+    this.schema = GenerateSchema.json("Configurations", this.options);
   }
 };
 </script>

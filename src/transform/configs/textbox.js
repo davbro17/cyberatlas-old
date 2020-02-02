@@ -1,7 +1,8 @@
 import {
   transformText,
   transformHTML,
-  transformGeometry
+  transformGeometry,
+  transformStyle
 } from "../utility/drawio_helper.js";
 
 let textBoxElements = [
@@ -57,7 +58,13 @@ let elementRules = {
       : metaRules["CyberAtlas"](data);
   }
 };
-
+/**
+ * Transforms a TextBox config into Drawio XML
+ * @param  {Object} textBox
+ * @param  {Object} data
+ * @param  {Object} state
+ * @param  {Function} unknownHandler
+ */
 function transformTextBox(textBox, data, state, unknownHandler) {
   let transformRules = {};
   let elements = textBox.elements || [];
@@ -81,7 +88,7 @@ function transformTextBox(textBox, data, state, unknownHandler) {
   }
   /*eslint no-console: ["error", {"allow": ["log"]}] */
   console.log(value);
-  style = "rounded=1;whiteSpace=wrap;html=1;";
+  style = transformStyle(textBox.style);
   output += `<mxCell id="${id}" value="${value}" style="${style}" parent="${parent}" vertex="${vertex}">`;
   output += transformGeometry(textBox.geometry);
   output += `</mxCell>`;

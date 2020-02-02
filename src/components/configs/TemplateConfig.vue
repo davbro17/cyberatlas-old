@@ -41,7 +41,7 @@
                   class="input is-info"
                   type="text"
                   placeholder="10"
-                  v-model="self.geometry.x"
+                  v-model.number="self.geometry.x"
                 />
               </p>
             </div>
@@ -58,7 +58,7 @@
                   class="input is-info"
                   type="text"
                   placeholder="10"
-                  v-model="self.geometry.y"
+                  v-model.number="self.geometry.y"
                 />
               </p>
             </div>
@@ -75,7 +75,7 @@
                   class="input is-info"
                   type="text"
                   placeholder="200"
-                  v-model="self.geometry.width"
+                  v-model.number="self.geometry.width"
                 />
               </p>
             </div>
@@ -92,7 +92,7 @@
                   class="input is-info"
                   type="text"
                   placeholder="100"
-                  v-model="self.geometry.height"
+                  v-model.number="self.geometry.height"
                 />
               </p>
             </div>

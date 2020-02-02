@@ -1,5 +1,5 @@
 <template>
-  <div class="column">
+  <div class="column" style="padding-bottom:0em;">
     <!-- Panel Heading -->
     <div class="panel-heading pointer" @click="togglePanel">
       <div class="level">
@@ -79,11 +79,15 @@
                 </p>
                 <!-- Download Configurations Button -->
                 <p class="control is-expanded">
-                  <button class="button is-info is-outlined is-fullwidth">
+                  <button
+                    class="button is-info is-outlined is-fullwidth"
+                    @click="downloadConfigs"
+                  >
                     <span>Download</span>
                     <b-icon icon="download" />
                   </button>
                 </p>
+                <a ref="configdownloader" style="display:none" />
               </div>
             </template>
           </b-table>
@@ -92,7 +96,7 @@
         <component
           v-bind:is="selected.component"
           :configs.sync="configs"
-          :self="this.selected"
+          :self.sync="this.selected"
           :data="this.data"
         />
       </div>
@@ -169,6 +173,18 @@ export default {
           }
         }
       }
+    },
+    // @vuese
+    // Download the configurations as a JSON file
+    downloadConfigs() {
+      let configs = [...this.configs];
+      configs.shift();
+      const dataStr =
+        "data:text/json;charset=utf-8," +
+        encodeURIComponent(JSON.stringify(configs));
+      this.$refs.configdownloader.setAttribute("href", dataStr);
+      this.$refs.configdownloader.setAttribute("download", "configs.json");
+      this.$refs.configdownloader.click();
     }
   },
   mounted() {

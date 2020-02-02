@@ -26,7 +26,7 @@ function transformHTML(html) {
   return output;
 }
 
-function transformGeometry(geometry){
+function transformGeometry(geometry) {
   let x = geometry.x || 0;
   let y = geometry.y || 0;
   let width = geometry.width || 100;
@@ -34,4 +34,14 @@ function transformGeometry(geometry){
   return `<mxGeometry x="${x}" y="${y}" width="${width}" height="${height}" as="geometry"/>`;
 }
 
-export { transformText, transformHTML, transformGeometry };
+function transformStyle(style) {
+  if (style) {
+    let output = "";
+    for (const property in style) {
+      output += `${property}=${style[property]};`;
+    }
+    return output;
+  }
+}
+
+export { transformText, transformHTML, transformGeometry, transformStyle };

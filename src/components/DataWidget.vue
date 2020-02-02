@@ -5,6 +5,7 @@
       'is-half': isOpen && configOpen,
       'is-full': !isOpen || !configOpen
     }"
+    style="padding-bottom:0em;"
   >
     <!-- Panel Header -->
     <div class="panel-heading pointer" @click="togglePanel">
@@ -81,6 +82,7 @@
                   !data.customHeaders[data.sheetIndex] ||
                     !data.customHeaders[data.sheetIndex].length
                 "
+                content
               >
                 <td />
                 <th
@@ -96,9 +98,9 @@
                 <td />
                 <th
                   v-for="(header, index) in data.customHeaders[data.sheetIndex]"
-                  v-bind:key="header"
+                  v-bind:key="index"
                   contenteditable="true"
-                  @focusout="updateHeader(index, $event.target.innerText)"
+                  @blur="updateHeader(index, $event.target.innerText)"
                 >
                   {{ header }}
                 </th>
@@ -111,16 +113,19 @@
                 v-bind:key="rowindex"
               >
                 <th>{{ rowindex + 1 }}</th>
-                <td
-                  contenteditable="true"
-                  v-for="(entry, colindex) in row"
-                  v-bind:key="colindex"
-                  style="overflow:hidden"
-                  @focusout="
-                    updateDataCell(rowindex, colindex, $event.target.innerText)
-                  "
-                >
-                  {{ entry }}
+                <td v-for="(entry, colindex) in row" v-bind:key="colindex">
+                  <span
+                    contenteditable="true"
+                    @blur="
+                      updateDataCell(
+                        rowindex,
+                        colindex,
+                        $event.target.innerText
+                      )
+                    "
+                  >
+                    {{ entry }}
+                  </span>
                 </td>
               </tr>
             </tbody>
@@ -169,7 +174,7 @@ export default {
     // Update a custom header
     // @arg (index, text) [Number, String] : header index, replacement string
     updateHeader: function(index, text) {
-      this.customHeaders[this.data.sheetIndex].splice(index, 1, text);
+      this.data.customHeaders[this.data.sheetIndex].splice(index, 1, text);
     },
     // @vuese
     // Update a data entry

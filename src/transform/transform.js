@@ -22,5 +22,7 @@ export default function(configs, data, unknownHandler) {
     }
   }
   output += pageEndTag;
+  /*eslint no-console: ["error", {"allow": ["log"]}] */
+  console.log(output);
   return output;
 }
