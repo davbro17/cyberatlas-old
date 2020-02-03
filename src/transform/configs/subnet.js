@@ -1,4 +1,3 @@
-import cidrTools from "cidr-tools";
 import isIp from "is-ip";
 import {
   transformBox,
@@ -8,10 +7,24 @@ import {
 
 function transformSubnet(subnet, data, state, devices) {
   /*eslint no-console: ["error", {"allow": ["log"]}] */
-  // Filter and sort all the ip-address
-  let sortedDevices = cidrTools.expand(
-    Object.keys(devices).filter(entry => isIp(entry))
-  );
+  // Filter and sort all the ip addresses
+  let sortedDevices = Object.keys(devices)
+    .filter(entry => isIp(entry))
+    .sort((a, b) => {
+      const num1 = Number(
+        a
+          .split(".")
+          .map(num => `000${num}`.slice(-3))
+          .join("")
+      );
+      const num2 = Number(
+        b
+          .split(".")
+          .map(num => `000${num}`.slice(-3))
+          .join("")
+      );
+      return num1 - num2;
+    });
   // Create State
   state = state || { id: 2, parent: 1, vertex: 1 };
   let output = "";
@@ -65,7 +78,6 @@ function transformSubnet(subnet, data, state, devices) {
       deviceCount = 1;
     }
     deviceCount += 1;
-    console.log(geometry);
   }
   return output;
 }
