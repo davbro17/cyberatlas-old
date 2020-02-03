@@ -71,7 +71,6 @@ function transformTextBox(textBox, data, state, unknownHandler) {
   let output = "";
   let value = "";
   let style = "";
-  let { id, parent, vertex } = state || { id: 2, parent: 1, vertex: 1 };
   state.id += 1;
 
   for (let i; i < textBoxElements.length; i++) {
@@ -89,7 +88,7 @@ function transformTextBox(textBox, data, state, unknownHandler) {
   /*eslint no-console: ["error", {"allow": ["log"]}] */
   console.log(value);
   style = transformStyle(textBox.style);
-  output += `<mxCell id="${id}" value="${value}" style="${style}" parent="${parent}" vertex="${vertex}">`;
+  output += `<mxCell id="${state.Filenameid}" value="${value}" style="${style}" parent="${state.parent}" vertex="${state.vertex}">`;
   output += transformGeometry(textBox.geometry);
   output += `</mxCell>`;
   return output;

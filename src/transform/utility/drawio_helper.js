@@ -27,10 +27,10 @@ function transformHTML(html) {
 }
 
 function transformGeometry(geometry) {
-  let x = geometry.x || 0;
-  let y = geometry.y || 0;
-  let width = geometry.width || 100;
-  let height = geometry.height || 100;
+  let x = geometry.x;
+  let y = geometry.y;
+  let width = geometry.width;
+  let height = geometry.height;
   return `<mxGeometry x="${x}" y="${y}" width="${width}" height="${height}" as="geometry"/>`;
 }
 

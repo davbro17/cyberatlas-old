@@ -61,27 +61,50 @@ export default {
           lines: [],
           commands: [],
           style: {
-            image: "mxgraph.citrix.thin_client",
-            bgcolor: "green"
+            fillColor: "#d5e8d4",
+            rounded: 1
           },
           geometry: {
             x: 0,
             y: 0,
-            width: 200,
+            width: 800,
             height: 100
           },
-          layout: {
-            margin: {
-              left: 0,
-              top: 0,
-              bottom: 0,
-              right: 0
+          margin: {
+            left: 0,
+            top: 0,
+            bottom: 0,
+            right: 0
+          },
+          padding: {
+            top: 10,
+            left: 10
+          },
+          device: {
+            columns: 10,
+            width: 70,
+            height: 70,
+            paddingx: 5,
+            paddingy: 30,
+            style: {
+              shape: "mxgraph.citrix.desktop",
+              verticalLabelPosition: "bottom",
+              aspect: "fixed",
+              html: 1,
+              verticalAlign: "top",
+              align: "center",
+              outlineConnect: 0
             },
-            device: {
-              columns: 6,
-              width: 70,
-              height: 70,
-              padding: 5
+            background: {
+              shape: "mxgraph.citrix.desktop",
+              verticalLabelPosition: "bottom",
+              aspect: "fixed",
+              html: 1,
+              verticalAlign: "top",
+              fillColor: "none",
+              strokeColor: "none",
+              align: "center",
+              outlineConnect: 0
             }
           }
         },

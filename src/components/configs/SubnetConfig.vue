@@ -125,7 +125,7 @@
           class="input is-info"
           type="text"
           placeholder="mxgraph.citrix.thin_client"
-          v-model="self.image"
+          v-model="self.device.style.shape"
         />
       </div>
       <div class="field">
@@ -136,7 +136,7 @@
           class="input is-info"
           type="text"
           placeholder="green"
-          v-model="self.bgcolor"
+          v-model="self.style.fillColor"
         />
       </div>
       <div class="field">
@@ -144,7 +144,7 @@
           Rounded Border
         </label>
         <b-switch
-          v-model="self.style.rounded"
+          v-model.number="self.style.rounded"
           type="is-info"
           true-value="1"
           false-value="0"
@@ -154,6 +154,40 @@
     </template>
     <!-- Layout Tab -->
     <template #layout>
+      <div class="field is-horizontal">
+        <div class="field-label is-normal">
+          <label class="label">padding left</label>
+        </div>
+        <div class="field-body">
+          <div class="field">
+            <p class="control is-expanded has-icons-left">
+              <input
+                class="input is-info"
+                type="text"
+                placeholder="10"
+                v-model.number="self.padding.left"
+              />
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="field is-horizontal">
+        <div class="field-label is-normal">
+          <label class="label">padding top</label>
+        </div>
+        <div class="field-body">
+          <div class="field">
+            <p class="control is-expanded has-icons-left">
+              <input
+                class="input is-info"
+                type="text"
+                placeholder="10"
+                v-model.number="self.padding.top"
+              />
+            </p>
+          </div>
+        </div>
+      </div>
       <div class="field">
         <label class="label">Device Layout</label>
       </div>
@@ -168,48 +202,7 @@
                 class="input is-info"
                 type="text"
                 placeholder="10"
-                v-model.number="self.layout.device.columns"
-              />
-            </p>
-          </div>
-        </div>
-      </div>
-      <div class="field is-horizontal">
-        <div class="field-label is-normal">
-          <label class="label">Margin</label>
-        </div>
-        <div class="field-body">
-          <div class="field has-addons">
-            <p class="control">
-              <input
-                class="input is-info"
-                type="text"
-                placeholder="2"
-                v-model.number="self.layout.margin.top"
-              />
-            </p>
-            <p class="control">
-              <input
-                class="input is-info"
-                type="text"
-                placeholder="2"
-                v-model.number="self.layout.margin.right"
-              />
-            </p>
-            <p class="control">
-              <input
-                class="input is-info"
-                type="text"
-                placeholder="2"
-                v-model.number="self.layout.margin.bottom"
-              />
-            </p>
-            <p class="control">
-              <input
-                class="input is-info"
-                type="text"
-                placeholder="2"
-                v-model.number="self.layout.margin.left"
+                v-model.number="self.device.columns"
               />
             </p>
           </div>
@@ -231,7 +224,8 @@ export default {
         action: "Filter",
         cidr: "",
         sheet: "",
-        column: ""
+        column: "",
+        id: null
       }
     };
   },
@@ -255,6 +249,7 @@ export default {
     if (!this.self.lines) {
       this.$set(this.self, "lines", []);
     }
+    this.command.id = this.self.id;
   }
 };
 </script>
