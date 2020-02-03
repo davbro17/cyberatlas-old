@@ -20,7 +20,7 @@
       <div class="navbar-end">
         <!-- Documentation Link Button -->
         <div class="navbar-item">
-          <button class="button is-info is-medium">
+          <button class="button is-info is-medium" @click="openDocs">
             <strong>
               Documentation
             </strong>
@@ -98,6 +98,11 @@ export default {
     // Returns pointer to configurations object, App.configs
     sendConfigs() {
       return this.configs;
+    },
+    // @vuese
+    // Open a new tab to the Documentation
+    openDocs() {
+      window.open("./docs/index.html");
     }
   }
 };

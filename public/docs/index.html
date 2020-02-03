@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>CyberAtlas Docs</title>
+    <link rel="stylesheet" href="./docute.css">
+  </head>
+  <body>
+    <div id="docute"></div>
+    <script src="./docute.js"></script>
+    <script>
+      new Docute({
+        target: '#docute',
+        sourcePath: './md/',
+        nav: [
+          {
+            title: 'Home'
+          },
+          {
+            title: 'About'
+          }
+        ],
+        sidebar: [
+          {
+            title: 'Guide',
+            links: [
+              {
+                title: 'Introduction'
+              },
+              {
+                title: 'Installation'
+              }
+            ]
+          }
+        ]
+      })
+    </script>
+  </body>
+</html>
