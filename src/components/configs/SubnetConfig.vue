@@ -208,6 +208,40 @@
           </div>
         </div>
       </div>
+      <div class="field is-horizontal">
+        <div class="field-label is-normal">
+          <label class="label">padding left</label>
+        </div>
+        <div class="field-body">
+          <div class="field">
+            <p class="control is-expanded has-icons-left">
+              <input
+                class="input is-info"
+                type="text"
+                placeholder="10"
+                v-model.number="self.device.padding.left"
+              />
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="field is-horizontal">
+        <div class="field-label is-normal">
+          <label class="label">padding top</label>
+        </div>
+        <div class="field-body">
+          <div class="field">
+            <p class="control is-expanded has-icons-left">
+              <input
+                class="input is-info"
+                type="text"
+                placeholder="10"
+                v-model.number="self.device.padding.top"
+              />
+            </p>
+          </div>
+        </div>
+      </div>
     </template>
   </TemplateConfig>
 </template>
@@ -235,6 +269,7 @@ export default {
         this.$set(this.self, "commands", []);
       }
       let tmp = Object.assign({}, this.command);
+      tmp.id = this.self.id;
       this.self.commands.unshift(tmp);
     },
     deleteCommand(index) {

@@ -17,6 +17,8 @@ export default function(configs, data, unknownHandler) {
   let state = {
     id: 2,
     parent: 1,
+    // Parent of the document page
+    docparent: 1,
     vertex: 1
   };
   // Create Filter object w/ Array for each sheet
@@ -82,9 +84,7 @@ export default function(configs, data, unknownHandler) {
           confDevices[device] = devices[device];
         }
       }
-      const originalParent = state.parent;
       output += transformSubnet(conf, data, state, confDevices);
-      state.parent = originalParent;
     }
   }
   // Close out the Drawio xml

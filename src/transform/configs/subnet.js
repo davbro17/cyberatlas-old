@@ -29,7 +29,8 @@ function transformSubnet(subnet, data, state, devices) {
   state = state || { id: 2, parent: 1, vertex: 1 };
   let output = "";
   // Create the BIG box group
-  output += transformGroup(state, subnet.geometry, state.parent);
+  // Set the parent to the document parent
+  output += transformGroup(state, subnet.geometry, state.docparent);
   // Create big box
   output += transformBox(
     state,
@@ -41,14 +42,14 @@ function transformSubnet(subnet, data, state, devices) {
     },
     subnet.style
   );
-  let oldParent = state.parent;
+  let oldParent = state.id;
   let x0 = subnet.padding.left;
   let x = x0;
   let y = subnet.padding.top;
   let width = subnet.device.width;
   let height = subnet.device.height;
-  let paddingx = subnet.device.paddingx;
-  let paddingy = subnet.device.paddingy;
+  let paddingx = subnet.device.padding.left;
+  let paddingy = subnet.device.padding.top;
   let deviceCount = 1;
   let devicesPerRow = subnet.device.columns;
   for (let i = 0; i < sortedDevices.length; i++) {
@@ -72,12 +73,12 @@ function transformSubnet(subnet, data, state, devices) {
     // Change Geometry
     if (deviceCount < devicesPerRow) {
       x += width + paddingx;
+      deviceCount += 1;
     } else {
       x = x0;
       y += height + paddingy;
       deviceCount = 1;
     }
-    deviceCount += 1;
   }
   return output;
 }

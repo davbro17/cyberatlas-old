@@ -88,7 +88,7 @@ function transformTextBox(textBox, data, state, unknownHandler) {
   /*eslint no-console: ["error", {"allow": ["log"]}] */
   console.log(value);
   style = transformStyle(textBox.style);
-  output += `<mxCell id="${state.Filenameid}" value="${value}" style="${style}" parent="${state.parent}" vertex="${state.vertex}">`;
+  output += `<mxCell id="${state.id}" value="${value}" style="${style}" parent="${state.docparent}" vertex="${state.vertex}">`;
   output += transformGeometry(textBox.geometry);
   output += `</mxCell>`;
   return output;

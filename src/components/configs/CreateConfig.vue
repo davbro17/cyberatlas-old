@@ -67,7 +67,7 @@ export default {
           geometry: {
             x: 0,
             y: 0,
-            width: 800,
+            width: 810,
             height: 100
           },
           margin: {
@@ -84,8 +84,10 @@ export default {
             columns: 10,
             width: 70,
             height: 70,
-            paddingx: 5,
-            paddingy: 30,
+            padding: {
+              top: 30,
+              left: 10
+            },
             style: {
               shape: "mxgraph.citrix.desktop",
               verticalLabelPosition: "bottom",
@@ -96,7 +98,6 @@ export default {
               outlineConnect: 0
             },
             background: {
-              shape: "mxgraph.citrix.desktop",
               verticalLabelPosition: "bottom",
               aspect: "fixed",
               html: 1,
