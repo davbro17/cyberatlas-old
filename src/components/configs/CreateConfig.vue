@@ -62,8 +62,11 @@ export default {
           commands: [],
           style: {
             fillColor: "#d5e8d4",
-            rounded: 1
+            rounded: 0,
+            verticalAlign: "top",
+            fontStyle: 1
           },
+          label: "",
           geometry: {
             x: 0,
             y: 0,

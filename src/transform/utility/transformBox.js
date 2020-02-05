@@ -1,11 +1,12 @@
 import { transformGeometry, transformStyle } from "./drawio_helper.js";
 
-function transformBox(state, geometry, style) {
+function transformBox(state, geometry, style, value) {
+  let val = value || "";
   style = style || "rounded=1;whiteSpace=wrap;html=1;";
   /*eslint no-console: ["error", {"allow": ["log"]}] */
   state.id += 1;
   const boxStyle = transformStyle(style);
-  let output = `<mxCell id="${state.id}" value="" style="${boxStyle}" parent="${state.parent}" vertex="${state.vertex}">`;
+  let output = `<mxCell id="${state.id}" value="${val}" style="${boxStyle}" parent="${state.parent}" vertex="${state.vertex}">`;
   output += transformGeometry(geometry);
   output += `</mxCell>`;
   return output;

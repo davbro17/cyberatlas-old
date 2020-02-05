@@ -70,9 +70,11 @@ export default function(configs, data, unknownHandler) {
       }
     }
   }
+  // Copy configurations for possible modification during build process
+  let confs = JSON.parse(JSON.stringify(configs));
   // Build Diagram Objects
-  for (let i = 0; i < configs.length; i++) {
-    let conf = configs[i];
+  for (let i = 0; i < confs.length; i++) {
+    let conf = confs[i];
     const component = conf.component;
     if (component === "TextBoxConfig") {
       output += transformTextBox(conf, data, state, unknownHandler);

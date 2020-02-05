@@ -4,6 +4,17 @@
     <template #data>
       <div class="field">
         <label class="label">
+          Subnet Label
+        </label>
+        <input
+          class="input is-info"
+          type="text"
+          placeholder="none"
+          v-model="self.label"
+        />
+      </div>
+      <div class="field">
+        <label class="label">
           Network Devices
         </label>
       </div>

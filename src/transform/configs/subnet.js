@@ -31,6 +31,11 @@ function transformSubnet(subnet, data, state, devices) {
   // Create the BIG box group
   // Set the parent to the document parent
   output += transformGroup(state, subnet.geometry, state.docparent);
+  // Check if the subnet has a label, if so adjust top padding
+  if (subnet.label.length) {
+    subnet.padding.top += 20;
+    subnet.geometry.height += 20;
+  }
   // Create big box
   output += transformBox(
     state,
@@ -40,7 +45,8 @@ function transformSubnet(subnet, data, state, devices) {
       width: subnet.geometry.width,
       height: subnet.geometry.height
     },
-    subnet.style
+    subnet.style,
+    subnet.label
   );
   let oldParent = state.id;
   let x0 = subnet.padding.left;
