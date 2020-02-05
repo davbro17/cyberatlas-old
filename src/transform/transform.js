@@ -3,6 +3,7 @@ import cidrTools from "cidr-tools";
 import isCidr from "is-cidr";
 import isIp from "is-ip";
 import { transformSubnet } from "./configs/subnet";
+import { transformNetworks } from "./configs/networks";
 
 let pageStartTag =
   '<mxGraphModel dx="1186" dy="781" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">' +
@@ -87,6 +88,15 @@ export default function(configs, data, unknownHandler) {
         }
       }
       output += transformSubnet(conf, data, state, confDevices);
+    }
+    if (conf.component === "NetworksConfig") {
+      let confDevices = {};
+      for (let device in devices) {
+        if (conf.id in devices[device].filters) {
+          confDevices[device] = devices[device];
+        }
+      }
+      output += transformNetworks(conf, data, state, confDevices);
     }
   }
   // Close out the Drawio xml

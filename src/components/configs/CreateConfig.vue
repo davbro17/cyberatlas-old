@@ -46,6 +46,9 @@
 <script>
 import GenerateSchema from "generate-schema";
 import JSONschema from "jsonschema";
+import { textBoxConfig } from "../../transform/configs/textbox";
+import { subnetConfig } from "../../transform/configs/subnet";
+import { networksConfig } from "../../transform/configs/networks";
 
 export default {
   props: ["configs"],
@@ -53,83 +56,8 @@ export default {
     return {
       files: [],
       options: [
-        {
-          name: "Subnet",
-          icon: "network-wired",
-          component: "SubnetConfig",
-          id: Date.now(),
-          lines: [],
-          commands: [],
-          style: {
-            fillColor: "#d5e8d4",
-            rounded: 0,
-            verticalAlign: "top",
-            fontStyle: 1
-          },
-          label: "",
-          geometry: {
-            x: 0,
-            y: 0,
-            width: 810,
-            height: 100
-          },
-          margin: {
-            left: 0,
-            top: 0,
-            bottom: 0,
-            right: 0
-          },
-          padding: {
-            top: 10,
-            left: 10
-          },
-          device: {
-            columns: 10,
-            width: 70,
-            height: 70,
-            padding: {
-              top: 30,
-              left: 10
-            },
-            style: {
-              shape: "mxgraph.citrix.desktop",
-              verticalLabelPosition: "bottom",
-              aspect: "fixed",
-              html: 1,
-              verticalAlign: "top",
-              align: "center",
-              outlineConnect: 0
-            },
-            background: {
-              verticalLabelPosition: "bottom",
-              aspect: "fixed",
-              html: 1,
-              verticalAlign: "top",
-              fillColor: "none",
-              strokeColor: "none",
-              align: "center",
-              outlineConnect: 0
-            }
-          }
-        },
-        {
-          name: "Text Box",
-          icon: "comment-alt",
-          component: "TextBoxConfig",
-          id: Date.now(),
-          elements: [],
-          geometry: {
-            x: 0,
-            y: 0,
-            width: 200,
-            height: 100
-          },
-          style: {
-            rounded: 1,
-            whitespace: "wrap",
-            html: 1
-          }
-        },
+        subnetConfig,
+        textBoxConfig,
         {
           name: "Cloud",
           icon: "cloud",
@@ -142,12 +70,7 @@ export default {
           component: "NetDeviceConfig",
           id: Date.now()
         },
-        {
-          name: "Networks",
-          icon: "project-diagram",
-          component: "NetworksConfig",
-          id: Date.now()
-        },
+        networksConfig,
         {
           name: "Collection",
           icon: "th",

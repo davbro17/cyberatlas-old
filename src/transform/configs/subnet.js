@@ -5,6 +5,66 @@ import {
   transformDevice
 } from "../utility/transformBox.js";
 
+let subnetConfig = {
+  name: "Subnet",
+  icon: "network-wired",
+  component: "SubnetConfig",
+  id: Date.now(),
+  lines: [],
+  commands: [],
+  style: {
+    fillColor: "#d5e8d4",
+    rounded: 0,
+    verticalAlign: "top",
+    fontStyle: 1
+  },
+  label: "",
+  geometry: {
+    x: 0,
+    y: 0,
+    width: 810,
+    height: 100
+  },
+  margin: {
+    left: 0,
+    top: 0,
+    bottom: 0,
+    right: 0
+  },
+  padding: {
+    top: 10,
+    left: 10
+  },
+  device: {
+    columns: 10,
+    width: 70,
+    height: 70,
+    padding: {
+      top: 30,
+      left: 10
+    },
+    style: {
+      shape: "mxgraph.citrix.desktop",
+      verticalLabelPosition: "bottom",
+      aspect: "fixed",
+      html: 1,
+      verticalAlign: "top",
+      align: "center",
+      outlineConnect: 0
+    },
+    background: {
+      verticalLabelPosition: "bottom",
+      aspect: "fixed",
+      html: 1,
+      verticalAlign: "top",
+      fillColor: "none",
+      strokeColor: "none",
+      align: "center",
+      outlineConnect: 0
+    }
+  }
+};
+
 function transformSubnet(subnet, data, state, devices) {
   /*eslint no-console: ["error", {"allow": ["log"]}] */
   // Filter and sort all the ip addresses
@@ -46,6 +106,7 @@ function transformSubnet(subnet, data, state, devices) {
       height: subnet.geometry.height
     },
     subnet.style,
+    state.parent,
     subnet.label
   );
   let oldParent = state.id;
@@ -71,7 +132,12 @@ function transformSubnet(subnet, data, state, devices) {
     geometry.x = 0;
     geometry.y = 0;
     // Create Device Background
-    output += transformBox(state, geometry, subnet.device.background);
+    output += transformBox(
+      state,
+      geometry,
+      subnet.device.background,
+      state.parent
+    );
     // Create Device
 
     const ip = sortedDevices[i];
@@ -89,4 +155,4 @@ function transformSubnet(subnet, data, state, devices) {
   return output;
 }
 
-export { transformSubnet };
+export { transformSubnet, subnetConfig };

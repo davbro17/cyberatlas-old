@@ -5,6 +5,25 @@ import {
   transformStyle
 } from "../utility/drawio_helper.js";
 
+let textBoxConfig = {
+  name: "Text Box",
+  icon: "comment-alt",
+  component: "TextBoxConfig",
+  id: Date.now(),
+  elements: [],
+  geometry: {
+    x: 0,
+    y: 0,
+    width: 200,
+    height: 100
+  },
+  style: {
+    rounded: 1,
+    whitespace: "wrap",
+    html: 1
+  }
+};
+
 let textBoxElements = [
   {
     name: "Text",
@@ -94,4 +113,4 @@ function transformTextBox(textBox, data, state, unknownHandler) {
   return output;
 }
 
-export { textBoxElements, transformTextBox };
+export { textBoxElements, transformTextBox, textBoxConfig };
