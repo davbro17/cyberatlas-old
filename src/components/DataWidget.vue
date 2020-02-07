@@ -12,8 +12,9 @@
       <div class="level">
         <div class="level-left">
           <div class="level-item">
-            <strong>Step 1: Upload Scan File</strong>
+            <strong><slot name="title"/></strong>
           </div>
+          <slot name="dynamicTitle" />
         </div>
         <div class="level-right">
           <div class="level-item">
@@ -30,7 +31,13 @@
     >
       <!-- Upload Widget -->
       <div class="container has-text-centered table-container">
-        <b-upload v-model="file" drag-drop v-if="!file" type="is-info">
+        <b-upload
+          v-model="files"
+          drag-drop
+          multiple
+          v-if="!outputOnly && data.sheets.length == 0"
+          type="is-info"
+        >
           <section class="section">
             <div class="content has-text-centered">
               <p>
@@ -41,11 +48,11 @@
           </section>
         </b-upload>
         <!-- Toolbar -->
-        <div class="level" v-if="file">
+        <div class="level" v-if="data.files.length > 0">
           <div class="level-left">
             <div class="level-item">
               <span class="tag is-info is-medium">
-                {{ file.name.slice(0, 25) }}
+                {{ data.files[0].name.slice(0, 25) }}
                 <button
                   class="delete is-small"
                   type="button"
@@ -69,10 +76,7 @@
           </div>
         </div>
         <!-- Excel Table -->
-        <div
-          style="height:400px;overflow:auto;"
-          v-if="data.customHeaders[data.sheetIndex]"
-        >
+        <div style="height:400px;overflow:auto;" v-if="data.sheets.length">
           <table class="table is-bordered is-striped is-hoverable">
             <!-- Table Header -->
             <thead>
@@ -142,6 +146,7 @@ import XLSX from "xlsx";
 export default {
   props: {
     configOpen: Boolean,
+    outputOnly: Boolean,
     data: {
       type: Object,
       default() {
@@ -158,15 +163,16 @@ export default {
   data() {
     return {
       isOpen: true,
-      file: null,
-      customHeaders: false
+      customHeaders: false,
+      files: [],
+      isLoading: false
     };
   },
   methods: {
     // @vuese
     // Removes current file data from Data Object
     removeFile: function() {
-      this.file = null;
+      this.data.files.splice(0, this.data.files.length);
       this.data.sheets.splice(0, this.data.sheets.length);
       this.data.customHeaders.splice(0, this.data.headers.length);
     },
@@ -197,7 +203,7 @@ export default {
     // @vuese
     // Downloads Data as Excel Sheet
     exportExcel: function() {
-      if (this.file) {
+      if (this.data.sheets.length > 0) {
         let data = this.data.sheets;
         let custom = this.data.customHeaders;
         let wb = XLSX.utils.book_new();
@@ -212,7 +218,7 @@ export default {
           }
           XLSX.utils.book_append_sheet(wb, ws, "Test");
         }
-        XLSX.writeFile(wb, this.file.name);
+        XLSX.writeFile(wb, this.data.files[0].name);
       }
     },
     loadExcel: function(e) {
@@ -255,12 +261,15 @@ export default {
     }
   },
   watch: {
-    file: function(e) {
-      if (this.file) {
-        this.loadExcel(e);
-        this.data.files.push({
-          name: this.file.name
-        });
+    files() {
+      if (this.files.length > 0){
+        for (let i = 0; i < this.files.length; i++) {
+          this.loadExcel(this.files[i]);
+          this.data.files.push({
+            name: this.files[i].name
+          });
+        }
+        this.files.splice(0, this.files.length);
       }
     },
     customHeaders() {

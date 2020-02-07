@@ -78,7 +78,9 @@ Vue.use(Buefy, {
 });
 
 import "buefy/dist/buefy.css";
+import router from "./router";
 
 new Vue({
+  router,
   render: h => h(App)
 }).$mount("#app");

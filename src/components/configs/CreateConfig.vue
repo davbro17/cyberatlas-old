@@ -127,12 +127,14 @@ export default {
   },
   watch: {
     files() {
-      for (let i = 0; i < this.files.length; i++) {
-        let file = this.files[i];
-        let reader = new FileReader();
-        reader.onload = this.loadJSON;
-        reader.readAsText(file);
-        this.files.splice(i, 1);
+      if (this.files.length > 0) {
+        for (let i = 0; i < this.files.length; i++) {
+          let file = this.files[i];
+          let reader = new FileReader();
+          reader.onload = this.loadJSON;
+          reader.readAsText(file);
+        }
+        this.files.splice(0, this.files.length);
       }
     }
   },
