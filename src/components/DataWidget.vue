@@ -35,7 +35,7 @@
           v-model="files"
           drag-drop
           multiple
-          v-if="!outputOnly && data.sheets.length == 0"
+          v-if="!outputOnly && data.sheets.length == 0 && !isLoading"
           type="is-info"
         >
           <section class="section">
@@ -47,8 +47,6 @@
             </div>
           </section>
         </b-upload>
-        <!-- Loading Data -->
-        <b-icon v-if="isLoading" icon="download" />
         <!-- Toolbar -->
         <div class="level" v-if="data.files.length > 0">
           <div class="level-left">
@@ -77,6 +75,8 @@
             </div>
           </div>
         </div>
+        <!-- Loading Data -->
+        <b-icon v-if="isLoading" icon="spinner" custom-class="fa-pulse" />
         <!-- Excel Table -->
         <div style="height:400px;overflow:auto;" v-if="data.sheets.length">
           <table class="table is-bordered is-striped is-hoverable">
@@ -144,7 +144,7 @@
 
 <script>
 import XLSX from "xlsx";
-import Worker from "worker-loader!../transform/workers/data-worker";
+import * as DataWorker from "worker-loader!../transform/workers/data_worker";
 
 export default {
   props: {
@@ -227,6 +227,7 @@ export default {
     },
     loadExcel(event) {
       /*eslint no-console: ["error", {"allow": ["log"]}] */
+      this.isLoading = true;
       let raw = new Uint8Array(event.target.result);
       this.myWorker.postMessage([raw]);
     },
@@ -236,8 +237,9 @@ export default {
     updateData(result) {
       console.log(result);
       this.data.sheets.push(...result.data.sheets);
-      this.data.customHeaders.push(...result.data.customHeaders);
+      this.data.customHeaders.push(result.data.customHeaders);
       this.data.headers.push(...result.data.headers);
+      this.isLoading = false;
     }
   },
   watch: {
@@ -260,7 +262,7 @@ export default {
   },
   created() {
     if (window.Worker) {
-      this.myWorker = new Worker();
+      this.myWorker = new DataWorker();
       this.myWorker.onmessage = this.updateData;
     }
   },

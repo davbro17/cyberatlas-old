@@ -39,7 +39,7 @@
 
 <script>
 import DataWidget from "../components/DataWidget.vue";
-import { filterRows, extractSubnets } from "../transform/utility/extract.js";
+import * as ExtractWorker from "worker-loader!../transform/workers/extract_worker";
 
 export default {
   name: "app",
@@ -69,6 +69,7 @@ export default {
         sheetIndex: 0,
         files: []
       },
+      myWorker: null,
       configOpen: true
     };
   },
@@ -80,13 +81,29 @@ export default {
       if (this.ips.sheets.length == 0 || this.subnets.sheets.length == 0) {
         console.log("MISSING DATA");
       } else {
-        const ipData = JSON.parse(JSON.stringify(this.ips));
-        const subnets = extractSubnets(this.subnets.sheets);
-        const tmp = filterRows(ipData.sheets, subnets);
-        this.output = ipData;
-        this.output.sheets.splice(0, tmp.length, tmp);
+        this.output.files.splice(0, this.output.files.length);
+        this.output.sheets.splice(0, this.output.sheets.length);
+        this.output.headers.splice(0, this.output.headers.length);
+        this.output.customHeaders.splice(0, this.output.headers.length);
+        this.myWorker.postMessage([this.subnets.sheets, this.ips]);
       }
+    },
+    updateOutput(result) {
+      let tmp = result.data;
+      this.output.headers.push(...tmp.headers);
+      this.output.customHeaders.push(...tmp.customHeaders);
+      this.output.files.push(...tmp.files);
+      this.output.sheets.push(tmp.sheets);
     }
+  },
+  created() {
+    if (window.Worker) {
+      this.myWorker = new ExtractWorker();
+      this.myWorker.onmessage = this.updateOutput;
+    }
+  },
+  beforeDestroy() {
+    this.myWorker.terminate();
   }
 };
 </script>

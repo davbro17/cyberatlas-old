@@ -32,6 +32,5 @@ onmessage = function(e) {
   for (var column in json[0]) {
     data.headers.push(column);
   }
-  data.customHeaders.push([]);
   this.postMessage(data);
 };

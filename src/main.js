@@ -79,6 +79,11 @@ Vue.use(Buefy, {
   defaultTooltipType: "is-info"
 });
 
+import VueVirtualScroller from "vue-virtual-scroller";
+
+Vue.use(VueVirtualScroller);
+import "vue-virtual-scroller/dist/vue-virtual-scroller.css";
+
 import "buefy/dist/buefy.css";
 import router from "./router";
 
