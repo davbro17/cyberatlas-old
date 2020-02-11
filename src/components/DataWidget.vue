@@ -47,6 +47,8 @@
             </div>
           </section>
         </b-upload>
+        <!-- Loading Data -->
+        <b-icon v-if="isLoading" icon="download" />
         <!-- Toolbar -->
         <div class="level" v-if="data.files.length > 0">
           <div class="level-left">
@@ -142,6 +144,7 @@
 
 <script>
 import XLSX from "xlsx";
+import Worker from "worker-loader!../transform/workers/data-worker";
 
 export default {
   props: {
@@ -165,7 +168,8 @@ export default {
       isOpen: true,
       customHeaders: false,
       files: [],
-      isLoading: false
+      isLoading: false,
+      myWorker: null
     };
   },
   methods: {
@@ -221,53 +225,31 @@ export default {
         XLSX.writeFile(wb, this.data.files[0].name);
       }
     },
-    loadExcel: function(e) {
+    loadExcel(event) {
       /*eslint no-console: ["error", {"allow": ["log"]}] */
-      var reader = new FileReader();
-      reader.readAsArrayBuffer(e);
-      var headers = this.data.headers;
-      var data = this.data.sheets;
-      let customHeaders = this.data.customHeaders;
-      reader.onload = function() {
-        var raw = new Uint8Array(reader.result);
-        var wb = XLSX.read(raw, { type: "array" });
-        var sheetList = wb.SheetNames;
-        var json = XLSX.utils.sheet_to_json(wb.Sheets[sheetList[0]], {
-          defval: "",
-          header: "A"
-        });
-        var columnentries = json.map(function(obj) {
-          return Object.keys(obj).length;
-        });
-        var colcount = Math.max(...columnentries);
-        var rowcount = json.length;
-        var tmp = Array.from(Array(rowcount), () => new Array(colcount));
-        for (var i = 0; i < rowcount; i++) {
-          var row = json[i];
-          var cols = Object.values(row);
-          for (var j = 0; j < colcount; j++) {
-            tmp[i][j] = cols[j] || "";
-          }
-        }
-        data.push(tmp);
-        for (var column in json[0]) {
-          headers.push(column);
-        }
-        customHeaders.push([]);
-      };
+      let raw = new Uint8Array(event.target.result);
+      this.myWorker.postMessage([raw]);
     },
     togglePanel() {
       this.isOpen = !this.isOpen;
+    },
+    updateData(result) {
+      console.log(result);
+      this.data.sheets.push(...result.data.sheets);
+      this.data.customHeaders.push(...result.data.customHeaders);
+      this.data.headers.push(...result.data.headers);
     }
   },
   watch: {
     files() {
-      if (this.files.length > 0){
+      if (this.files.length > 0) {
         for (let i = 0; i < this.files.length; i++) {
-          this.loadExcel(this.files[i]);
           this.data.files.push({
             name: this.files[i].name
           });
+          let reader = new FileReader();
+          reader.onload = this.loadExcel;
+          reader.readAsArrayBuffer(this.files[i]);
         }
         this.files.splice(0, this.files.length);
       }
@@ -275,6 +257,15 @@ export default {
     customHeaders() {
       this.swapHeaders();
     }
+  },
+  created() {
+    if (window.Worker) {
+      this.myWorker = new Worker();
+      this.myWorker.onmessage = this.updateData;
+    }
+  },
+  beforeDestroy() {
+    this.myWorker.terminate();
   }
 };
 </script>
