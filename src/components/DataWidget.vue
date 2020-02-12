@@ -78,7 +78,10 @@
         <!-- Loading Data -->
         <b-icon v-if="isLoading" icon="spinner" custom-class="fa-pulse" />
         <!-- Excel Table -->
-        <div style="height:400px;overflow:auto;" v-if="data.sheets.length">
+        <div
+          style="height:400px;overflow:auto;border: 1px solid #dbdbdb;"
+          v-if="data.sheets.length"
+        >
           <table class="table is-bordered is-striped is-hoverable">
             <!-- Table Header -->
             <thead>
@@ -115,10 +118,13 @@
             <!-- Table Body -->
             <tbody>
               <tr
-                v-for="(row, rowindex) in data.sheets[data.sheetIndex]"
+                v-for="(row, rowindex) in data.sheets[data.sheetIndex].slice(
+                  (currentPage - 1) * perPage,
+                  currentPage * perPage
+                )"
                 v-bind:key="rowindex"
               >
-                <th>{{ rowindex + 1 }}</th>
+                <th>{{ (currentPage - 1) * perPage + rowindex + 1 }}</th>
                 <td v-for="(entry, colindex) in row" v-bind:key="colindex">
                   <span
                     contenteditable="true"
@@ -136,6 +142,45 @@
               </tr>
             </tbody>
           </table>
+        </div>
+      </div>
+      <div class="level" v-if="data.sheets.length > 0">
+        <div class="level-left">
+          <div class="level-item">
+            <div class="field is-horizontal">
+              <div class="field-label is-normal">
+                <label class="label">Rows/Page</label>
+              </div>
+              <div class="field-body">
+                <div class="field">
+                  <p class="control">
+                    <input
+                      class="input is-info has-text-centered"
+                      type="text"
+                      placeholder="25"
+                      v-model.number="perPage"
+                      style="width:27%"
+                    />
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="level-right">
+          <div class="level-item">
+            <b-pagination
+              :total="data.sheets[data.sheetIndex].length"
+              :current.sync="currentPage"
+              order="is-right"
+              simple
+              :per-page="perPage"
+              aria-next-label="Next page"
+              aria-previous-label="Previous page"
+              aria-page-label="Page"
+              aria-current-label="Current page"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -169,7 +214,9 @@ export default {
       customHeaders: false,
       files: [],
       isLoading: false,
-      myWorker: null
+      myWorker: null,
+      currentPage: 1,
+      perPage: 25
     };
   },
   methods: {
@@ -279,5 +326,11 @@ export default {
 }
 .panel-heading.pointer {
   cursor: pointer;
+}
+
+v-deep .pagination-previous:focus,
+.pagination-next:focus,
+.pagination-link:focus {
+  border-color: #167df0;
 }
 </style>

@@ -11,7 +11,7 @@ const routes = [
     component: Map
   },
   {
-    path: "/extract",
+    path: "/Extract",
     name: "extract",
     // route level code-splitting
     // this generates a separate chunk (extract.[hash].js) for this route
@@ -20,7 +20,7 @@ const routes = [
       import(/* webpackChunkName: "extract" */ "../views/Extract.vue")
   },
   {
-    path: "/compare",
+    path: "/Compare",
     name: "compare",
     // route level code-splitting
     // this generates a separate chunk (crossref.[hash].js) for this route

@@ -38,7 +38,7 @@
             <div class="field">
               <p class="control is-expanded has-icons-left">
                 <input
-                  class="input is-info"
+                  class="is-info"
                   type="text"
                   placeholder="10"
                   v-model.number="self.geometry.x"

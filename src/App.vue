@@ -31,27 +31,25 @@
       </div>
       <div class="navbar-menu" v-bind:class="{ 'is-active': burgerToggle }">
         <div class="navbar-start">
-          <div
-            class="navbar-item has-dropdown"
-            v-bind:class="{ 'is-active': appSelectMenu }"
-          >
-            <a
-              class="navbar-link is-medium "
-              @click="appSelectMenu = !appSelectMenu"
-            >
-              <strong>{{ selectedApp }}</strong>
-            </a>
-            <div class="navbar-dropdown is-boxed">
-              <a class="navbar-item" @click="route('/', 'Map')">
-                <strong>Map</strong>
-              </a>
-              <a class="navbar-item" @click="route('/extract', 'Extract')">
-                <strong>Extract</strong>
-              </a>
-              <a class="navbar-item" @click="route('/compare', 'Compare')">
-                <strong>Compare</strong>
-              </a>
-            </div>
+          <div class="navbar-item">
+            <b-dropdown aria-role="list" v-model="selectedApp" @change="route">
+              <button class="button is-info" slot="trigger">
+                <span
+                  ><strong>{{ selectedApp }}</strong>
+                </span>
+                <b-icon icon="angle-down"></b-icon>
+              </button>
+              <b-dropdown-item
+                aria-role="listitem"
+                v-for="(item, index) in appOptions.filter(
+                  (e, i) => e != selectedApp
+                )"
+                :key="index"
+                :value="item"
+              >
+                {{ item }}
+              </b-dropdown-item>
+            </b-dropdown>
           </div>
         </div>
         <div class="navbar-end">
@@ -72,12 +70,14 @@
       <div class="content has-text-centered">
         <p>
           <strong>CyberAtlas</strong> by
-          <!-- Personal Webpage Link -->
-          <a href="https://davbro.me">1LT David Brownfield</a>. The source code
-          is licensed
+          <!-- Personal Email Link -->
+          <a href="mailto:david.c.brownfield3.mil@mail.mil"
+            >1LT David Brownfield
+          </a>
+          . The source code is licensed
           <!-- Source Code License -->
-          <a href="http://opensource.org/licenses/mit-license.php">MIT</a>. The
-          website content is licensed
+          <a href="https://choosealicense.com/licenses/gpl-3.0/">GNU GPLv3</a>.
+          The website content is licensed
           <!-- Website License -->
           <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/"
             >CC BY NC SA 4.0</a
@@ -89,12 +89,11 @@
 </template>
 
 <script>
-
 export default {
   data() {
     return {
       selectedApp: "Map",
-      appSelectMenu: false,
+      appOptions: ["Map", "Extract", "Compare"],
       burgerToggle: false
     };
   },
@@ -106,10 +105,12 @@ export default {
     },
     // @vuese
     // Open a new tab to the Documentation
-    route(path, name) {
-      this.selectedApp = name;
-      this.appSelectMenu = !this.appSelectMenu;
-      this.$router.push(path);
+    route(path) {
+      if (path === "Map") {
+        this.$router.push("/");
+      } else {
+        this.$router.push("/" + path);
+      }
     }
   }
 };
