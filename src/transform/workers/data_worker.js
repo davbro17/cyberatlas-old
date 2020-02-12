@@ -2,7 +2,6 @@ import XLSX from "xlsx";
 
 onmessage = function(e) {
   /*eslint no-console: ["error", {"allow": ["log"]}] */
-  console.log("Worker: Message received from main script");
   let raw = e.data[0];
   let wb = XLSX.read(raw, { type: "array" });
   let sheetList = wb.SheetNames;

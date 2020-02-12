@@ -235,7 +235,6 @@ export default {
       this.isOpen = !this.isOpen;
     },
     updateData(result) {
-      console.log(result);
       this.data.sheets.push(...result.data.sheets);
       this.data.customHeaders.push(result.data.customHeaders);
       this.data.headers.push(...result.data.headers);
