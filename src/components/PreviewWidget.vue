@@ -60,7 +60,7 @@
 </template>
 
 <script>
-import transform from "../transform/transform.js";
+import * as MapWorker from "worker-loader!../transform/workers/map_worker";
 
 export default {
   props: ["getData", "getConfigs"],
@@ -68,25 +68,18 @@ export default {
     return {
       isOpen: true,
       toggleLock: false,
-      iframe: null
+      iframe: null,
+      myWorker: null
     };
   },
   methods: {
     // @vuese
     // Generates a new diagram in a new tab with Drawio
     generateDiagram: function() {
-      if (this.iframe) {
-        this.toggleLock = true;
-        let configs = this.getConfigs();
-        let data = this.getData();
-        let diagram = transform(configs, data, console.log);
-        console.log(diagram);
-        var win = window.open("./drawio/index.html");
-        win.onload = function() {
-          win.createGraph(diagram);
-          win.edit();
-        };
-      }
+      this.toggleLock = true;
+      let configs = this.getConfigs();
+      let data = this.getData();
+      this.myWorker.postMessage([configs, data, "generate"]);
     },
     togglePanel: function() {
       if (this.toggleLock) {
@@ -95,22 +88,38 @@ export default {
         this.isOpen = !this.isOpen;
       }
     },
+    receiveXML(result) {
+      if (result.data[0] === "preview" && this.iframe) {
+        this.iframe.createGraph(result.data[1]);
+      } else {
+        let win = window.open("./drawio/index.html");
+        win.onload = function() {
+          win.createGraph(result.data[1]);
+          win.edit();
+        };
+      }
+    },
     preview() {
       /*eslint no-console: ["error", {"allow": ["log"]}] */
       if (this.isOpen) {
         this.toggleLock = true;
       }
-      console.log(this.getData());
-      console.log(this.getConfigs());
-
       let configs = this.getConfigs();
       let data = this.getData();
-      let diagram = transform(configs, data, console.log);
-      this.iframe.createGraph(diagram);
+      this.myWorker.postMessage([configs, data, "preview"]);
     }
   },
   mounted: function() {
     this.iframe = this.$refs.preview.contentWindow;
+  },
+  created() {
+    if (window.Worker) {
+      this.myWorker = new MapWorker();
+      this.myWorker.onmessage = this.receiveXML;
+    }
+  },
+  beforeDestroy() {
+    this.myWorker.terminate();
   }
 };
 </script>

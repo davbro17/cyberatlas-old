@@ -102,6 +102,5 @@ export default function(configs, data, unknownHandler) {
   // Close out the Drawio xml
   output += pageEndTag;
   /*eslint no-console: ["error", {"allow": ["log"]}] */
-  console.log(output);
   return output;
 }
