@@ -7,5 +7,5 @@ onmessage = function(e) {
   const subs = extractSubnets(subnets);
   const tmp = filterRows(ips.sheets, subs);
   ips.sheets = tmp;
-  this.postMessage(ips);
+  this.postMessage([ips, subs]);
 };
