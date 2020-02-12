@@ -6,6 +6,9 @@ let networksConfig = {
   icon: "project-diagram",
   component: "NetworksConfig",
   id: Date.now(),
+  autowidth: true,
+  autoheight: true,
+  autoposition: true,
   lines: [],
   commands: [],
   style: {

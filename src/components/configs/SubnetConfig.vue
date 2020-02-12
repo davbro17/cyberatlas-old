@@ -1,5 +1,5 @@
 <template>
-  <TemplateConfig :self.sync="self">
+  <TemplateConfig :self.sync="self" autosizing>
     <!-- Data Tab -->
     <template #data>
       <div class="field">

@@ -19,6 +19,9 @@ let subnetConfig = {
     fontStyle: 1
   },
   label: "",
+  autowidth: true,
+  autoheight: true,
+  autoposition: true,
   geometry: {
     x: 0,
     y: 0,
@@ -41,7 +44,7 @@ let subnetConfig = {
     height: 70,
     padding: {
       top: 30,
-      left: 10
+      left: 25
     },
     style: {
       shape: "mxgraph.citrix.desktop",
@@ -91,10 +94,29 @@ function transformSubnet(subnet, data, state, devices) {
   // Create the BIG box group
   // Set the parent to the document parent
   output += transformGroup(state, subnet.geometry, state.docparent);
-  // Check if the subnet has a label, if so adjust top padding
-  if (subnet.label.length) {
-    subnet.padding.top += 20;
-    subnet.geometry.height += 20;
+  // Set subnet width
+  let width = subnet.geometry.width;
+  if (subnet.autowidth) {
+    width = subnet.padding.left * 2;
+    const count =
+      sortedDevices.length < subnet.device.columns
+        ? sortedDevices.length
+        : subnet.device.columns;
+    width += count * subnet.device.width;
+    width += (count - 1) * subnet.device.padding.left;
+  }
+  // Set subnet height
+  let height = subnet.geometry.height;
+  if (subnet.autoheight) {
+    // Check if the subnet has a label, if so adjust top padding
+    height = subnet.padding.top * 2;
+    if (subnet.label.length) {
+      subnet.padding.top += 20;
+      height += 10;
+    }
+    const count = Math.ceil(sortedDevices.length / subnet.device.columns);
+    height += count * subnet.device.height;
+    height += count * subnet.device.padding.top;
   }
   // Create big box
   output += transformBox(
@@ -102,8 +124,8 @@ function transformSubnet(subnet, data, state, devices) {
     {
       x: 0,
       y: 0,
-      width: subnet.geometry.width,
-      height: subnet.geometry.height
+      width: width,
+      height: height
     },
     subnet.style,
     state.parent,
@@ -113,8 +135,8 @@ function transformSubnet(subnet, data, state, devices) {
   let x0 = subnet.padding.left;
   let x = x0;
   let y = subnet.padding.top;
-  let width = subnet.device.width;
-  let height = subnet.device.height;
+  width = subnet.device.width;
+  height = subnet.device.height;
   let paddingx = subnet.device.padding.left;
   let paddingy = subnet.device.padding.top;
   let deviceCount = 1;

@@ -38,7 +38,7 @@
             <div class="field">
               <p class="control is-expanded has-icons-left">
                 <input
-                  class="is-info"
+                  class="input is-info"
                   type="text"
                   placeholder="10"
                   v-model.number="self.geometry.x"
@@ -69,16 +69,25 @@
             <label class="label">width</label>
           </div>
           <div class="field-body">
-            <div class="field">
+            <b-field grouped>
+              <b-checkbox
+                v-model="self.autowidth"
+                type="is-info"
+                style="margin-right:10px;"
+                v-if="autosizing"
+              >
+              Automatic
+              </b-checkbox>
               <p class="control is-expanded has-icons-left">
                 <input
                   class="input is-info"
                   type="text"
                   placeholder="200"
+                  :disabled="self.autowidth"
                   v-model.number="self.geometry.width"
                 />
               </p>
-            </div>
+            </b-field>
           </div>
         </div>
         <div class="field is-horizontal">
@@ -86,16 +95,25 @@
             <label class="label">height</label>
           </div>
           <div class="field-body">
-            <div class="field">
+            <b-field grouped>
+              <b-checkbox
+                v-model="self.autoheight"
+                type="is-info"
+                style="margin-right:10px;"
+                v-if="autosizing"
+              >
+              Automatic
+              </b-checkbox>
               <p class="control is-expanded has-icons-left">
                 <input
                   class="input is-info"
                   type="text"
                   placeholder="100"
+                  :disabled="self.autoheight"
                   v-model.number="self.geometry.height"
                 />
               </p>
-            </div>
+            </b-field>
           </div>
         </div>
         <slot name="layout"> </slot>
@@ -106,7 +124,10 @@
 
 <script>
 export default {
-  props: ["self"]
+  props: {
+    self: Object,
+    autosizing: Boolean
+  }
 };
 </script>
 
