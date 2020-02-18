@@ -3,19 +3,31 @@
     <!-- Main Application -->
     <div class="columns is-multiline add-space">
       <!-- Original Data Widget -->
-      <DataWidget :configOpen="configOpen" :data.sync="excelA">
+      <PanelBlock
+        @toggle="bool => (dataAOpen = bool)"
+        :widthClass="dataBOpen && dataAOpen ? 'is-half' : 'is-full'"
+      >
         <template #title>
           Step 1: Upload Excel 1
         </template>
-      </DataWidget>
-      <!-- Subnet Ranges Data Widget -->
-      <DataWidget :configOpen="configOpen" :data.sync="excelB">
-        <template #title>
-          <strong>Step 2: Upload Excel 2</strong>
+        <template #content>
+          <DataWidget :data.sync="excelA" />
         </template>
-      </DataWidget>
+      </PanelBlock>
+      <!-- Subnet Ranges Data Widget -->
+      <PanelBlock
+        @toggle="bool => (dataAOpen = bool)"
+        :widthClass="dataBOpen && dataAOpen ? 'is-half' : 'is-full'"
+      >
+        <template #title>
+          Step 1: Upload Excel 2
+        </template>
+        <template #content>
+          <DataWidget :data.sync="excelB" />
+        </template>
+      </PanelBlock>
       <!-- Output Data Widget -->
-      <DataWidget :data.sync="output" outputOnly>
+      <PanelBlock>
         <template #dynamicTitle>
           <div class="level-item">
             <strong>Step 3:</strong>
@@ -48,19 +60,24 @@
             </span>
           </div>
         </template>
-      </DataWidget>
+        <template #content>
+          <DataWidget :data.sync="output" outputOnly />
+        </template>
+      </PanelBlock>
     </div>
   </div>
 </template>
 
 <script>
 import DataWidget from "../components/DataWidget.vue";
+import PanelBlock from "../components/templates/PanelBlock.vue";
 import * as CompareWorker from "worker-loader!../transform/workers/compare_worker";
 
 export default {
   name: "app",
   components: {
-    DataWidget
+    DataWidget,
+    PanelBlock
   },
   data() {
     return {
@@ -88,7 +105,8 @@ export default {
       myWorker: null,
       selected: "Similarities",
       options: ["Similarities", "Excel 1 Differences", "Excel 2 Differences"],
-      configOpen: true
+      dataAOpen: true,
+      dataBOpen: true
     };
   },
   methods: {

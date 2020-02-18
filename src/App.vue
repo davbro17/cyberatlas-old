@@ -93,7 +93,7 @@ export default {
   data() {
     return {
       selectedApp: "Map",
-      appOptions: ["Map", "Extract", "Compare"],
+      appOptions: ["Map", "Extract", "Compare", "Merge"],
       burgerToggle: false
     };
   },

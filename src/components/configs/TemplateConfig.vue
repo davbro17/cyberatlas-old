@@ -27,8 +27,21 @@
       </b-tab-item>
       <!-- Layout Tab -->
       <b-tab-item label="Layout" icon="object-group">
-        <div class="field">
-          <label class="label">Absolute Position</label>
+        <div class="field is-horizontal">
+          <div class="field-label is-normal">
+            <label class="label">Position</label>
+          </div>
+          <div class="field-body">
+            <b-field grouped>
+              <b-checkbox
+                v-model="self.autoposition"
+                type="is-info"
+                style="margin-right:10px;"
+              >
+                Automatic
+              </b-checkbox>
+            </b-field>
+          </div>
         </div>
         <div class="field is-horizontal">
           <div class="field-label is-normal">
@@ -42,6 +55,7 @@
                   type="text"
                   placeholder="10"
                   v-model.number="self.geometry.x"
+                  :disabled="self.autoposition"
                 />
               </p>
             </div>
@@ -59,6 +73,7 @@
                   type="text"
                   placeholder="10"
                   v-model.number="self.geometry.y"
+                  :disabled="self.autoposition"
                 />
               </p>
             </div>
@@ -76,17 +91,35 @@
                 style="margin-right:10px;"
                 v-if="autosizing"
               >
-              Automatic
+                Automatic
               </b-checkbox>
               <p class="control is-expanded has-icons-left">
                 <input
                   class="input is-info"
                   type="text"
                   placeholder="200"
-                  :disabled="self.autowidth"
+                  :disabled="autosizing && self.autowidth"
                   v-model.number="self.geometry.width"
                 />
               </p>
+            </b-field>
+            <b-field v-if="self.name === 'subnet'">
+              <b-radio-button
+                v-model="self.widthUnits"
+                :type="self.autowidth ? '' : 'is-info'"
+                native-value="pixels"
+                :disabled="self.autowidth"
+              >
+                pixels
+              </b-radio-button>
+              <b-radio-button
+                v-model="self.widthUnits"
+                :type="self.autowidth ? '' : 'is-info'"
+                native-value="device"
+                :disabled="self.autowidth"
+              >
+                device widths
+              </b-radio-button>
             </b-field>
           </div>
         </div>
@@ -102,17 +135,35 @@
                 style="margin-right:10px;"
                 v-if="autosizing"
               >
-              Automatic
+                Automatic
               </b-checkbox>
               <p class="control is-expanded has-icons-left">
                 <input
                   class="input is-info"
                   type="text"
                   placeholder="100"
-                  :disabled="self.autoheight"
+                  :disabled="autosizing && self.autoheight"
                   v-model.number="self.geometry.height"
                 />
               </p>
+            </b-field>
+            <b-field v-if="self.name === 'subnet'">
+              <b-radio-button
+                v-model="self.heightUnits"
+                :type="self.autoheight ? '' : 'is-info'"
+                native-value="pixels"
+                :disabled="self.autoheight"
+              >
+                pixels
+              </b-radio-button>
+              <b-radio-button
+                v-model="self.heightUnits"
+                :type="self.autoheight ? '' : 'is-info'"
+                native-value="device"
+                :disabled="self.autoheight"
+              >
+                device heights
+              </b-radio-button>
             </b-field>
           </div>
         </div>

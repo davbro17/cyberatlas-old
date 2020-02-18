@@ -3,17 +3,26 @@
     <!-- Main Application -->
     <div class="columns is-multiline add-space">
       <!-- Data Widget -->
-      <DataWidget :configOpen="configOpen" :data.sync="data">
+      <PanelBlock
+        @toggle="bool => (dataOpen = bool)"
+        :widthClass="configOpen && dataOpen ? 'is-half' : 'is-full'"
+      >
         <template #title>
           Step 1: Upload Scan File
         </template>
-      </DataWidget>
+        <template #content>
+          <DataWidget :data.sync="data" />
+        </template>
+      </PanelBlock>
       <!-- Configuration Widget -->
-      <ConfigWidget
-        :configs.sync="configs"
-        :data="data"
-        @toggleConfigPanel="configOpen = !configOpen"
-      />
+      <PanelBlock widthClass="" @toggle="bool => (configOpen = bool)">
+        <template #title>
+          Step 2: Filter Data and Configure Diagram
+        </template>
+        <template #content>
+          <ConfigWidget :configs.sync="configs" :data="data" />
+        </template>
+      </PanelBlock>
       <!-- Preview Widget -->
       <PreviewWidget :getData="sendData" :getConfigs="sendConfigs" />
     </div>
@@ -24,12 +33,15 @@
 import ConfigWidget from "../components/ConfigWidget.vue";
 import DataWidget from "../components/DataWidget.vue";
 import PreviewWidget from "../components/PreviewWidget.vue";
+import PanelBlock from "../components/templates/PanelBlock.vue";
+
 export default {
   name: "app",
   components: {
     DataWidget,
     ConfigWidget,
-    PreviewWidget
+    PreviewWidget,
+    PanelBlock
   },
   data() {
     return {
@@ -41,7 +53,8 @@ export default {
         sheetIndex: 0,
         files: []
       },
-      configOpen: true
+      configOpen: true,
+      dataOpen: true
     };
   },
   methods: {

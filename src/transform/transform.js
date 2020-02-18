@@ -20,7 +20,17 @@ export default function(configs, data, unknownHandler) {
     parent: 1,
     // Parent of the document page
     docparent: 1,
-    vertex: 1
+    vertex: 1,
+    startx: 0,
+    starty: 0,
+    offsetx: 0,
+    offsety: 0,
+    prevWidth: 0,
+    prevHeight: 0,
+    margin: {
+      left: 10,
+      top: 10
+    }
   };
   // Create Filter object w/ Array for each sheet
   let filters = new Array(data.sheets.length);
@@ -35,11 +45,19 @@ export default function(configs, data, unknownHandler) {
     if ("commands" in configs[i]) {
       let commands = configs[i].commands;
       for (let j = 0; j < commands.length; j++) {
-        // TODO add sheet seperation
         let f = commands[j];
-        if (isCidr.v4(f.cidr)) {
-          for (var a = 0; a < filters.length; a++) {
-            for (var b = 0; b < filters[a].length; b++) {
+        if (isCidr.v4(f.cidr) || isIp(f.cidr)) {
+          const ret = data.files.indexOf(f.sheet);
+          const start = ret > -1 ? ret : 0;
+          const end = ret > -1 ? ret + 1 : filters.length;
+          for (var a = start; a < end; a++) {
+            const ret2 = Math.max(
+              data.customHeaders[a].indexOf(f.column),
+              data.headers.indexOf(f.column)
+            );
+            const start2 = ret2 > -1 ? ret2 : 0;
+            const end2 = ret2 > -1 ? ret2 + 1 : filters[a].length;
+            for (var b = start2; b < end2; b++) {
               filters[a][b].push(f);
             }
           }
@@ -77,6 +95,7 @@ export default function(configs, data, unknownHandler) {
   for (let i = 0; i < confs.length; i++) {
     let conf = confs[i];
     const component = conf.component;
+    state.offsety += state.prevHeight + state.margin.top;
     if (component === "TextBoxConfig") {
       output += transformTextBox(conf, data, state, unknownHandler);
     }
@@ -102,5 +121,6 @@ export default function(configs, data, unknownHandler) {
   // Close out the Drawio xml
   output += pageEndTag;
   /*eslint no-console: ["error", {"allow": ["log"]}] */
+  //console.log(output);
   return output;
 }

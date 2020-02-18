@@ -33,7 +33,9 @@ import {
   faEdit,
   faTimes,
   faProjectDiagram,
-  faSpinner
+  faSpinner,
+  faSlidersH,
+  faHammer
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
@@ -68,7 +70,9 @@ library.add(
   faEdit,
   faTimes,
   faProjectDiagram,
-  faSpinner
+  faSpinner,
+  faSlidersH,
+  faHammer
 );
 Vue.component("vue-fontawesome", FontAwesomeIcon);
 

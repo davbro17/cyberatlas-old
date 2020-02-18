@@ -46,6 +46,8 @@
             placeholder="Sheet"
             open-on-focus
             v-model="command.sheet"
+            :disabled="command.action !== 'Filter'"
+            :data="data.files"
           />
         </b-field>
         <b-field>
@@ -59,6 +61,7 @@
                 : data.headers
             "
             v-model="command.column"
+            :disabled="command.action !== 'Filter'"
           />
         </b-field>
         <div class="control">
@@ -100,6 +103,7 @@
             type="text"
             placeholder="Sheet"
             v-model="self.commands[index].sheet"
+            :disabled="command.action !== 'Filter'"
           />
         </div>
         <div class="control">
@@ -108,6 +112,7 @@
             type="text"
             placeholder="Column"
             v-model="self.commands[index].column"
+            :disabled="command.action !== 'Filter'"
           />
         </div>
         <div class="control">
@@ -124,21 +129,25 @@
           Device Label
         </label>
       </div>
-      <TextEditor :self.sync="self" :data.sync="data"></TextEditor>
+      <TextEditor :self.sync="self" :data.sync="data" />
+      <div class="field is-horizontal">
+        <div class="field-label is-normal">
+          <label class="label">Render If Empty</label>
+        </div>
+        <div class="field-body">
+          <b-field grouped>
+            <b-checkbox
+              v-model="self.renderEmpty"
+              type="is-info"
+              style="margin-right:10px;"
+            >
+            </b-checkbox>
+          </b-field>
+        </div>
+      </div>
     </template>
     <!-- Style Tab -->
     <template #style>
-      <div class="field">
-        <label class="label">
-          Image
-        </label>
-        <input
-          class="input is-info"
-          type="text"
-          placeholder="mxgraph.citrix.thin_client"
-          v-model="self.device.style.shape"
-        />
-      </div>
       <div class="field">
         <label class="label">
           Background Color
@@ -152,6 +161,17 @@
       </div>
       <div class="field">
         <label class="label">
+          Border Color
+        </label>
+        <input
+          class="input is-info"
+          type="text"
+          placeholder="green"
+          v-model="self.style.strokeColor"
+        />
+      </div>
+      <div class="field">
+        <label class="label">
           Rounded Border
         </label>
         <b-switch
@@ -161,6 +181,73 @@
           false-value="0"
         >
         </b-switch>
+      </div>
+      <div class="field">
+        <label class="label">
+          Device Image
+        </label>
+        <input
+          class="input is-info"
+          type="text"
+          placeholder="mxgraph.citrix.thin_client"
+          v-model="self.device.style.shape"
+        />
+      </div>
+      <div class="field is-horizontal">
+        <div class="field-label is-normal">
+          <label class="label">width</label>
+        </div>
+        <div class="field-body">
+          <div class="field">
+            <p class="control is-expanded has-icons-left">
+              <input
+                class="input is-info"
+                type="text"
+                placeholder="10"
+                v-model.number="self.device.width"
+              />
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="field is-horizontal">
+        <div class="field-label is-normal">
+          <label class="label">height</label>
+        </div>
+        <div class="field-body">
+          <div class="field">
+            <p class="control is-expanded has-icons-left">
+              <input
+                class="input is-info"
+                type="text"
+                placeholder="10"
+                v-model.number="self.device.height"
+              />
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label class="label">
+          Device Background Color
+        </label>
+        <input
+          class="input is-info"
+          type="text"
+          placeholder="mxgraph.citrix.thin_client"
+          v-model="self.device.background.fillColor"
+        />
+      </div>
+      <div class="field">
+        <label class="label">
+          Device Border Color
+        </label>
+        <input
+          class="input is-info"
+          type="text"
+          placeholder="mxgraph.citrix.thin_client"
+          v-model="self.device.background.strokeColor"
+        />
       </div>
     </template>
     <!-- Layout Tab -->
@@ -204,11 +291,11 @@
       </div>
       <div class="field is-horizontal">
         <div class="field-label is-normal">
-          <label class="label">Columns</label>
+          <label class="label">columns</label>
         </div>
         <div class="field-body">
           <div class="field">
-            <p class="control is-expanded has-icons-left">
+            <p class="control has-icons-left">
               <input
                 class="input is-info"
                 type="text"
@@ -248,6 +335,23 @@
                 type="text"
                 placeholder="10"
                 v-model.number="self.device.padding.top"
+              />
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="field is-horizontal">
+        <div class="field-label is-normal">
+          <label class="label">line height</label>
+        </div>
+        <div class="field-body">
+          <div class="field">
+            <p class="control is-expanded has-icons-left">
+              <input
+                class="input is-info"
+                type="text"
+                placeholder="10"
+                v-model.number="self.device.lineHeight"
               />
             </p>
           </div>

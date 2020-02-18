@@ -1,45 +1,51 @@
 <template>
-  <!-- Add NEW OBJECT Interface -->
   <div class="column">
-    <div class="field">
-      <span class="decision">
-        Create A New
-      </span>
-      <!-- Dropdown Select -->
-      <div class="select is-info">
-        <select v-model="selected">
-          <option
-            v-for="(option, index) in options"
-            v-bind:key="index"
-            :value="index"
+    <!-- Tabs -->
+    <b-tabs type="is-boxed">
+      <!-- Create New Diagram Object Interface -->
+      <b-tab-item label="Create" icon="hammer">
+        <div class="field">
+          <span class="decision">
+            Create A New
+          </span>
+          <!-- Dropdown Select -->
+          <div class="select is-info">
+            <select v-model="selected">
+              <option
+                v-for="(option, index) in options"
+                v-bind:key="index"
+                :value="index"
+              >
+                {{ option.name }}
+              </option>
+            </select>
+          </div>
+          <!-- ADD Button -->
+          <span
+            class="button is-info is-outlined decision"
+            @click="createDiagramObject"
           >
-            {{ option.name }}
-          </option>
-        </select>
-      </div>
-      <!-- ADD Button -->
-      <span
-        class="button is-info is-outlined decision"
-        @click="createDiagramObject"
-      >
-        <strong>Add</strong>
-      </span>
-    </div>
-    <!-- Drag N Drop Interface -->
-    <div class="container has-text-centered" style="margin-top:1.5em;">
-      <b-upload v-model="files" drag-drop multiple type="is-info">
-        <div
-          class="content has-text-centered"
-          width="100%"
-          style="padding-bottom:2.28em"
-        >
-          <p>
-            <b-icon icon="upload" size="is-large"> </b-icon>
-          </p>
-          <p>OR Upload a Configuration File</p>
+            <b-icon icon="plus" />
+          </span>
         </div>
-      </b-upload>
-    </div>
+        <!-- Drag N Drop Interface -->
+        <div class="container has-text-centered" style="margin-top:1.5em;">
+          <b-upload v-model="files" drag-drop multiple type="is-info">
+            <div
+              class="content has-text-centered"
+              width="100%"
+              style="padding-bottom:2.28em"
+            >
+              <p>
+                <b-icon icon="upload" size="is-large"> </b-icon>
+              </p>
+              <p>OR Upload a Configuration File</p>
+            </div>
+          </b-upload>
+        </div>
+      </b-tab-item>
+      <b-tab-item label="Defaults" icon="sliders-h"> </b-tab-item>
+    </b-tabs>
   </div>
 </template>
 
@@ -150,5 +156,8 @@ export default {
   padding-top: calc(0.4em - 1px);
   margin-right: 0.4em;
   margin-left: 0.4em;
+}
+::v-deep .tabs li.is-active a {
+  color: #167df0;
 }
 </style>

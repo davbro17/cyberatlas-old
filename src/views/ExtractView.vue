@@ -1,62 +1,76 @@
 <template>
-  <div id="app">
-    <!-- Main Application -->
-    <div class="columns is-multiline add-space">
-      <!-- Original Data Widget -->
-      <DataWidget :configOpen="configOpen" :data.sync="ips">
-        <template #title>
-          Step 1: Upload Scan file
-        </template>
-      </DataWidget>
-      <!-- Subnet Ranges Data Widget -->
-      <DataWidget :configOpen="configOpen" :data.sync="subnets">
-        <template #title>
-          <strong>Step 2: Upload Subnet List</strong>
-        </template>
-      </DataWidget>
-      <!-- Output Data Widget -->
-      <DataWidget :data.sync="output" outputOnly>
-        <template #dynamicTitle>
-          <div class="level-item">
-            <strong>Step 3:</strong>
-          </div>
-          <div class="level-item">
-            <span
-              class="button is-info is-outlined"
-              @click.stop="extractIPAdresses"
-            >
-              <strong>Extract</strong>
-            </span>
-          </div>
-          <div class="level-item">
-            <strong>IP Addresses</strong>
-          </div>
-          <div class="level-item" v-if="output.sheets.length > 0">
-            <span
-              class="button is-info is-outlined is-fullwidth"
-              @click="downloadConfigs"
-            >
-              <strong>Download Map Configurations</strong>
-              <b-icon icon="download" />
-            </span>
-          </div>
-          <a ref="configdownloader" style="display:none" />
-        </template>
-      </DataWidget>
-    </div>
+  <!-- Main Application -->
+  <div class="columns is-multiline add-space">
+    <!-- Original Data Widget -->
+    <PanelBlock
+      @toggle="bool => (dataAOpen = bool)"
+      :widthClass="dataBOpen && dataAOpen ? 'is-half' : 'is-full'"
+    >
+      <template #title>
+        Step 1: Upload Scan file
+      </template>
+      <template #content>
+        <DataWidget :data.sync="ips" />
+      </template>
+    </PanelBlock>
+    <!-- Subnet Ranges Data Widget -->
+    <PanelBlock
+      :widthClass="dataBOpen && dataAOpen ? 'is-half' : 'is-full'"
+      @toggle="bool => (dataBOpen = bool)"
+    >
+      <template #title>
+        Step 2: Upload Subnet List
+      </template>
+      <template #content>
+        <DataWidget :data.sync="subnets" />
+      </template>
+    </PanelBlock>
+    <!-- Output Data Widget -->
+    <PanelBlock>
+      <template #dynamicTitle>
+        <div class="level-item">
+          <strong>Step 3:</strong>
+        </div>
+        <div class="level-item">
+          <span
+            class="button is-info is-outlined"
+            @click.stop="extractIPAdresses"
+          >
+            <strong>Extract</strong>
+          </span>
+        </div>
+        <div class="level-item">
+          <strong>IP Addresses</strong>
+        </div>
+        <div class="level-item" v-if="output.sheets.length > 0">
+          <span class="button is-info is-outlined" @click="downloadConfigs">
+            <strong>Download Map Configurations</strong>
+            <b-icon icon="download" />
+          </span>
+        </div>
+        <div class="level-item" v-if="output.sheets.length > 0">
+          <span class="button is-info is-outlined is-fullwidth">
+            <b-icon icon="sliders-h" />
+          </span>
+        </div>
+        <a ref="configdownloader" style="display:none" />
+      </template>
+      <template #content>
+        <DataWidget :data.sync="output" outputOnly />
+      </template>
+    </PanelBlock>
   </div>
 </template>
 
 <script>
 import DataWidget from "../components/DataWidget.vue";
+import PanelBlock from "../components/templates/PanelBlock.vue";
 import * as ExtractWorker from "worker-loader!../transform/workers/extract_worker";
 import { subnetConfig } from "../transform/configs/subnet";
 
 export default {
-  name: "app",
-  components: {
-    DataWidget
-  },
+  name: "ExtractView",
+  components: { DataWidget, PanelBlock },
   data() {
     return {
       ips: {
@@ -82,7 +96,8 @@ export default {
       },
       myWorker: null,
       cidrs: null,
-      configOpen: true
+      dataAOpen: true,
+      dataBOpen: true
     };
   },
   methods: {
@@ -106,6 +121,7 @@ export default {
       this.output.headers.push(...tmp.headers);
       this.output.customHeaders.push(...tmp.customHeaders);
       this.output.files.push(...tmp.files);
+      this.output.fileName = tmp.fileName;
       this.output.sheets.push(tmp.sheets);
     },
     downloadConfigs() {
