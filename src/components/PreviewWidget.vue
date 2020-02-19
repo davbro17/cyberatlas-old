@@ -19,11 +19,13 @@
       v-if="selected === options[1]"
       v-model="input"
       class="textarea is-info"
+      rows="20"
     />
     <textarea
       v-if="selected === options[2]"
       v-model="configurations"
       class="textarea is-info"
+      rows="20"
     />
   </div>
 </template>
