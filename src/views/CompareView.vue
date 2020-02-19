@@ -114,8 +114,20 @@ export default {
     // Takes two excel sheet of network objects and gets similarities & differences
     compareData() {
       /*eslint no-console: ["error", {"allow": ["log"]}] */
-      if (this.excelA.sheets.length == 0 || this.excelB.sheets.length == 0) {
-        console.log("MISSING DATA");
+      if (this.excelA.sheets.length == 0) {
+        this.$buefy.notification.open({
+          duration: 3000,
+          message: `Missing Data For Excel 1`,
+          type: "is-danger",
+          hasIcon: true
+        });
+      } else if (this.excelB.sheets.length == 0) {
+        this.$buefy.notification.open({
+          duration: 3000,
+          message: `Missing Data For Excel 2`,
+          type: "is-danger",
+          hasIcon: true
+        });
       } else {
         const index = this.options.findIndex(o => o === this.selected);
         this.output.files.splice(0, this.output.files.length);
@@ -132,6 +144,7 @@ export default {
       this.output.headers.push(...tmp.headers);
       this.output.customHeaders.push(...tmp.customHeaders);
       this.output.files.push(...tmp.files);
+      this.output.fileName = tmp.fileName;
       this.output.sheets.push(tmp.sheets);
     }
   },

@@ -49,7 +49,7 @@
           </span>
         </div>
         <div class="level-item" v-if="output.sheets.length > 0">
-          <span class="button is-info is-outlined is-fullwidth">
+          <span class="button is-info is-outlined is-fullwidth" @click.stop>
             <b-icon icon="sliders-h" />
           </span>
         </div>

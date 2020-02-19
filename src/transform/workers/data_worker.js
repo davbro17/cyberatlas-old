@@ -39,6 +39,5 @@ onmessage = function(e) {
     data.sheetNames.push(sheetList[i]);
     data.customHeaders.push([]);
   }
-  console.log(data);
   this.postMessage(data);
 };
