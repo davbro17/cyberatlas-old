@@ -24,7 +24,33 @@
         </template>
       </PanelBlock>
       <!-- Preview Widget -->
-      <PreviewWidget :getData="sendData" :getConfigs="sendConfigs" />
+      <PanelBlock>
+        <template #dynamicTitle>
+          <div class="level-item">
+            <strong>Step 3:</strong>
+          </div>
+          <!-- PREVIEW Button -->
+          <div class="level-item">
+            <a class="button is-info is-outlined" @click.stop="preview">
+              <span><strong>Preview</strong></span>
+              <b-icon icon="sync" size="is-small" />
+            </a>
+          </div>
+          <div class="level-item">
+            <strong>and</strong>
+          </div>
+          <!-- GENERATE Button -->
+          <div class="level-item">
+            <a class="button is-info is-outlined" @click.stop="generateDiagram">
+              <span><strong>Generate Diagram</strong></span>
+              <b-icon icon="external-link-alt" size="is-small" />
+            </a>
+          </div>
+        </template>
+        <template #content>
+          <PreviewWidget :input="output" :configs="configs" />
+        </template>
+      </PanelBlock>
     </div>
   </div>
 </template>
@@ -34,6 +60,7 @@ import ConfigWidget from "../components/ConfigWidget.vue";
 import DataWidget from "../components/DataWidget.vue";
 import PreviewWidget from "../components/PreviewWidget.vue";
 import PanelBlock from "../components/templates/PanelBlock.vue";
+import * as MapWorker from "worker-loader!../transform/workers/map_worker";
 
 export default {
   name: "app",
@@ -54,21 +81,41 @@ export default {
         files: []
       },
       configOpen: true,
-      dataOpen: true
+      dataOpen: true,
+      myWorker: null,
+      output: ""
     };
   },
   methods: {
     // @vuese
-    // Returns pointer to network data object, App.data
-    sendData() {
-      /*eslint no-console: ["error", {"allow": ["log"]}] */
-      return this.data;
+    // Generates a new diagram in a new tab with Drawio
+    generateDiagram: function() {
+      this.myWorker.postMessage([this.configs, this.data, "generate"]);
     },
-    // @vuese
-    // Returns pointer to configurations object, App.configs
-    sendConfigs() {
-      return this.configs;
+    receiveXML(result) {
+      if (result.data[0] === "preview") {
+        this.output = result.data[1];
+      } else {
+        let win = window.open("./drawio/index.html");
+        win.onload = function() {
+          win.createGraph(result.data[1]);
+          win.edit();
+        };
+      }
+    },
+    preview() {
+      /*eslint no-console: ["error", {"allow": ["log"]}] */
+      this.myWorker.postMessage([this.configs, this.data, "preview"]);
     }
+  },
+  created() {
+    if (window.Worker) {
+      this.myWorker = new MapWorker();
+      this.myWorker.onmessage = this.receiveXML;
+    }
+  },
+  beforeDestroy() {
+    this.myWorker.terminate();
   }
 };
 </script>

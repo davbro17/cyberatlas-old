@@ -21,8 +21,30 @@ function extract(filter) {
   };
 }
 
+function extractIncludeRows(filter) {
+  return function(sheets) {
+    let output = {};
+    for (let i = 0; i < sheets.length; i++) {
+      const s = sheets[i];
+      for (let j = 0; j < s.length; j++) {
+        const row = s[j];
+        for (let k = 0; k < row.length; k++) {
+          const entry = row[k];
+          if (filter(entry)) {
+            output[entry] = row;
+          }
+        }
+      }
+    }
+    return output;
+  };
+}
+
 const extractSubnets = extract(entry => isCidr(entry) > 0);
 const extractNetObjs = extract(entry => isCidr(entry) > 0 || isIp(entry));
+const extractNetObjsWithRows = extractIncludeRows(
+  entry => isCidr(entry) > 0 || isIp(entry)
+);
 
 function filterRows(sheets, netObjs) {
   let output = [];
@@ -51,4 +73,10 @@ function excludeRows(sheets, netObjs) {
   return output;
 }
 
-export { extractSubnets, extractNetObjs, filterRows, excludeRows };
+export {
+  extractSubnets,
+  extractNetObjs,
+  extractNetObjsWithRows,
+  filterRows,
+  excludeRows
+};

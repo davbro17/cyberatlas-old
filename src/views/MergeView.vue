@@ -7,22 +7,22 @@
       :widthClass="dataBOpen && dataAOpen ? 'is-half' : 'is-full'"
     >
       <template #title>
-        Step 1: Upload Excel Sheet
+        Step 1: Upload Excel 1
       </template>
       <template #content>
-        <DataWidget :data.sync="ips" />
+        <DataWidget :data.sync="excelA" />
       </template>
     </PanelBlock>
     <!-- Subnet Ranges Data Widget -->
     <PanelBlock
+      @toggle="bool => (dataAOpen = bool)"
       :widthClass="dataBOpen && dataAOpen ? 'is-half' : 'is-full'"
-      @toggle="bool => (dataBOpen = bool)"
     >
       <template #title>
-        Step 2: Upload Excel With Additional Fields
+        Step 1: Upload Excel 2
       </template>
       <template #content>
-        <DataWidget :data.sync="subnets" />
+        <DataWidget :data.sync="excelB" />
       </template>
     </PanelBlock>
     <!-- Output Data Widget -->
@@ -32,24 +32,34 @@
           <strong>Step 3:</strong>
         </div>
         <div class="level-item">
-          <span
-            class="button is-info is-outlined"
-            @click.stop="extractIPAdresses"
-          >
-            <strong>Merge</strong>
+          <span class="button is-info is-outlined" @click.stop="mergeData">
+            <strong>Generate</strong>
           </span>
         </div>
         <div class="level-item">
-          <strong>Excel Sheets</strong>
-        </div>
-        <div class="level-item">
-          <span class="button is-info is-outlined is-fullwidth" @click.stop>
-            <b-icon icon="sliders-h" />
+          <span
+            class="button is-info is-outlined"
+            @click.stop="settingsWidget = !settingsWidget"
+          >
+            <b-icon :icon="settingsWidget ? 'align-justify' : 'sliders-h'" />
           </span>
         </div>
       </template>
       <template #content>
-        <DataWidget :data.sync="output" outputOnly />
+        <DataWidget :data.sync="output" outputOnly v-if="!settingsWidget" />
+        <div v-else>
+          <b-field>
+            <b-radio-button
+              type="is-info"
+              v-model="selected"
+              v-for="(option, index) in options"
+              :native-value="option"
+              :key="index"
+            >
+              <span> {{ option }} </span>
+            </b-radio-button>
+          </b-field>
+        </div>
       </template>
     </PanelBlock>
   </div>
@@ -58,21 +68,23 @@
 <script>
 import DataWidget from "../components/DataWidget.vue";
 import PanelBlock from "../components/templates/PanelBlock.vue";
-import * as ExtractWorker from "worker-loader!../transform/workers/extract_worker";
+import * as MergeWorker from "worker-loader!../transform/workers/merge_worker";
 
 export default {
-  name: "ExtractView",
-  components: { DataWidget, PanelBlock },
+  components: {
+    DataWidget,
+    PanelBlock
+  },
   data() {
     return {
-      ips: {
+      excelA: {
         sheets: [],
         headers: [],
         customHeaders: [],
         sheetIndex: 0,
         files: []
       },
-      subnets: {
+      excelB: {
         sheets: [],
         headers: [],
         customHeaders: [],
@@ -87,38 +99,56 @@ export default {
         files: []
       },
       myWorker: null,
-      cidrs: null,
+      selected: "Columns",
+      options: ["Columns", "Sheets"],
       dataAOpen: true,
-      dataBOpen: true
+      dataBOpen: true,
+      settingsWidget: false
     };
   },
   methods: {
     // @vuese
-    // Pulls IP Address that fall into a list of subnets
-    extractIPAdresses() {
+    // Takes two excel sheet of network objects and gets similarities & differences
+    mergeData() {
       /*eslint no-console: ["error", {"allow": ["log"]}] */
-      if (this.ips.sheets.length == 0 || this.subnets.sheets.length == 0) {
-        console.log("MISSING DATA");
+      if (this.excelA.sheets.length == 0) {
+        this.$buefy.notification.open({
+          duration: 3000,
+          message: `Missing Data For Excel 1`,
+          type: "is-danger",
+          hasIcon: true
+        });
+      } else if (this.excelB.sheets.length == 0) {
+        this.$buefy.notification.open({
+          duration: 3000,
+          message: `Missing Data For Excel 2`,
+          type: "is-danger",
+          hasIcon: true
+        });
       } else {
+        this.settingsWidget = false;
+        const index = this.options.findIndex(o => o === this.selected);
         this.output.files.splice(0, this.output.files.length);
         this.output.sheets.splice(0, this.output.sheets.length);
         this.output.headers.splice(0, this.output.headers.length);
         this.output.customHeaders.splice(0, this.output.headers.length);
-        this.myWorker.postMessage([this.subnets.sheets, this.ips]);
+        this.myWorker.postMessage([index, this.excelA, this.excelB]);
       }
     },
+    // @vuese
+    // Receive the output from the web worker and update the Output Excel Widget
     updateOutput(result) {
-      let tmp = result.data[0];
-      this.cidrs = result.data[1];
+      let tmp = result.data;
       this.output.headers.push(...tmp.headers);
       this.output.customHeaders.push(...tmp.customHeaders);
       this.output.files.push(...tmp.files);
-      this.output.sheets.push(tmp.sheets);
+      this.output.fileName = tmp.fileName;
+      this.output.sheets.push(...tmp.sheets);
     }
   },
   created() {
     if (window.Worker) {
-      this.myWorker = new ExtractWorker();
+      this.myWorker = new MergeWorker();
       this.myWorker.onmessage = this.updateOutput;
     }
   },
