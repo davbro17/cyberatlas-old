@@ -33,7 +33,11 @@
           <div class="level-item">
             <a class="button is-info is-outlined" @click.stop="preview">
               <span><strong>Preview</strong></span>
-              <b-icon icon="sync" size="is-small" />
+              <b-icon
+                icon="sync"
+                size="is-small"
+                :custom-class="previewLoading ? 'fa-spin' : ''"
+              />
             </a>
           </div>
           <div class="level-item">
@@ -43,11 +47,16 @@
           <div class="level-item">
             <a class="button is-info is-outlined" @click.stop="generateDiagram">
               <span><strong>Generate Diagram</strong></span>
-              <b-icon icon="external-link-alt" size="is-small" />
+              <b-icon
+                icon="external-link-alt"
+                size="is-small"
+                :custom-class="generateLoading ? 'fa-spin' : ''"
+              />
             </a>
           </div>
         </template>
         <template #content>
+          <!-- Loading Data -->
           <PreviewWidget :input="output" :configs="configs" />
         </template>
       </PanelBlock>
@@ -83,19 +92,24 @@ export default {
       configOpen: true,
       dataOpen: true,
       myWorker: null,
-      output: ""
+      output: "",
+      previewLoading: false,
+      generateLoading: false
     };
   },
   methods: {
     // @vuese
     // Generates a new diagram in a new tab with Drawio
     generateDiagram: function() {
+      this.generateLoading = true;
       this.myWorker.postMessage([this.configs, this.data, "generate"]);
     },
     receiveXML(result) {
       if (result.data[0] === "preview") {
+        this.previewLoading = false;
         this.output = result.data[1];
       } else {
+        this.generateLoading = false;
         let win = window.open("./drawio/index.html");
         win.onload = function() {
           win.createGraph(result.data[1]);
@@ -105,6 +119,7 @@ export default {
     },
     preview() {
       /*eslint no-console: ["error", {"allow": ["log"]}] */
+      this.previewLoading = true;
       this.myWorker.postMessage([this.configs, this.data, "preview"]);
     }
   },

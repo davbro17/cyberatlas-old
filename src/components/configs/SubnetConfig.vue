@@ -366,7 +366,30 @@ import TemplateConfig from "./TemplateConfig.vue";
 import TextEditor from "./TextEditor.vue";
 
 export default {
-  props: ["configs", "self", "data"],
+  props: {
+    configs: {
+      type: Array,
+      default() {
+        return [];
+      }
+    },
+    data: {
+      type: Object,
+      default() {
+        return {
+          sheets: [],
+          headers: [],
+          files: [],
+          customHeaders: [],
+          fileName: ""
+        };
+      }
+    },
+    self: {
+      type: Object,
+      required: true
+    }
+  },
   data() {
     return {
       command: {

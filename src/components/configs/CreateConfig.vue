@@ -44,7 +44,9 @@
           </b-upload>
         </div>
       </b-tab-item>
-      <b-tab-item label="Defaults" icon="sliders-h"> </b-tab-item>
+      <b-tab-item label="Defaults" icon="sliders-h">
+        <DefaultWidget :configDefaults.sync="options" :configs.sync="configs" />
+      </b-tab-item>
     </b-tabs>
   </div>
 </template>
@@ -55,9 +57,11 @@ import JSONschema from "jsonschema";
 import { textBoxConfig } from "../../transform/configs/textbox";
 import { subnetConfig } from "../../transform/configs/subnet";
 import { networksConfig } from "../../transform/configs/networks";
+import DefaultWidget from "../templates/DefaultsWidget.vue";
 
 export default {
   props: ["configs"],
+  components: { DefaultWidget },
   data() {
     return {
       files: [],
