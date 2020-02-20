@@ -12,7 +12,6 @@ let subnetConfig = {
   icon: "network-wired",
   component: "SubnetConfig",
   id: Date.now(),
-  lines: [],
   commands: [],
   style: {
     fillColor: "#d5e8d4",
@@ -22,6 +21,7 @@ let subnetConfig = {
     strokeColor: "#000000"
   },
   label: "",
+  lines: [[{type: "ip", text: "IP", edit: false}]],
   autowidth: false,
   autoheight: true,
   autoposition: true,
