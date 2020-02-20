@@ -56,6 +56,10 @@
         <a ref="configdownloader" style="display:none" />
       </template>
       <template #content>
+        <!-- Loading Data -->
+        <div class="container has-text-right" v-if="isLoading">
+          <b-icon icon="spinner" custom-class="fa-pulse" />
+        </div>
         <DataWidget :data.sync="output" outputOnly />
       </template>
     </PanelBlock>
@@ -97,7 +101,8 @@ export default {
       myWorker: null,
       cidrs: null,
       dataAOpen: true,
-      dataBOpen: true
+      dataBOpen: true,
+      isLoading: false
     };
   },
   methods: {
@@ -105,9 +110,22 @@ export default {
     // Pulls IP Address that fall into a list of subnets
     extractIPAdresses() {
       /*eslint no-console: ["error", {"allow": ["log"]}] */
-      if (this.ips.sheets.length == 0 || this.subnets.sheets.length == 0) {
-        console.log("MISSING DATA");
+      if (this.ips.sheets.length == 0) {
+        this.$buefy.notification.open({
+          duration: 3000,
+          message: `Missing Data For Excel 1`,
+          type: "is-danger",
+          hasIcon: true
+        });
+      } else if (this.subnets.sheets.length == 0) {
+        this.$buefy.notification.open({
+          duration: 3000,
+          message: `Missing Data For Excel 2`,
+          type: "is-danger",
+          hasIcon: true
+        });
       } else {
+        this.isLoading = true;
         this.output.files.splice(0, this.output.files.length);
         this.output.sheets.splice(0, this.output.sheets.length);
         this.output.headers.splice(0, this.output.headers.length);
@@ -116,6 +134,7 @@ export default {
       }
     },
     updateOutput(result) {
+      this.isLoading = false;
       let tmp = result.data[0];
       this.cidrs = result.data[1];
       this.output.headers.push(...tmp.headers);

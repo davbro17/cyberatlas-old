@@ -19,7 +19,7 @@
       :widthClass="dataBOpen && dataAOpen ? 'is-half' : 'is-full'"
     >
       <template #title>
-        Step 1: Upload Excel 2
+        Step 2: Upload Excel 2
       </template>
       <template #content>
         <DataWidget :data.sync="excelB" />
@@ -46,8 +46,16 @@
         </div>
       </template>
       <template #content>
+        <!-- Loading Data -->
+        <div class="container has-text-right" v-if="isLoading">
+          <b-icon icon="spinner" custom-class="fa-pulse" />
+        </div>
+        <!-- DataWidget for Output -->
         <DataWidget :data.sync="output" outputOnly v-if="!settingsWidget" />
-        <div v-else>
+        <div class="container" v-else>
+          <div class="field">
+            <label class="label"> Merge </label>
+          </div>
           <b-field>
             <b-radio-button
               type="is-info"
@@ -103,7 +111,8 @@ export default {
       options: ["Columns", "Sheets"],
       dataAOpen: true,
       dataBOpen: true,
-      settingsWidget: false
+      settingsWidget: false,
+      isLoading: false
     };
   },
   methods: {
@@ -127,6 +136,7 @@ export default {
         });
       } else {
         this.settingsWidget = false;
+        this.isLoading = true;
         const index = this.options.findIndex(o => o === this.selected);
         this.output.files.splice(0, this.output.files.length);
         this.output.sheets.splice(0, this.output.sheets.length);
@@ -138,6 +148,7 @@ export default {
     // @vuese
     // Receive the output from the web worker and update the Output Excel Widget
     updateOutput(result) {
+      this.isLoading = false;
       let tmp = result.data;
       this.output.headers.push(...tmp.headers);
       this.output.customHeaders.push(...tmp.customHeaders);

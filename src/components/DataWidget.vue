@@ -234,6 +234,7 @@ export default {
       this.fileName = "";
       this.data.sheets.splice(0, this.data.sheets.length);
       this.data.customHeaders.splice(0, this.data.headers.length);
+      this.data.headers.splice(0, this.data.headers.length);
     },
     // @vuese
     // Update a custom header

@@ -20,7 +20,7 @@
         :widthClass="dataBOpen && dataAOpen ? 'is-half' : 'is-full'"
       >
         <template #title>
-          Step 1: Upload Excel 2
+          Step 2: Upload Excel 2
         </template>
         <template #content>
           <DataWidget :data.sync="excelB" />
@@ -61,6 +61,10 @@
           </div>
         </template>
         <template #content>
+          <!-- Loading Data -->
+          <div class="container has-text-right" v-if="isLoading">
+            <b-icon icon="spinner" custom-class="fa-pulse" />
+          </div>
           <DataWidget :data.sync="output" outputOnly />
         </template>
       </PanelBlock>
@@ -106,7 +110,8 @@ export default {
       selected: "Similarities",
       options: ["Similarities", "Excel 1 Differences", "Excel 2 Differences"],
       dataAOpen: true,
-      dataBOpen: true
+      dataBOpen: true,
+      isLoading: false
     };
   },
   methods: {
@@ -129,6 +134,7 @@ export default {
           hasIcon: true
         });
       } else {
+        this.isLoading = true;
         const index = this.options.findIndex(o => o === this.selected);
         this.output.files.splice(0, this.output.files.length);
         this.output.sheets.splice(0, this.output.sheets.length);
@@ -140,6 +146,7 @@ export default {
     // @vuese
     // Receive the output from the web worker and update the Output Excel Widget
     updateOutput(result) {
+      this.isLoading = false;
       let tmp = result.data;
       this.output.headers.push(...tmp.headers);
       this.output.customHeaders.push(...tmp.customHeaders);

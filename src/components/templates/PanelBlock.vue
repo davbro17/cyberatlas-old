@@ -18,7 +18,7 @@
       </div>
     </div>
     <!-- Panel Body -->
-    <div class="panel-block" v-if="isOpen">
+    <div class="panel-block" v-show="isOpen">
       <slot name="content" />
     </div>
   </div>
