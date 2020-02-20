@@ -70,7 +70,7 @@
 import DataWidget from "../components/DataWidget.vue";
 import PanelBlock from "../components/templates/PanelBlock.vue";
 import * as ExtractWorker from "worker-loader!../transform/workers/extract_worker";
-import { subnetConfig } from "../transform/configs/subnet";
+import configOptions from "../transform/configs/configs.js";
 
 export default {
   name: "ExtractView",
@@ -148,7 +148,7 @@ export default {
       let cidrs = this.cidrs;
       for (let i = 0; i < cidrs.length; i++) {
         const cidr = cidrs[i];
-        let tmp = JSON.parse(JSON.stringify(subnetConfig));
+        let tmp = JSON.parse(JSON.stringify(configOptions[0]));
         tmp.id = Date.now() + i;
         tmp.label = cidr;
         tmp.title = cidr;

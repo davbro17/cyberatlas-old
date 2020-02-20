@@ -76,7 +76,7 @@ export default function(configs, data, unknownHandler) {
       for (let c = 0; c < row.length; c++) {
         const colFilters = sheetFilters[c];
         const entry = row[c];
-        if (isIp(entry) || isCidr(entry) != 0) {
+        if (isCidr.v4(entry) || isIp(entry)) {
           for (let d = 0; d < colFilters.length; d++) {
             const filter = colFilters[d];
             if (cidrTools.overlap(filter.cidr, entry)) {
@@ -89,6 +89,8 @@ export default function(configs, data, unknownHandler) {
       }
     }
   }
+  console.log(devices);
+  console.log(filters);
   // Copy configurations for possible modification during build process
   let confs = JSON.parse(JSON.stringify(configs));
   // Build Diagram Objects

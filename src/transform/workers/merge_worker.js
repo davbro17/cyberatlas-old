@@ -1,4 +1,6 @@
 import { extractNetObjsWithRows } from "../utility/extract.js";
+import cidrTools from "cidr-tools";
+import isIp from "is-ip";
 
 /*eslint no-console: ["error", {"allow": ["log"]}] */
 onmessage = function(e) {
@@ -19,8 +21,9 @@ onmessage = function(e) {
           const row = sheet[j];
           for (let k = 0; k < row.length; k++) {
             const entry = row[k];
-            if (entry in netObjs)
-              row.push(...netObjs[entry].filter(e => e != entry));
+            Object.keys(netObjs)
+              .filter(n => isIp(entry) && cidrTools.overlap(n, entry))
+              .forEach(f => row.push(...netObjs[f].filter(e => e != f)));
           }
           for (let k = row.length; k < headerLength; k++) {
             row.push("");

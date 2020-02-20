@@ -25,6 +25,14 @@
           Frequency
         </button>
       </div>
+      <div class="control" v-if="self.name === 'Networks'">
+        <button
+          class="button is-info is-outlined"
+          @click="addTag('ipcount', 'IPCOUNT', false)"
+        >
+          IPCount
+        </button>
+      </div>
       <div class="control">
         <button
           class="button is-danger is-outlined"

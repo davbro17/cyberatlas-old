@@ -7,77 +7,11 @@ import {
   transformDevice
 } from "../utility/transformBox.js";
 
-let subnetConfig = {
-  name: "Subnet",
-  icon: "network-wired",
-  component: "SubnetConfig",
-  commands: [],
-  style: {
-    fillColor: "#d5e8d4",
-    rounded: 0,
-    verticalAlign: "top",
-    fontStyle: 1,
-    strokeColor: "#000000"
-  },
-  label: "",
-  lines: [[{ type: "ip", text: "IP", edit: false }]],
-  autowidth: false,
-  autoheight: true,
-  autoposition: true,
-  widthUnits: "device",
-  heightUnits: "pixels",
-  renderEmpty: true,
-  geometry: {
-    x: 0,
-    y: 0,
-    width: 10,
-    height: 100
-  },
-  margin: {
-    left: 0,
-    top: 0,
-    bottom: 0,
-    right: 0
-  },
-  padding: {
-    top: 10,
-    left: 10
-  },
-  device: {
-    columns: 10,
-    width: 70,
-    height: 70,
-    lineHeight: 13.5,
-    padding: {
-      top: 15,
-      left: 25
-    },
-    style: {
-      shape: "mxgraph.citrix.desktop",
-      verticalLabelPosition: "bottom",
-      aspect: "fixed",
-      html: 1,
-      verticalAlign: "top",
-      align: "center",
-      outlineConnect: 0
-    },
-    background: {
-      verticalLabelPosition: "bottom",
-      aspect: "fixed",
-      html: 1,
-      verticalAlign: "top",
-      fillColor: "none",
-      strokeColor: "none",
-      align: "center",
-      outlineConnect: 0
-    }
-  }
-};
-
-let tagTypes = {
-  ip: (device, ip) => ip,
-  freq: (device, ip, id) => device.filters[id] || 0,
-  text: (device, ip, id, text) => text
+const tagTypes = {
+  ip: options => options.ip,
+  freq: options => options.device.filters[options.id] || 0,
+  text: options => options.text,
+  ipcount: options => options.device.cidrFreq || 0
 };
 
 function processLines(lines, device, ip, id) {
@@ -86,12 +20,60 @@ function processLines(lines, device, ip, id) {
     const line = lines[i];
     for (let j = 0; j < line.length; j++) {
       const tag = line[j];
-      output += tagTypes[tag.type](device, ip, id, tag.text);
+      output += tagTypes[tag.type]({
+        device: device,
+        ip: ip,
+        id: id,
+        text: tag.text
+      });
     }
     output += "&lt;br&gt;";
   }
   return output;
 }
+
+const filterFunctions = {
+  Subnet: entry => isIp(entry),
+  Networks: entry => isCidr(entry)
+};
+
+function sortIps(a, b) {
+  const num1 = Number(
+    a
+      .split(".")
+      .map(num => `000${num}`.slice(-3))
+      .join("")
+  );
+  const num2 = Number(
+    b
+      .split(".")
+      .map(num => `000${num}`.slice(-3))
+      .join("")
+  );
+  return num1 - num2;
+}
+
+function sortCidrs(a, b) {
+  console.log(a, b);
+  const num1 = Number(
+    a
+      .split(/[\\.\\/]+/)
+      .map(num => `000${num}`.slice(-3))
+      .join("")
+  );
+  const num2 = Number(
+    b
+      .split(/[\\.\\/]+/)
+      .map(num => `000${num}`.slice(-3))
+      .join("")
+  );
+  return num1 - num2;
+}
+
+const sortFunctions = {
+  Subnet: sortIps,
+  Networks: sortCidrs
+};
 
 function transformSubnet(subnet, data, state, confDevices) {
   /*eslint no-console: ["error", {"allow": ["log"]}] */
@@ -120,24 +102,24 @@ function transformSubnet(subnet, data, state, confDevices) {
         )
     );
   }
+  // Determine Filter Functions
+  const objFilter = filterFunctions[subnet.name];
+  const objSort = sortFunctions[subnet.name];
   // Filter and sort all the ip addresses
-  sortedDevices = sortedDevices
-    .filter(entry => isIp(entry))
-    .sort((a, b) => {
-      const num1 = Number(
-        a
-          .split(".")
-          .map(num => `000${num}`.slice(-3))
-          .join("")
-      );
-      const num2 = Number(
-        b
-          .split(".")
-          .map(num => `000${num}`.slice(-3))
-          .join("")
-      );
-      return num1 - num2;
-    });
+  sortedDevices = sortedDevices.filter(objFilter).sort(objSort);
+  // If Networks Object record the number of IPs
+  if (subnet.name === "Networks") {
+    const id = subnet.id;
+    for (const device in devices) {
+      if (isIp(device)) {
+        for (let cidr of sortedDevices.filter(f =>
+          cidrTools.overlap(device, f)
+        )) {
+          devices[cidr].cidrFreq = 1 + (devices[cidr].cidrFreq || 0);
+        }
+      }
+    }
+  }
   // Create State
   state = state || { id: 2, parent: 1, vertex: 1 };
   let output = "";
@@ -248,22 +230,30 @@ function transformSubnet(subnet, data, state, confDevices) {
     output += transformGroup(state, geometry, oldParent);
     geometry.x = 0;
     geometry.y = 0;
+
+    // Process Lines for Device
+    const device = devices[sortedDevices[i]];
+    const value = processLines(
+      subnet.lines,
+      device,
+      sortedDevices[i],
+      subnet.id
+    );
+    // Check if device image exists
+    const image = subnet.device.style.image !== "none";
+    const backgroundValue = image ? "" : value;
     // Create Device Background
     output += transformBox(
       state,
       geometry,
       subnet.device.background,
-      state.parent
-    );
-    // Process Lines for Device
-    const value = processLines(
-      subnet.lines,
-      devices[sortedDevices[i]],
-      sortedDevices[i],
-      subnet.id
+      state.parent,
+      backgroundValue
     );
     // Create Device
-    output += transformDevice(state, geometry, subnet.device.style, value);
+    if (image) {
+      output += transformDevice(state, geometry, subnet.device.style, value);
+    }
     // Change Geometry
     if (deviceCount < devicesPerRow) {
       x += width + paddingx;
@@ -277,4 +267,4 @@ function transformSubnet(subnet, data, state, confDevices) {
   return output;
 }
 
-export { transformSubnet, subnetConfig };
+export { transformSubnet };

@@ -54,10 +54,9 @@
 <script>
 import GenerateSchema from "generate-schema";
 import JSONschema from "jsonschema";
-import { textBoxConfig } from "../../transform/configs/textbox";
-import { subnetConfig } from "../../transform/configs/subnet";
-import { networksConfig } from "../../transform/configs/networks";
+
 import DefaultWidget from "../templates/DefaultsWidget.vue";
+import options from "../../transform/configs/configs.js";
 
 export default {
   props: ["configs"],
@@ -65,29 +64,7 @@ export default {
   data() {
     return {
       files: [],
-      options: [
-        subnetConfig,
-        textBoxConfig,
-        {
-          name: "Cloud",
-          icon: "cloud",
-          component: "CloudConfig",
-          id: Date.now()
-        },
-        {
-          name: "Network Device",
-          icon: "ethernet",
-          component: "NetDeviceConfig",
-          id: Date.now()
-        },
-        networksConfig,
-        {
-          name: "Collection",
-          icon: "th",
-          component: "CollectionConfig",
-          id: Date.now()
-        }
-      ],
+      options: options,
       selected: 0,
       schema: null
     };
