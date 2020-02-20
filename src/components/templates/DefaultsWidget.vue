@@ -1,41 +1,46 @@
 <template>
-  <div class="column" style="padding-bottom:0em;">
-    <b-field grouped>
-      <b-field
-        label="Configure"
-        horizontal
-        type="is-info"
-        message="Object"
-        grouped
-      >
-        <b-select v-model="selected">
-          <option
-            v-for="(config, index) in configDefaults"
-            :value="config"
-            :key="index"
-          >
-            {{ config.name }}
-          </option>
-        </b-select>
+  <div>
+    <div class="column" style="padding-bottom:0em;">
+      <b-field grouped>
+        <b-field
+          label="Configure"
+          horizontal
+          type="is-info"
+          message="Object"
+          grouped
+        >
+          <b-select v-model="selected">
+            <option
+              v-for="(config, index) in configDefaults"
+              :value="config"
+              :key="index"
+            >
+              {{ config.name }}
+            </option>
+          </b-select>
+        </b-field>
+        <div class="field">
+          <p class="control">
+            <button
+              class="button is-info is-outlined"
+              @click="forceChanges(selected)"
+            >
+              Force
+            </button>
+          </p>
+          <p class="help is-info">Changes</p>
+        </div>
+        <div class="field">
+          <p class="control">
+            <button class="button is-info is-outlined" @click="forceAllChanges">
+              Force All
+            </button>
+          </p>
+          <p class="help is-info">Object Changes</p>
+        </div>
       </b-field>
-      <div class="field">
-        <p class="control">
-          <button class="button is-info is-outlined" @click="forceChanges(selected)">
-            Force
-          </button>
-        </p>
-        <p class="help is-info">Changes</p>
-      </div>
-      <div class="field">
-        <p class="control">
-          <button class="button is-info is-outlined" @click="forceAllChanges">
-            Force All
-          </button>
-        </p>
-        <p class="help is-info">Object Changes</p>
-      </div>
-    </b-field>
-    <hr />
+      <hr />
+    </div>
     <component
       :is="selected.component"
       v-if="selected"
@@ -74,7 +79,7 @@ export default {
     forceChanges(config) {
       for (let i = 0; i < this.configs.length; i++) {
         if (this.configs[i].name === this.selected.name) {
-          this.configs.splice(i, 1, config);
+          this.configs.splice(i, 1, JSON.parse(JSON.stringify(config)));
         }
       }
     },

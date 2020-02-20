@@ -169,6 +169,9 @@
         </div>
         <slot name="layout"> </slot>
       </b-tab-item>
+      <!-- Layout Tab -->
+      <b-tab-item label="Connections" icon="exchange-alt">
+      </b-tab-item>
     </b-tabs>
   </div>
 </template>
