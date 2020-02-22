@@ -30,8 +30,18 @@
         </div>
         <!-- Drag N Drop Interface -->
         <div class="container has-text-centered" style="margin-top:1.5em;">
-          <b-upload v-model="files" drag-drop multiple type="is-info">
-            <div class="content has-text-centered" width="100%" style="padding-bottom:3px;">
+          <b-upload
+            v-model="files"
+            drag-drop
+            multiple
+            type="is-info"
+            accept=".json"
+          >
+            <div
+              class="content has-text-centered"
+              width="100%"
+              style="padding-bottom:3px;"
+            >
               <span>
                 <b-icon icon="upload" size="is-large" />
               </span>

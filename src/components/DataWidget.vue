@@ -5,6 +5,7 @@
       v-model="files"
       drag-drop
       multiple
+      accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,.csv,text/plain"
       v-if="!outputOnly && data.sheets.length == 0 && !isLoading"
       type="is-info"
     >
