@@ -284,8 +284,7 @@ export default {
     loadExcel(event) {
       /*eslint no-console: ["error", {"allow": ["log"]}] */
       this.isLoading = true;
-      let raw = new Uint8Array(event.target.result);
-      this.myWorker.postMessage([raw]);
+      this.myWorker.postMessage([event.target.result, this.fileName]);
     },
     updateData(result) {
       this.data.sheets.push(...result.data.sheets);
@@ -313,10 +312,15 @@ export default {
     files() {
       if (this.files.length > 0) {
         for (let i = 0; i < this.files.length; i++) {
-          this.data.fileName = this.files[i].name;
+          let file = this.files[i];
+          this.data.fileName = file.name;
           let reader = new FileReader();
           reader.onload = this.loadExcel;
-          reader.readAsArrayBuffer(this.files[i]);
+          if (file.type === "text/plain") {
+            reader.readAsText(file);
+          } else {
+            reader.readAsArrayBuffer(file);
+          }
         }
         this.files.splice(0, this.files.length);
       }

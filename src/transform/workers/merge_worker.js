@@ -1,6 +1,7 @@
 import { extractNetObjsWithRows } from "../utility/extract.js";
 import cidrTools from "cidr-tools";
 import isIp from "is-ip";
+import generateHeaders from "../utility/headers.js";
 
 /*eslint no-console: ["error", {"allow": ["log"]}] */
 onmessage = function(e) {
@@ -45,35 +46,3 @@ onmessage = function(e) {
     "-merged.xlsx";
   this.postMessage(excelA);
 };
-
-function generateHeaders(n) {
-  let result = [];
-  // Get index of first and last letters
-  const indexA = "A".charCodeAt(0);
-  const indexZ = "Z".charCodeAt(0);
-
-  let alphabetLength = indexZ - indexA + 1;
-  const repeatNum = Math.floor(n / alphabetLength);
-
-  let startIndex = 0;
-  let startString = "";
-  let string = "";
-
-  while (startIndex <= repeatNum) {
-    if (startIndex > 0) {
-      startString = String.fromCharCode(indexA + startIndex - 1);
-    }
-
-    if (startIndex === repeatNum) {
-      alphabetLength = n % alphabetLength;
-    }
-
-    for (var i = 0; i < alphabetLength; i++) {
-      string = String.fromCharCode(indexA + i);
-
-      result.push(startString + string);
-    }
-    startIndex++;
-  }
-  return result;
-}

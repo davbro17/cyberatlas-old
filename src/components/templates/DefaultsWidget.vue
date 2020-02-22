@@ -39,7 +39,6 @@
           <p class="help is-info">Object Changes</p>
         </div>
       </b-field>
-      <hr />
     </div>
     <component
       :is="selected.component"

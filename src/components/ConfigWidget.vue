@@ -1,7 +1,7 @@
 <template>
-  <div class="columns">
+  <div class="columns is-centered" style="width:100%">
     <!-- Config Select Interface -->
-    <div class="column is-narrow">
+    <div class="column is-narrow" v-show="configs.length > 0">
       <b-table
         :data="configs"
         :selected.sync="selected"
@@ -163,13 +163,13 @@ export default {
     // Delete the selected diagram object/configuration.
     // Does NOT delete the `Create Diagram Object` configuration.
     deleteConfig() {
-      if (this.selected.component != "CreateConfig") {
-        let id = this.selected.id;
-        for (let i = 0; i < this.configs.length; i++) {
-          if (this.configs[i].id === id) {
-            this.configs.splice(i, 1);
-            // decrement index by one to avoid index error with array
-            i--;
+      let id = this.selected.id;
+      for (let i = 0; i < this.configs.length; i++) {
+        if (this.configs[i].id === id) {
+          this.configs.splice(i, 1);
+          // decrement index by one to avoid index error with array
+          i--;
+          if (this.configs.length > 0) {
             // Change the current config to one before the deleted config
             this.selected = this.configs[i];
           }
@@ -187,12 +187,6 @@ export default {
       this.$refs.configdownloader.setAttribute("download", "configs.json");
       this.$refs.configdownloader.click();
     }
-  },
-  mounted() {
-    this.configs.push({ title: "test", icon: "times" });
-    setTimeout(() => {
-      this.configs.pop();
-    }, 10);
   }
 };
 </script>

@@ -31,15 +31,11 @@
         <!-- Drag N Drop Interface -->
         <div class="container has-text-centered" style="margin-top:1.5em;">
           <b-upload v-model="files" drag-drop multiple type="is-info">
-            <div
-              class="content has-text-centered"
-              width="100%"
-              style="padding-bottom:2.28em"
-            >
-              <p>
-                <b-icon icon="upload" size="is-large"> </b-icon>
-              </p>
-              <p>OR Upload a Configuration File</p>
+            <div class="content has-text-centered" width="100%" style="padding-bottom:3px;">
+              <span>
+                <b-icon icon="upload" size="is-large" />
+              </span>
+              <span>OR Upload a Configuration File</span>
             </div>
           </b-upload>
         </div>
