@@ -1,5 +1,8 @@
 <template>
   <div class="container has-text-centered table-container">
+    <span v-if="outputOnly && data.sheets.length == 0 && !isLoading">
+      Empty &#128577;
+    </span>
     <!-- Upload Widget -->
     <b-upload
       v-model="files"

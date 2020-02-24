@@ -16,7 +16,7 @@
           <!-- Table Column -->
           <b-table-column
             field="title"
-            label="Diagram Objects"
+            label="Diagram configs"
             width="100"
             centered
           >
@@ -98,7 +98,7 @@
     <!-- Configuration Area -->
     <CreateConfig
       v-if="createConfigOpen || configs.length == 0"
-      :configs.sync="configs"
+      v-bind.sync="{ configs, tracker, defaults, layout }"
     />
     <component
       v-else
@@ -121,12 +121,22 @@ import TextBoxConfig from "./configs/TextBoxConfig.vue";
 
 export default {
   props: {
-    // Configurations for creating Diagram Objects
+    // Configurations for creating Diagram configs
     configs: {
       type: Array,
-      default() {
-        return [];
-      }
+      required: true
+    },
+    defaults: {
+      type: Array,
+      required: true
+    },
+    tracker: {
+      type: Object,
+      required: true
+    },
+    layout: {
+      type: Object,
+      required: true
     },
     data: {
       type: Object,

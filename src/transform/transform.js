@@ -89,8 +89,6 @@ export default function(configs, data, unknownHandler) {
       }
     }
   }
-  console.log(devices);
-  console.log(filters);
   // Copy configurations for possible modification during build process
   let confs = JSON.parse(JSON.stringify(configs));
   // Build Diagram Objects

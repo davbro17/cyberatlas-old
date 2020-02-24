@@ -1,30 +1,42 @@
 <template>
-  <TemplateConfig :self.sync="self" autosizing>
+  <TemplateConfig :self.sync="self" autosizing :defaults.sync="defaults">
     <!-- Data Tab -->
     <template #data>
-      <div class="field">
-        <label class="label">
-          Subnet Label
-        </label>
-        <input
-          class="input is-info"
-          type="text"
-          placeholder="none"
-          v-model="self.label"
+      <div v-if="!self.singleton" class="field">
+        <config-title
+          label="Object Label"
+          config="label"
+          :defaults.sync="defaults"
         />
+        <div class="field">
+          <input
+            class="input is-info"
+            type="text"
+            placeholder="none"
+            v-model="self.label"
+          />
+        </div>
       </div>
-      <div class="field">
-        <label class="label">
-          Network Devices
-        </label>
-      </div>
+      <config-title
+        :label="self.singleton ? 'Conditional Render' : 'Network Devices'"
+        config="commands"
+        :defaults.sync="defaults"
+      >
+        <template #extra>
+          <b-checkbox
+            v-if="self.singleton"
+            type="is-info"
+            v-model="self.conditionalRender"
+          />
+        </template>
+      </config-title>
       <div class="field has-addons">
         <div class="control">
           <div class="select is-info">
             <select v-model="command.action">
               <option value="Filter">Filter</option>
-              <option value="Exclude">Exclude</option>
-              <option value="Create">Create</option>
+              <option v-if="!self.singleton" value="Exclude">Exclude</option>
+              <option v-if="!self.singleton" value="Create">Create</option>
             </select>
           </div>
         </div>
@@ -79,8 +91,8 @@
           <div class="select is-info">
             <select v-model="self.commands[index].action">
               <option value="Filter">Filter</option>
-              <option value="Exclude">Exclude</option>
-              <option value="Create">Create</option>
+              <option v-if="!self.singleton" value="Exclude">Exclude</option>
+              <option v-if="!self.singleton" value="Create">Create</option>
             </select>
           </div>
         </div>
@@ -124,27 +136,22 @@
           </button>
         </div>
       </div>
-      <div class="field">
-        <label class="label">
-          Device Label
-        </label>
-      </div>
+      <config-title
+        label="Render If Empty"
+        config="renderEmpty"
+        :defaults.sync="defaults"
+        v-if="!self.singleton"
+      >
+        <template #extra>
+          <b-checkbox type="is-info" v-model="self.renderEmpty" />
+        </template>
+      </config-title>
+      <config-title
+        label="Device Label"
+        config="lines"
+        :defaults.sync="defaults"
+      />
       <TextEditor :self.sync="self" :data.sync="data" />
-      <div class="field is-horizontal">
-        <div class="field-label is-normal">
-          <label class="label">Render If Empty</label>
-        </div>
-        <div class="field-body">
-          <b-field grouped>
-            <b-checkbox
-              v-model="self.renderEmpty"
-              type="is-info"
-              style="margin-right:10px;"
-            >
-            </b-checkbox>
-          </b-field>
-        </div>
-      </div>
     </template>
     <!-- Style Tab -->
     <template #style>
@@ -364,6 +371,7 @@
 <script>
 import TemplateConfig from "./TemplateConfig.vue";
 import TextEditor from "./TextEditor.vue";
+import ConfigTitle from "../templates/ConfigTitle.vue";
 
 export default {
   props: {
@@ -388,6 +396,12 @@ export default {
     self: {
       type: Object,
       required: true
+    },
+    defaults: {
+      type: Object,
+      default() {
+        return null;
+      }
     }
   },
   data() {
@@ -416,7 +430,8 @@ export default {
   },
   components: {
     TemplateConfig,
-    TextEditor
+    TextEditor,
+    ConfigTitle
   },
   mounted() {
     if (!this.self.lines) {

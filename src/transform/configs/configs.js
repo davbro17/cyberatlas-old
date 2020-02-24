@@ -4,7 +4,10 @@ let subnetConfig = {
   name: "Subnet",
   icon: "network-wired",
   component: "SubnetConfig",
+  connections: [],
   commands: [],
+  singleton: false,
+  conditionalRender: false,
   style: {
     fillColor: "#d5e8d4",
     rounded: 0,
@@ -17,6 +20,7 @@ let subnetConfig = {
   autowidth: false,
   autoheight: true,
   autoposition: true,
+  multipleLines: true,
   widthUnits: "device",
   heightUnits: "pixels",
   renderEmpty: true,
@@ -71,38 +75,90 @@ networksConfig.icon = "project-diagram";
 networksConfig.lines = [[{ type: "ip", text: "NETWORK", edit: false }]];
 networksConfig.background = {
   background: {
-    verticalLabelPosition: "bottom",
     html: 1,
-    verticalAlign: "top",
+    verticalAlign: "middle",
     fillColor: "#FFFFFF",
     strokeColor: "#000000",
-    align: "center",
     rounded: 0,
     fontStyle: 1
   }
 };
-networksConfig.device.style.shape = "none";
+networksConfig.device.style = {
+  shape: "none",
+  aspect: "fixed",
+  html: 1,
+  verticalAlign: "middle",
+  outlineConnect: 0
+};
+networksConfig.device.width = 100;
+networksConfig.device.height = 50;
 
-export default [
+let cloudConfig = JSON.parse(JSON.stringify(subnetConfig));
+cloudConfig.name = "Cloud";
+cloudConfig.icon = "cloud";
+cloudConfig.multipleLines = false;
+cloudConfig.singleton = true;
+cloudConfig.autowidth = true;
+cloudConfig.lines = [[{ type: "text", text: "Cumulus", edit: true }]];
+cloudConfig.background = {
+  background: {
+    html: 1,
+    fillColor: "none",
+    strokeColor: "none",
+    rounded: 0,
+    fontStyle: 1
+  }
+};
+cloudConfig.device.style = {
+  shape: "cloud",
+  aspect: "fixed",
+  elipse: "elipse",
+  html: 1,
+  verticalAlign: "middle",
+  outlineConnect: 0
+};
+cloudConfig.device.width = 150;
+cloudConfig.device.height = 100;
+cloudConfig.style = {
+  fillColor: "none",
+  rounded: 0,
+  fontStyle: 1,
+  strokeColor: "none"
+};
+
+let netDeviceConfig = JSON.parse(JSON.stringify(subnetConfig));
+netDeviceConfig.name = "Network Device";
+netDeviceConfig.icon = "ethernet";
+netDeviceConfig.multipleLines = false;
+netDeviceConfig.singleton = true;
+netDeviceConfig.autowidth = true;
+netDeviceConfig.lines = [[{ type: "text", text: "WindowsXP", edit: true }]];
+netDeviceConfig.background = {
+  background: {
+    html: 1,
+    fillColor: "none",
+    strokeColor: "none",
+    rounded: 0,
+    fontStyle: 1
+  }
+};
+netDeviceConfig.style = {
+  fillColor: "none",
+  rounded: 0,
+  fontStyle: 1,
+  strokeColor: "none"
+};
+
+let options = [
   subnetConfig,
   textBoxConfig,
-  {
-    name: "Cloud",
-    icon: "cloud",
-    component: "CloudConfig",
-    id: Date.now()
-  },
-  {
-    name: "Network Device",
-    icon: "ethernet",
-    component: "NetDeviceConfig",
-    id: Date.now()
-  },
-  networksConfig,
-  {
-    name: "Collection",
-    icon: "th",
-    component: "CollectionConfig",
-    id: Date.now()
-  }
+  cloudConfig,
+  netDeviceConfig,
+  networksConfig
 ];
+
+for (let opt of options) {
+  opt.title = opt.name;
+}
+
+export default options;

@@ -20,7 +20,7 @@
           Step 2: Filter Data and Configure Diagram
         </template>
         <template #content>
-          <ConfigWidget :configs.sync="configs" :data="data" />
+          <ConfigWidget v-bind.sync="settings" :data="data" />
         </template>
       </PanelBlock>
       <!-- Preview Widget -->
@@ -57,7 +57,7 @@
         </template>
         <template #content>
           <!-- Loading Data -->
-          <PreviewWidget :input="output" :configs="configs" />
+          <PreviewWidget :input="output" :configs="settings.configs" />
         </template>
       </PanelBlock>
     </div>
@@ -70,6 +70,7 @@ import DataWidget from "../components/DataWidget.vue";
 import PreviewWidget from "../components/PreviewWidget.vue";
 import PanelBlock from "../components/templates/PanelBlock.vue";
 import * as MapWorker from "worker-loader!../transform/workers/map_worker";
+import options from "../transform/configs/configs.js";
 
 export default {
   name: "app",
@@ -81,7 +82,12 @@ export default {
   },
   data() {
     return {
-      configs: [],
+      settings: {
+        configs: [],
+        defaults: options,
+        tracker: {},
+        layout: {}
+      },
       data: {
         sheets: [],
         headers: [],
@@ -102,7 +108,7 @@ export default {
     // Generates a new diagram in a new tab with Drawio
     generateDiagram: function() {
       this.generateLoading = true;
-      this.myWorker.postMessage([this.configs, this.data, "generate"]);
+      this.myWorker.postMessage([this.settings.configs, this.data, "generate"]);
     },
     receiveXML(result) {
       if (result.data[0] === "preview") {
@@ -120,7 +126,7 @@ export default {
     preview() {
       /*eslint no-console: ["error", {"allow": ["log"]}] */
       this.previewLoading = true;
-      this.myWorker.postMessage([this.configs, this.data, "preview"]);
+      this.myWorker.postMessage([this.settings.configs, this.data, "preview"]);
     }
   },
   created() {

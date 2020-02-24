@@ -12,7 +12,7 @@
           <div class="select is-info">
             <select v-model="selected">
               <option
-                v-for="(option, index) in options"
+                v-for="(option, index) in defaults"
                 v-bind:key="index"
                 :value="index"
               >
@@ -51,8 +51,13 @@
         </div>
       </b-tab-item>
       <b-tab-item label="Defaults" icon="sliders-h">
-        <DefaultWidget :configDefaults.sync="options" :configs.sync="configs" />
+        <DefaultWidget
+          :configDefaults.sync="defaults"
+          :configs.sync="configs"
+          :defaults.sync="tracker"
+        />
       </b-tab-item>
+      <b-tab-item label="Layout" icon="object-group"> </b-tab-item>
     </b-tabs>
   </div>
 </template>
@@ -62,15 +67,30 @@ import GenerateSchema from "generate-schema";
 import JSONschema from "jsonschema";
 
 import DefaultWidget from "../templates/DefaultsWidget.vue";
-import options from "../../transform/configs/configs.js";
 
 export default {
-  props: ["configs"],
+  props: {
+    configs: {
+      type: Array,
+      required: true
+    },
+    defaults: {
+      type: Array,
+      required: true
+    },
+    tracker: {
+      type: Object,
+      required: true
+    },
+    layout: {
+      type: Object,
+      required: true
+    }
+  },
   components: { DefaultWidget },
   data() {
     return {
       files: [],
-      options: options,
       selected: 0,
       schema: null
     };
@@ -78,9 +98,8 @@ export default {
   methods: {
     createDiagramObject() {
       /* eslint-disable no-console */
-      let tmp = JSON.parse(JSON.stringify(this.options[this.selected]));
+      let tmp = JSON.parse(JSON.stringify(this.defaults[this.selected]));
       tmp.id = Date.now();
-      tmp.title = tmp.name;
       this.configs.push(tmp);
     },
     loadJSON(event) {
@@ -132,8 +151,8 @@ export default {
     }
   },
   mounted() {
-    // Generate JSON schema from this.options
-    this.schema = GenerateSchema.json("Configurations", this.options);
+    // Generate JSON schema from this.defaults
+    this.schema = GenerateSchema.json("Configurations", this.defaults);
   }
 };
 </script>

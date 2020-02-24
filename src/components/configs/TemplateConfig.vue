@@ -4,10 +4,13 @@
     <b-tabs type="is-boxed">
       <!-- Data Tab -->
       <b-tab-item label="Data" icon="filter">
+        <config-title
+          label="Object Name"
+          config="title"
+          :defaults.sync="defaults"
+          force
+        />
         <div class="field">
-          <label class="label">
-            Object Name
-          </label>
           <input
             class="input is-info"
             type="text"
@@ -15,34 +18,25 @@
             v-model="self.title"
           />
         </div>
-        <slot name="data">
-          <p>Still Under Construction</p>
-        </slot>
+        <slot name="data" />
       </b-tab-item>
       <!-- Style Tab -->
       <b-tab-item label="Style" icon="edit">
-        <slot name="style">
-          <p>Still Under Construction</p>
-        </slot>
+        <slot name="style" />
       </b-tab-item>
       <!-- Layout Tab -->
       <b-tab-item label="Layout" icon="object-group">
-        <div class="field is-horizontal">
-          <div class="field-label is-normal">
-            <label class="label">Position</label>
-          </div>
-          <div class="field-body">
-            <b-field grouped>
-              <b-checkbox
-                v-model="self.autoposition"
-                type="is-info"
-                style="margin-right:10px;"
-              >
-                Automatic
-              </b-checkbox>
-            </b-field>
-          </div>
-        </div>
+        <config-title
+          label="Position"
+          config="autoposition"
+          :defaults.sync="defaults"
+        >
+          <template #extra>
+            <b-checkbox v-model="self.autoposition" type="is-info">
+              Automatic
+            </b-checkbox>
+          </template>
+        </config-title>
         <div class="field is-horizontal">
           <div class="field-label is-normal">
             <label class="label">x pos</label>
@@ -170,17 +164,27 @@
         <slot name="layout"> </slot>
       </b-tab-item>
       <!-- Layout Tab -->
-      <b-tab-item label="Connections" icon="exchange-alt">
-      </b-tab-item>
+      <b-tab-item label="Connections" icon="exchange-alt"> </b-tab-item>
     </b-tabs>
   </div>
 </template>
 
 <script>
+import ConfigTitle from "../templates/ConfigTitle.vue";
+
 export default {
   props: {
     self: Object,
-    autosizing: Boolean
+    autosizing: Boolean,
+    defaults: {
+      type: Object,
+      default() {
+        return null;
+      }
+    }
+  },
+  components: {
+    ConfigTitle
   }
 };
 </script>

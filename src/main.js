@@ -37,7 +37,8 @@ import {
   faSlidersH,
   faHammer,
   faAlignJustify,
-  faExchangeAlt
+  faExchangeAlt,
+  faFrown
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
@@ -76,7 +77,8 @@ library.add(
   faSlidersH,
   faHammer,
   faAlignJustify,
-  faExchangeAlt
+  faExchangeAlt,
+  faFrown
 );
 Vue.component("vue-fontawesome", FontAwesomeIcon);
 

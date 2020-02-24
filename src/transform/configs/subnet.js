@@ -54,7 +54,6 @@ function sortIps(a, b) {
 }
 
 function sortCidrs(a, b) {
-  console.log(a, b);
   const num1 = Number(
     a
       .split(/[\\.\\/]+/)
@@ -76,53 +75,63 @@ const sortFunctions = {
 };
 
 function transformSubnet(subnet, data, state, confDevices) {
+  let output = "";
   /*eslint no-console: ["error", {"allow": ["log"]}] */
   // Copy confDevices to devices, shallow copy
   let devices = Object.assign({}, confDevices);
+  let sortedDevices;
   // Get all the commands with 'create' as its action
-  const createCommands = subnet.commands.filter(c => c.action === "Create");
-  // Expand the cidr, and add all the new devices to the devices Object
-  createCommands.forEach(c => {
-    if (isCidr(c.cidr) > 0) {
-      cidrTools.expand(c.cidr).forEach(ip => {
-        devices[ip] = devices[ip] || {};
-      });
+  if (!subnet.singleton) {
+    const createCommands = subnet.commands.filter(c => c.action === "Create");
+    // Expand the cidr, and add all the new devices to the devices Object
+    createCommands.forEach(c => {
+      if (isCidr(c.cidr) > 0) {
+        cidrTools.expand(c.cidr).forEach(ip => {
+          devices[ip] = devices[ip] || {};
+        });
+      }
+    });
+    // Get all the commands with 'create' as its action
+    const excludeCommands = subnet.commands.filter(c => c.action === "Exclude");
+    // Check if there were any exclude commands, if so remove excluded ips/cidrs
+    sortedDevices = Object.keys(devices);
+    if (excludeCommands.length) {
+      sortedDevices = sortedDevices.filter(
+        entry =>
+          !excludeCommands.reduce(
+            (accum, filter) => cidrTools.overlap(filter.cidr, entry) || accum,
+            false
+          )
+      );
     }
-  });
-  // Get all the commands with 'create' as its action
-  const excludeCommands = subnet.commands.filter(c => c.action === "Exclude");
-  // Check if there were any exclude commands, if so remove excluded ips/cidrs
-  let sortedDevices = Object.keys(devices);
-  if (excludeCommands.length) {
-    sortedDevices = sortedDevices.filter(
-      entry =>
-        !excludeCommands.reduce(
-          (accum, filter) => cidrTools.overlap(filter.cidr, entry) || accum,
-          false
-        )
-    );
-  }
-  // Determine Filter Functions
-  const objFilter = filterFunctions[subnet.name];
-  const objSort = sortFunctions[subnet.name];
-  // Filter and sort all the ip addresses
-  sortedDevices = sortedDevices.filter(objFilter).sort(objSort);
-  // If Networks Object record the number of IPs
-  if (subnet.name === "Networks") {
-    const id = subnet.id;
-    for (const device in devices) {
-      if (isIp(device)) {
-        for (let cidr of sortedDevices.filter(f =>
-          cidrTools.overlap(device, f)
-        )) {
-          devices[cidr].cidrFreq = 1 + (devices[cidr].cidrFreq || 0);
+    // Determine Filter Functions
+    const objFilter = filterFunctions[subnet.name];
+    const objSort = sortFunctions[subnet.name];
+    // Filter and sort all the ip addresses
+    sortedDevices = sortedDevices.filter(objFilter).sort(objSort);
+    // If Networks Object record the number of IPs
+    if (subnet.name === "Networks") {
+      for (const device in devices) {
+        if (isIp(device)) {
+          for (let cidr of sortedDevices.filter(f =>
+            cidrTools.overlap(device, f)
+          )) {
+            devices[cidr].cidrFreq = 1 + (devices[cidr].cidrFreq || 0);
+          }
         }
       }
+    }
+  } else {
+    sortedDevices = Object.keys(devices);
+    if (subnet.conditionalRender && sortedDevices.length == 0) {
+      return output;
+    }
+    if (sortedDevices.length == 0) {
+      sortedDevices.push(subnet.title);
     }
   }
   // Create State
   state = state || { id: 2, parent: 1, vertex: 1 };
-  let output = "";
   // Check if renderEmpty and if sortedDevices is Empty
   if (!subnet.renderEmpty && sortedDevices.length == 0) {
     return output;
@@ -218,7 +227,8 @@ function transformSubnet(subnet, data, state, confDevices) {
     subnet.device.padding.top + subnet.device.lineHeight * subnet.lines.length;
   let deviceCount = 1;
   let devicesPerRow = subnet.device.columns;
-  for (let i = 0; i < sortedDevices.length; i++) {
+  const length = subnet.singleton ? 1 : sortedDevices.length;
+  for (let i = 0; i < length; i++) {
     // Create Geometry
     let geometry = {
       x: x,
@@ -232,7 +242,7 @@ function transformSubnet(subnet, data, state, confDevices) {
     geometry.y = 0;
 
     // Process Lines for Device
-    const device = devices[sortedDevices[i]];
+    const device = subnet.singleton ? null : devices[sortedDevices[i]];
     const value = processLines(
       subnet.lines,
       device,

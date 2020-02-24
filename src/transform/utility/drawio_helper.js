@@ -38,7 +38,11 @@ function transformStyle(style) {
   if (style) {
     let output = "";
     for (const property in style) {
-      output += `${property}=${style[property]};`;
+      if (property === style[property]) {
+        output += `${property};`;
+      } else {
+        output += `${property}=${style[property]};`;
+      }
     }
     return output;
   }
