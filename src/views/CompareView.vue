@@ -27,7 +27,7 @@
         </template>
       </PanelBlock>
       <!-- Output Data Widget -->
-      <PanelBlock>
+      <PanelBlock :Open="false">
         <template #dynamicTitle>
           <div class="level-item">
             <strong>Step 3:</strong>
@@ -64,6 +64,13 @@
           <!-- Loading Data -->
           <div class="container has-text-right" v-if="isLoading">
             <b-icon icon="spinner" custom-class="fa-pulse" />
+          </div>
+          <!-- Empty Data -->
+          <div
+            class="container has-text-centered"
+            v-if="output.sheets.length == 0 && !isLoading"
+          >
+            Empty &#128577;
           </div>
           <DataWidget :data.sync="output" outputOnly />
         </template>

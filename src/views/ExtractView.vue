@@ -53,8 +53,15 @@
       </template>
       <template #content>
         <!-- Loading Data -->
-        <div class="container has-text-right" v-if="isLoading">
+        <div class="container has-text-centered" v-if="isLoading">
           <b-icon icon="spinner" custom-class="fa-pulse" />
+        </div>
+        <!-- Empty Data -->
+        <div
+          class="container has-text-centered"
+          v-if="output.sheets.length == 0 && !isLoading"
+        >
+          Empty &#128577;
         </div>
         <!-- Output Content -->
         <DataWidget :data.sync="output" outputOnly v-if="!settingsWidget" />
