@@ -92,7 +92,7 @@ export default {
     return {
       files: [],
       selected: 0,
-      schema: null
+      schemas: {}
     };
   },
   methods: {
@@ -105,8 +105,11 @@ export default {
     loadJSON(event) {
       try {
         let newConfigs = JSON.parse(event.target.result);
-        let validation = JSONschema.validate(newConfigs, this.schema);
-        if (validation.valid) {
+        let validation = newConfigs.reduce(
+          (a, c) => a || JSONschema.validate(c, this.schemas[c.name]).valid,
+          true
+        );
+        if (validation) {
           for (let i = 0; i < newConfigs.length; i++) {
             this.sanitizeConfig(newConfigs[i], i);
           }
@@ -152,7 +155,9 @@ export default {
   },
   mounted() {
     // Generate JSON schema from this.defaults
-    this.schema = GenerateSchema.json("Configurations", this.defaults);
+    for (let conf of this.defautls) {
+      this.schemas[conf.name] = GenerateSchema.json(conf.name, conf);
+    }
   }
 };
 </script>
