@@ -155,7 +155,7 @@ export default {
   },
   mounted() {
     // Generate JSON schema from this.defaults
-    for (let conf of this.defautls) {
+    for (let conf of this.defaults) {
       this.schemas[conf.name] = GenerateSchema.json(conf.name, conf);
     }
   }
