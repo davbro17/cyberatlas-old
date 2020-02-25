@@ -232,10 +232,12 @@ export default {
     // Removes current file data from Data Object
     removeFile: function() {
       this.data.files.splice(0, this.data.files.length);
-      this.fileName = "";
+      this.data.fileName = "";
+      this.data.sheetIndex = 0;
       this.data.sheets.splice(0, this.data.sheets.length);
-      this.data.customHeaders.splice(0, this.data.headers.length);
+      this.data.customHeaders.splice(0, this.data.customHeaders.length);
       this.data.headers.splice(0, this.data.headers.length);
+      console.log(this.data);
     },
     // @vuese
     // Update a custom header
