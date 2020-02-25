@@ -27,52 +27,44 @@
       <!-- Layout Tab -->
       <b-tab-item label="Layout" icon="object-group">
         <config-title
-          label="Position"
+          label="Autoposition"
           config="autoposition"
           :defaults.sync="defaults"
         >
           <template #extra>
-            <b-checkbox v-model="self.autoposition" type="is-info">
-              Automatic
-            </b-checkbox>
+            <b-checkbox v-model="self.autoposition" type="is-info" />
           </template>
         </config-title>
-        <div class="field is-horizontal">
-          <div class="field-label is-normal">
-            <label class="label">x pos</label>
-          </div>
-          <div class="field-body">
-            <div class="field">
-              <p class="control is-expanded has-icons-left">
-                <input
-                  class="input is-info"
-                  type="text"
-                  placeholder="10"
-                  v-model.number="self.geometry.x"
-                  :disabled="self.autoposition"
-                />
-              </p>
-            </div>
-          </div>
-        </div>
-        <div class="field is-horizontal">
-          <div class="field-label is-normal">
-            <label class="label">y pos</label>
-          </div>
-          <div class="field-body">
-            <div class="field">
-              <p class="control is-expanded has-icons-left">
-                <input
-                  class="input is-info"
-                  type="text"
-                  placeholder="10"
-                  v-model.number="self.geometry.y"
-                  :disabled="self.autoposition"
-                />
-              </p>
-            </div>
-          </div>
-        </div>
+        <config-title
+          label="X Position"
+          config="geometry.x"
+          :defaults.sync="defaults"
+        >
+          <template #extra>
+            <input
+              class="input is-info"
+              type="text"
+              placeholder="10"
+              v-model.number="self.geometry.x"
+              :disabled="self.autoposition"
+            />
+          </template>
+        </config-title>
+        <config-title
+          label="Y Position"
+          config="geometry.y"
+          :defaults.sync="defaults"
+        >
+          <template #extra>
+            <input
+              class="input is-info"
+              type="text"
+              placeholder="10"
+              v-model.number="self.geometry.y"
+              :disabled="self.autoposition"
+            />
+          </template>
+        </config-title>
         <div class="field is-horizontal">
           <div class="field-label is-normal">
             <label class="label">width</label>
@@ -97,7 +89,7 @@
                 />
               </p>
             </b-field>
-            <b-field v-if="self.name === 'subnet'">
+            <b-field v-if="!self.singleton">
               <b-radio-button
                 v-model="self.widthUnits"
                 :type="self.autowidth ? '' : 'is-info'"
@@ -141,7 +133,7 @@
                 />
               </p>
             </b-field>
-            <b-field v-if="self.name === 'subnet'">
+            <b-field v-if="!self.singleton">
               <b-radio-button
                 v-model="self.heightUnits"
                 :type="self.autoheight ? '' : 'is-info'"

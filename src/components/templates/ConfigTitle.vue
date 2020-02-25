@@ -5,7 +5,11 @@
       v-if="defaults && initialized"
       v-model="defaults[config]"
     />
-    <label class="label is-marginless" style="padding-right:10px;">{{ title }}</label>
+    <label
+      class="label is-marginless"
+      style="padding-right:10px;white-space:nowrap;padding-top: 0.375em;"
+      >{{ title }}</label
+    >
     <slot name="extra" />
   </b-field>
 </template>
