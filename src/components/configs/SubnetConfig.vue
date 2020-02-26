@@ -17,19 +17,28 @@
           />
         </div>
       </div>
-      <config-title
-        :label="self.singleton ? 'Conditional Render' : 'Network Devices'"
-        config="commands"
-        :defaults.sync="defaults"
-      >
-        <template #extra>
-          <b-checkbox
-            v-if="self.singleton"
-            type="is-info"
-            v-model="self.conditionalRender"
-          />
-        </template>
-      </config-title>
+      <div v-if="self.singleton">
+        <config-title
+          :label="'Conditional Render'"
+          config="commands"
+          :defaults.sync="defaults"
+        >
+          <template #extra>
+            <b-checkbox
+              v-if="self.singleton"
+              type="is-info"
+              v-model="self.conditionalRender"
+            />
+          </template>
+        </config-title>
+      </div>
+      <div v-if="!self.singleton">
+        <config-title
+          :label="'Network Devices'"
+          config="commands"
+          :defaults.sync="defaults"
+        />
+      </div>
       <div class="field has-addons">
         <div class="control">
           <div class="select is-info">

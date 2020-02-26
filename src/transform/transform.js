@@ -3,7 +3,6 @@ import cidrTools from "cidr-tools";
 import isCidr from "is-cidr";
 import isIp from "is-ip";
 import { transformSubnet } from "./configs/subnet";
-import { transformNetworks } from "./configs/networks";
 
 let pageStartTag =
   '<mxGraphModel dx="1186" dy="781" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">' +
@@ -13,7 +12,43 @@ let pageStartTag =
 
 let pageEndTag = "</root></mxGraphModel>";
 
-export default function(configs, data, unknownHandler) {
+function updateLayout(layout, state) {
+  const shiftLeft =
+    layout.spacing === "Fixed" ? layout.fixedWidth : state.prevWidth;
+  const shiftDown =
+    layout.spacing === "Fixed" ? layout.fixedHeight : state.prevHeight;
+  if (layout.formationType === "Cup") {
+    console.log("Handling Cup");
+  } else {
+    if (layout.units === "rows") {
+      if (layout.spacing !== "Fixed") {
+        state.rowHeight = Math.max(state.rowHeight, state.prevHeight);
+      }
+      if (state.layoutCounter < layout.count) {
+        state.offsetx += shiftLeft + layout.margin.right;
+        state.layoutCounter++;
+      } else {
+        state.offsetx = state.startx;
+        state.offsety += state.rowHeight + layout.margin.bottom;
+        state.layoutCounter = 1;
+      }
+    } else {
+      if (layout.spacing !== "Fixed") {
+        state.colWidth = Math.max(state.colWidth, state.prevWidth);
+      }
+      if (state.layoutCounter < layout.count) {
+        state.offsety += shiftDown + layout.margin.bottom;
+        state.layoutCounter++;
+      } else {
+        state.offsety = state.starty;
+        state.offsetx += state.colWidth + layout.margin.right;
+        state.layoutCounter = 1;
+      }
+    }
+  }
+}
+
+export default function(configs, layout, data, unknownHandler) {
   let output = pageStartTag;
   let state = {
     id: 2,
@@ -27,10 +62,9 @@ export default function(configs, data, unknownHandler) {
     offsety: 0,
     prevWidth: 0,
     prevHeight: 0,
-    margin: {
-      left: 10,
-      top: 10
-    }
+    colWidth: layout.spacing === "Fixed" ? layout.fixedWidth : 0,
+    rowHeight: layout.spacing === "Fixed" ? layout.fixedHeight : 0,
+    layoutCounter: layout.count
   };
   // Create Filter object w/ Array for each sheet
   let filters = new Array(data.sheets.length);
@@ -95,11 +129,11 @@ export default function(configs, data, unknownHandler) {
   for (let i = 0; i < confs.length; i++) {
     let conf = confs[i];
     const component = conf.component;
-    state.offsety += state.prevHeight + state.margin.top;
+    updateLayout(layout, state);
     if (component === "TextBoxConfig") {
       output += transformTextBox(conf, data, state, unknownHandler);
     }
-    if (conf.component === "SubnetConfig") {
+    if (component === "SubnetConfig") {
       let confDevices = {};
       for (let device in devices) {
         if (conf.id in devices[device].filters) {
@@ -107,15 +141,6 @@ export default function(configs, data, unknownHandler) {
         }
       }
       output += transformSubnet(conf, data, state, confDevices);
-    }
-    if (conf.component === "NetworksConfig") {
-      let confDevices = {};
-      for (let device in devices) {
-        if (conf.id in devices[device].filters) {
-          confDevices[device] = devices[device];
-        }
-      }
-      output += transformNetworks(conf, data, state, confDevices);
     }
   }
   // Close out the Drawio xml

@@ -183,16 +183,12 @@ function transformSubnet(subnet, data, state, confDevices) {
   // Determine x and y position of subnet, check for autoposition
   const xpos = subnet.autoposition ? state.offsetx : subnet.geometry.x;
   const ypos = subnet.autoposition ? state.offsety : subnet.geometry.y;
-  const topMargin =
-    subnet.margin.top || false ? subnet.margin.top : state.margin.top;
-  const leftMargin =
-    subnet.margin.left || false ? subnet.margin.left : state.margin.left;
   // Create Group for Entire Subnet
   output += transformGroup(
     state,
     {
-      x: xpos + leftMargin,
-      y: ypos + topMargin,
+      x: xpos + subnet.margin.left,
+      y: ypos + subnet.margin.top,
       width: width,
       height: height
     },

@@ -59,7 +59,7 @@
         <!-- Empty Data -->
         <div
           class="container has-text-centered"
-          v-if="output.sheets.length == 0 && !isLoading"
+          v-if="output.sheets.length == 0 && !isLoading && !settingsWidget"
         >
           Empty &#128577;
         </div>
@@ -321,7 +321,7 @@
 import DataWidget from "../components/DataWidget.vue";
 import PanelBlock from "../components/templates/PanelBlock.vue";
 import * as ExtractWorker from "worker-loader!../transform/workers/extract_worker";
-import configOptions from "../transform/configs/configs.js";
+import configOptions from "../transform/defaults/configs.js";
 import GenerateSchema from "generate-schema";
 import JSONschema from "jsonschema";
 
@@ -469,7 +469,7 @@ export default {
       this.$refs.configdownloader.setAttribute("download", "configs.json");
       this.$refs.configdownloader.click();
     },
-    toggleSettings() {
+    toggleSettings(event) {
       if (this.outputOpen) {
         event.stopPropagation();
       }

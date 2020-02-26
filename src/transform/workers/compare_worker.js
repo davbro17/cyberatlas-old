@@ -1,4 +1,8 @@
-import { extractNetObjs, filterRows, excludeRows } from "../utility/extract.js";
+import {
+  extractNetObjs,
+  filterRowsNetObjs,
+  excludeRows
+} from "../utility/extract.js";
 
 /*eslint no-console: ["error", {"allow": ["log"]}] */
 onmessage = function(e) {
@@ -9,7 +13,7 @@ onmessage = function(e) {
   switch (e.data[0]) {
     case 0: // Similarities
       netObjs = extractNetObjs(excelB.sheets);
-      excelA.sheets = filterRows(excelA.sheets, netObjs);
+      excelA.sheets = filterRowsNetObjs(excelA.sheets, netObjs);
       output = excelA;
       output.fileName =
         excelA.fileName.split(".")[0] +

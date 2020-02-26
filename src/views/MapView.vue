@@ -70,7 +70,8 @@ import DataWidget from "../components/DataWidget.vue";
 import PreviewWidget from "../components/PreviewWidget.vue";
 import PanelBlock from "../components/templates/PanelBlock.vue";
 import * as MapWorker from "worker-loader!../transform/workers/map_worker";
-import options from "../transform/configs/configs.js";
+import options from "../transform/defaults/configs.js";
+import defaultLayout from "../transform/defaults/layout.js";
 
 export default {
   name: "app",
@@ -86,7 +87,7 @@ export default {
         configs: [],
         defaults: options,
         tracker: {},
-        layout: {}
+        layout: defaultLayout
       },
       data: {
         sheets: [],
@@ -108,7 +109,7 @@ export default {
     // Generates a new diagram in a new tab with Drawio
     generateDiagram: function() {
       this.generateLoading = true;
-      this.myWorker.postMessage([this.settings.configs, this.data, "generate"]);
+      this.myWorker.postMessage([this.settings, this.data, "generate"]);
     },
     receiveXML(result) {
       if (result.data[0] === "preview") {
@@ -126,7 +127,7 @@ export default {
     preview() {
       /*eslint no-console: ["error", {"allow": ["log"]}] */
       this.previewLoading = true;
-      this.myWorker.postMessage([this.settings.configs, this.data, "preview"]);
+      this.myWorker.postMessage([this.settings, this.data, "preview"]);
     }
   },
   created() {

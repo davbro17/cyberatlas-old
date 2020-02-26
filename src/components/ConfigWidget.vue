@@ -96,27 +96,25 @@
       </b-table>
     </div>
     <!-- Configuration Area -->
-    <CreateConfig
-      v-if="createConfigOpen || configs.length == 0"
-      v-bind.sync="{ configs, tracker, defaults, layout }"
-    />
-    <component
-      v-else
-      v-bind:is="selected.component"
-      :configs.sync="configs"
-      :self.sync="this.selected"
-      :data="this.data"
-    />
+    <div style="max-height:530px;overflow:auto">
+      <CreateConfig
+        v-if="createConfigOpen || configs.length == 0"
+        v-bind.sync="{ configs, tracker, defaults, layout }"
+      />
+      <component
+        v-else
+        v-bind:is="selected.component"
+        :configs.sync="configs"
+        :self.sync="this.selected"
+        :data="this.data"
+      />
+    </div>
   </div>
 </template>
 
 <script>
 import CreateConfig from "./configs/CreateConfig.vue";
-import CloudConfig from "./configs/CloudConfig.vue";
 import SubnetConfig from "./configs/SubnetConfig.vue";
-import NetDeviceConfig from "./configs/NetDeviceConfig.vue";
-import NetworksConfig from "./configs/NetworksConfig.vue";
-import CollectionConfig from "./configs/CollectionConfig.vue";
 import TextBoxConfig from "./configs/TextBoxConfig.vue";
 
 export default {
@@ -145,11 +143,7 @@ export default {
   },
   components: {
     CreateConfig,
-    CloudConfig,
     SubnetConfig,
-    NetworksConfig,
-    CollectionConfig,
-    NetDeviceConfig,
     TextBoxConfig
   },
   data() {
@@ -165,7 +159,7 @@ export default {
       createConfigOpen: true,
       // @vuese
       // Number of config buttons show in diagram object table
-      perPage: 10
+      perPage: 6
     };
   },
   methods: {

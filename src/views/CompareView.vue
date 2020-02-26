@@ -27,13 +27,13 @@
         </template>
       </PanelBlock>
       <!-- Output Data Widget -->
-      <PanelBlock :Open="false">
+      <PanelBlock :Open="outputOpen" @toggle="bool => (outputOpen = bool)">
         <template #dynamicTitle>
           <div class="level-item">
             <strong>Step 3:</strong>
           </div>
           <div class="level-item">
-            <span class="button is-info is-outlined" @click.stop="compareData">
+            <span class="button is-info is-outlined" @click="compareData">
               <strong>Generate</strong>
             </span>
           </div>
@@ -62,7 +62,7 @@
         </template>
         <template #content>
           <!-- Loading Data -->
-          <div class="container has-text-right" v-if="isLoading">
+          <div class="container has-text-centered" v-if="isLoading">
             <b-icon icon="spinner" custom-class="fa-pulse" />
           </div>
           <!-- Empty Data -->
@@ -118,14 +118,18 @@ export default {
       options: ["Similarities", "Excel 1 Differences", "Excel 2 Differences"],
       dataAOpen: true,
       dataBOpen: true,
+      outputOpen: false,
       isLoading: false
     };
   },
   methods: {
     // @vuese
     // Takes two excel sheet of network objects and gets similarities & differences
-    compareData() {
+    compareData(event) {
       /*eslint no-console: ["error", {"allow": ["log"]}] */
+      if (this.outputOpen) {
+        event.stopPropagation();
+      }
       if (this.excelA.sheets.length == 0) {
         this.$buefy.notification.open({
           duration: 3000,
@@ -137,7 +141,6 @@ export default {
         this.$buefy.notification.open({
           duration: 3000,
           message: `Missing Data For Excel 2`,
-          type: "is-danger",
           hasIcon: true
         });
       } else {
@@ -155,11 +158,20 @@ export default {
     updateOutput(result) {
       this.isLoading = false;
       let tmp = result.data;
-      this.output.headers.push(...tmp.headers);
-      this.output.customHeaders.push(...tmp.customHeaders);
-      this.output.files.push(...tmp.files);
-      this.output.fileName = tmp.fileName;
-      this.output.sheets.push(tmp.sheets);
+      if (tmp.sheets.length == 0) {
+        this.$buefy.notification.open({
+          duration: 3000,
+          message: `CyberAtlas Did Not Find Any ${this.selected}`,
+          type: "is-primary",
+          hasIcon: true
+        });
+      } else {
+        this.output.headers.push(...tmp.headers);
+        this.output.customHeaders.push(...tmp.customHeaders);
+        this.output.files.push(...tmp.files);
+        this.output.fileName = tmp.fileName;
+        this.output.sheets.push(tmp.sheets);
+      }
     }
   },
   created() {

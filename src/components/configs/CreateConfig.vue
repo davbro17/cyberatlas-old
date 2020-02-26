@@ -50,6 +50,7 @@
           </b-upload>
         </div>
       </b-tab-item>
+      <!-- Defaults Tab -->
       <b-tab-item label="Defaults" icon="sliders-h">
         <DefaultWidget
           :configDefaults.sync="defaults"
@@ -57,7 +58,10 @@
           :defaults.sync="tracker"
         />
       </b-tab-item>
-      <b-tab-item label="Layout" icon="object-group"> </b-tab-item>
+      <!-- Layout Tab -->
+      <b-tab-item label="Layout" icon="object-group">
+        <MapLayout :layout.sync="layout" />
+      </b-tab-item>
     </b-tabs>
   </div>
 </template>
@@ -65,7 +69,7 @@
 <script>
 import GenerateSchema from "generate-schema";
 import JSONschema from "jsonschema";
-
+import MapLayout from "../templates/MapLayout.vue";
 import DefaultWidget from "../templates/DefaultsWidget.vue";
 
 export default {
@@ -87,7 +91,7 @@ export default {
       required: true
     }
   },
-  components: { DefaultWidget },
+  components: { DefaultWidget, MapLayout },
   data() {
     return {
       files: [],

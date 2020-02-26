@@ -1,4 +1,4 @@
-import { textBoxConfig } from "../../transform/configs/textbox";
+import { textBoxConfig } from "../configs/textbox";
 
 let subnetConfig = {
   name: "Subnet",

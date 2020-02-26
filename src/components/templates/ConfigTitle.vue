@@ -34,17 +34,20 @@ export default {
   },
   data() {
     return {
-      title: "",
       initialized: false
     };
   },
   mounted() {
-    const layers = this.label.split(".");
-    this.title = layers[layers.length - 1];
     if (this.defaults) {
       this.$set(this.defaults, this.config, this.force);
     }
     this.initialized = true;
+  },
+  computed: {
+    title() {
+      const layers = this.label.split(".");
+      return layers[layers.length - 1];
+    }
   }
 };
 </script>

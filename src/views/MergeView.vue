@@ -26,34 +26,31 @@
       </template>
     </PanelBlock>
     <!-- Output Data Widget -->
-    <PanelBlock :Open="false">
+    <PanelBlock :Open="outputOpen" @toggle="bool => (outputOpen = bool)">
       <template #dynamicTitle>
         <div class="level-item">
           <strong>Step 3:</strong>
         </div>
         <div class="level-item">
-          <span class="button is-info is-outlined" @click.stop="mergeData">
+          <span class="button is-info is-outlined" @click="mergeData">
             <strong>Generate</strong>
           </span>
         </div>
         <div class="level-item">
-          <span
-            class="button is-info is-outlined"
-            @click.stop="settingsWidget = !settingsWidget"
-          >
+          <span class="button is-info is-outlined" @click="toggleSettings">
             <b-icon :icon="settingsWidget ? 'align-justify' : 'sliders-h'" />
           </span>
         </div>
       </template>
       <template #content>
         <!-- Loading Data -->
-        <div class="container has-text-right" v-if="isLoading">
+        <div class="container has-text-centered" v-if="isLoading">
           <b-icon icon="spinner" custom-class="fa-pulse" />
         </div>
         <!-- Empty Data -->
         <div
           class="container has-text-centered"
-          v-if="output.sheets.length == 0 && !isLoading"
+          v-if="output.sheets.length == 0 && !isLoading && !settingsWidget"
         >
           Empty &#128577;
         </div>
@@ -118,6 +115,7 @@ export default {
       options: ["Columns", "Sheets"],
       dataAOpen: true,
       dataBOpen: true,
+      outputOpen: false,
       settingsWidget: false,
       isLoading: false
     };
@@ -125,8 +123,11 @@ export default {
   methods: {
     // @vuese
     // Takes two excel sheet of network objects and gets similarities & differences
-    mergeData() {
+    mergeData(event) {
       /*eslint no-console: ["error", {"allow": ["log"]}] */
+      if (this.outputOpen) {
+        event.stopPropagation();
+      }
       if (this.excelA.sheets.length == 0) {
         this.$buefy.notification.open({
           duration: 3000,
@@ -162,6 +163,12 @@ export default {
       this.output.files.push(...tmp.files);
       this.output.fileName = tmp.fileName;
       this.output.sheets.push(...tmp.sheets);
+    },
+    toggleSettings(event) {
+      if (this.outputOpen) {
+        event.stopPropagation();
+      }
+      this.settingsWidget = !this.settingsWidget;
     }
   },
   created() {
