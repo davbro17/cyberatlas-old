@@ -147,9 +147,11 @@ export default {
         this.isLoading = true;
         const index = this.options.findIndex(o => o === this.selected);
         this.output.files.splice(0, this.output.files.length);
+        this.output.fileName = "";
+        this.output.sheetIndex = 0;
         this.output.sheets.splice(0, this.output.sheets.length);
+        this.output.customHeaders.splice(0, this.output.customHeaders.length);
         this.output.headers.splice(0, this.output.headers.length);
-        this.output.customHeaders.splice(0, this.output.headers.length);
         this.myWorker.postMessage([index, this.excelA, this.excelB]);
       }
     },
@@ -169,12 +171,22 @@ export default {
         event.stopPropagation();
       }
       this.settingsWidget = !this.settingsWidget;
+    },
+    handleError(event) {
+      this.isLoading = false;
+      this.$buefy.notification.open({
+        duration: 3000,
+        message: event.message,
+        type: "is-danger",
+        hasIcon: true
+      });
     }
   },
   created() {
     if (window.Worker) {
       this.myWorker = new MergeWorker();
       this.myWorker.onmessage = this.updateOutput;
+      this.myWorker.onerror = this.handleError;
     }
   },
   beforeDestroy() {

@@ -237,7 +237,6 @@ export default {
       this.data.sheets.splice(0, this.data.sheets.length);
       this.data.customHeaders.splice(0, this.data.customHeaders.length);
       this.data.headers.splice(0, this.data.headers.length);
-      console.log(this.data);
     },
     // @vuese
     // Update a custom header

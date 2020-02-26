@@ -32,7 +32,7 @@
           <strong>Step 3:</strong>
         </div>
         <div class="level-item">
-          <span class="button is-info is-outlined" @click="extractIPAdresses">
+          <span class="button is-info is-outlined" @click="extract">
             <strong>Extract</strong>
           </span>
         </div>
@@ -73,7 +73,7 @@
               class="button is-info is-outlined"
               @click.stop="downloadSettings"
             >
-              <strong>Download Setting Configurations</strong>
+              <strong>Download Configurations</strong>
             </span>
             <hr />
             <b-upload
@@ -242,12 +242,11 @@
                 </b-select>
               </b-field>
             </div>
-            <div v-else>
+            <div v-else-if="settings.selected === settings.options[2]">
               <b-field label="Action:" type="is-info">
                 <b-select v-model="settings.regexOperation">
                   <option value="filter"> Filter Rows </option>
                   <option value="apply"> Apply Regex </option>
-                  <option value="replace"> Apply &amp; Replace </option>
                 </b-select>
               </b-field>
               <div v-if="settings.regexOperation === 'apply'">
@@ -285,29 +284,29 @@
                   </b-checkbox>
                 </b-field>
               </div>
-              <div v-if="settings.regexOperation === 'replace'">
-                <label class="label">Replacement String </label>
-                <b-field horizontal label="Sheet">
-                  <input
-                    style="margin-left:15px"
-                    class="input is-info"
-                    v-model="settings.replacementStringSheet"
-                  />
-                </b-field>
-                <b-field horizontal label="Column">
-                  <input
-                    style="margin-left:8px"
-                    class="input is-info"
-                    v-model="settings.replacementStringColumn"
-                  />
-                </b-field>
-                <b-field horizontal label="Delimiter">
-                  <input
-                    class="input is-info"
-                    v-model="settings.replacementStringDelimiter"
-                  />
-                </b-field>
-              </div>
+            </div>
+            <div v-else>
+              <label class="label">Replacement Strings </label>
+              <b-field horizontal label="Sheet">
+                <input
+                  style="margin-left:15px"
+                  class="input is-info"
+                  v-model="settings.replacementStringSheet"
+                />
+              </b-field>
+              <b-field horizontal label="Column">
+                <input
+                  style="margin-left:8px"
+                  class="input is-info"
+                  v-model="settings.replacementStringColumn"
+                />
+              </b-field>
+              <b-field horizontal label="Delimiter">
+                <input
+                  class="input is-info"
+                  v-model="settings.replacementStringDelimiter"
+                />
+              </b-field>
             </div>
           </div>
         </div>
@@ -361,7 +360,7 @@ export default {
       file: null,
       schema: null,
       settings: {
-        options: ["IPs/Cidr", "Strings", "Regex"],
+        options: ["IPs/Cidr", "Strings", "Regex", "Replace"],
         selected: "IPs/Cidr",
         allSheets: true,
         allColumns: true,
@@ -394,7 +393,7 @@ export default {
   methods: {
     // @vuese
     // Pulls IP Address that fall into a list of subnets
-    extractIPAdresses(event) {
+    extract(event) {
       /*eslint no-console: ["error", {"allow": ["log"]}] */
       if (this.ips.sheets.length == 0) {
         this.$buefy.notification.open({
@@ -415,10 +414,13 @@ export default {
           event.stopPropagation();
         }
         this.isLoading = true;
+        this.settingsWidget = false;
         this.output.files.splice(0, this.output.files.length);
+        this.output.fileName = "";
+        this.output.sheetIndex = 0;
         this.output.sheets.splice(0, this.output.sheets.length);
+        this.output.customHeaders.splice(0, this.output.customHeaders.length);
         this.output.headers.splice(0, this.output.headers.length);
-        this.output.customHeaders.splice(0, this.output.headers.length);
         this.myWorker.postMessage([
           this.settings,
           this.subnets.sheets,
@@ -429,12 +431,21 @@ export default {
     updateOutput(result) {
       this.isLoading = false;
       let tmp = result.data[0];
-      this.cidrs = result.data[1];
-      this.output.headers.push(...tmp.headers);
-      this.output.customHeaders.push(...tmp.customHeaders);
-      this.output.files.push(...tmp.files);
-      this.output.fileName = tmp.fileName;
-      this.output.sheets.push(tmp.sheets);
+      if (tmp.sheets.length == 0) {
+        this.$buefy.notification.open({
+          duration: 3000,
+          message: `CyberAtlas Found Nothing To Extract`,
+          type: "is-primary",
+          hasIcon: true
+        });
+      } else {
+        this.cidrs = result.data[1];
+        this.output.headers.push(...tmp.headers);
+        this.output.customHeaders.push(...tmp.customHeaders);
+        this.output.files.push(...tmp.files);
+        this.output.fileName = tmp.fileName;
+        this.output.sheets.push(tmp.sheets);
+      }
     },
     downloadConfigs() {
       let configs = [];
@@ -492,6 +503,15 @@ export default {
       } catch {
         console.log("JSON FILE ERROR!");
       }
+    },
+    handleError(event) {
+      this.isLoading = false;
+      this.$buefy.notification.open({
+        duration: 3000,
+        message: event.message,
+        type: "is-danger",
+        hasIcon: true
+      });
     }
   },
   watch: {
@@ -506,6 +526,7 @@ export default {
     if (window.Worker) {
       this.myWorker = new ExtractWorker();
       this.myWorker.onmessage = this.updateOutput;
+      this.myWorker.onerror = this.handleError;
     }
   },
   mounted() {

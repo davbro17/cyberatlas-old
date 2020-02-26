@@ -172,12 +172,22 @@ export default {
         this.output.fileName = tmp.fileName;
         this.output.sheets.push(tmp.sheets);
       }
+    },
+    handleError(event) {
+      this.isLoading = false;
+      this.$buefy.notification.open({
+        duration: 3000,
+        message: event.message,
+        type: "is-danger",
+        hasIcon: true
+      });
     }
   },
   created() {
     if (window.Worker) {
       this.myWorker = new CompareWorker();
       this.myWorker.onmessage = this.updateOutput;
+      this.myWorker.onerror = this.handleError;
     }
   },
   beforeDestroy() {

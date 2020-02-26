@@ -41,11 +41,16 @@ function extractIncludeRows(filter) {
 }
 
 const extractStrings = extract(entry => entry);
+const extractIps = extract(entry => isIp(entry));
 const extractSubnets = extract(entry => isCidr(entry) > 0);
 const extractNetObjs = extract(entry => isCidr(entry) > 0 || isIp(entry));
 const extractNetObjsWithRows = extractIncludeRows(
   entry => isCidr(entry) > 0 || isIp(entry)
 );
+
+function extractRegexes(sheets) {
+  return extractStrings(sheets).map(s => new RegExp(s));
+}
 
 function filterRows(filter, check) {
   return function(sheets, values) {
@@ -62,13 +67,47 @@ function filterRows(filter, check) {
   };
 }
 
+function getColumn(sheets, colIndex, sheetIndex) {
+  let s = sheets;
+  let output = [];
+  if (sheetIndex && sheetIndex < sheets.length) {
+    s = sheets[sheetIndex];
+  }
+  for (const sheet of s) {
+    for (const row of sheet[colIndex]) {
+      if (colIndex < row.length) {
+        output.push(row[colIndex]);
+      }
+    }
+  }
+  return output;
+}
+
 const filterRowsNetObjs = filterRows(
   (ips, netObjs) =>
     netObjs.filter(net => cidrTools.overlap(net, ips)).length > 0,
   netObj => isIp(netObj) || isCidr(netObj) > 0
 );
-const filterRowsStrings = filterRows((row, strings) =>
+
+const filterRowsStringsEquals = filterRows((row, strings) =>
   strings.some(s => row.includes(s))
+);
+
+const filterRowsStringsContains = filterRows((row, strings) =>
+  row.reduce(
+    (accum, cell) =>
+      accum ||
+      strings.reduce((ret, string) => ret || cell.includes(string), false),
+    false
+  )
+);
+
+const filterRowsRegex = filterRows((row, regexes) =>
+  row.reduce(
+    (accum, cell) =>
+      accum || regexes.reduce((ret, reg) => ret || reg.test(cell), false),
+    false
+  )
 );
 
 function filterValuesRegex(sheets, regexes) {
@@ -77,16 +116,42 @@ function filterValuesRegex(sheets, regexes) {
   for (const sheet of sheets) {
     for (const row of sheet) {
       for (const entry of row) {
-        matches.push(...regexes.map(r => entry.matchAll(r)).filter(m => m));
+        const ret = regexes
+          .map(r => Array.from(entry.matchAll(r)))
+          .filter(m => m.length > 0);
+        if (ret.length > 0) {
+          matches.push(...ret);
+        }
       }
     }
   }
   let groupNames = {};
-  for (let match in matches) {
+  console.log(matches);
+  for (let match of matches.filter(m => m.length > 0)) {
+    /*eslint no-console: ["error", {"allow": ["log"]}] */
     if (match.groups) {
       Object.assign(groupNames, match.groups);
     }
     output.push({ indexed: Array.from(match), groups: match.groups });
+  }
+  return output;
+}
+
+function filterAndReplaceValues(sheets, regexes, replaceStrings, delimiter) {
+  let output = [];
+  const rLength = replaceStrings.length;
+  for (const sheet of sheets) {
+    for (const row of sheet) {
+      for (const cell of row) {
+        for (let i = 0; i < regexes.length; i++) {
+          if (regexes[i].test(cell) && i < rLength) {
+            output.push(
+              cell.replace(regexes[i], replaceStrings[i]).split(delimiter)
+            );
+          }
+        }
+      }
+    }
   }
   return output;
 }
@@ -109,9 +174,15 @@ export {
   extractSubnets,
   extractNetObjs,
   extractStrings,
+  extractRegexes,
+  extractIps,
   extractNetObjsWithRows,
   filterRowsNetObjs,
-  filterRowsStrings,
+  filterRowsStringsEquals,
+  filterRowsStringsContains,
+  filterRowsRegex,
   filterValuesRegex,
-  excludeRows
+  filterAndReplaceValues,
+  excludeRows,
+  getColumn
 };
