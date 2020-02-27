@@ -181,7 +181,8 @@
           <b-pagination
             :total="data.sheets[data.sheetIndex].length"
             :current.sync="currentPage"
-            order="is-right"
+            order="is-centered"
+            style="margin-right:3px;"
             simple
             :per-page="perPage"
             aria-next-label="Next page"
