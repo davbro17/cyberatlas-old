@@ -55,10 +55,11 @@ function extractRegexes(sheets) {
 function filterRows(filter, check) {
   return function(sheets, values) {
     let output = [];
+    let filteredRow = [];
     for (const sheet of sheets) {
       for (let row of sheet) {
-        row = check ? row.filter(check) : row;
-        if (filter(row, values)) {
+        filteredRow = check ? row.filter(check) : row;
+        if (filter(filteredRow, values)) {
           output.push(row);
         }
       }
