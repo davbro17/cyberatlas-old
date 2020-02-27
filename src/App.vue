@@ -35,7 +35,7 @@
             <b-dropdown aria-role="list" v-model="selectedApp" @change="route">
               <button class="button is-info" slot="trigger">
                 <span
-                  ><strong>{{ selectedApp }}</strong>
+                  ><strong>{{ $route.name }}</strong>
                 </span>
                 <b-icon icon="angle-down"></b-icon>
               </button>

@@ -7,12 +7,12 @@ Vue.use(VueRouter);
 const routes = [
   {
     path: "/",
-    name: "map",
+    name: "Map",
     component: Map
   },
   {
     path: "/Extract",
-    name: "extract",
+    name: "Extract",
     // route level code-splitting
     // this generates a separate chunk (extract.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
@@ -21,7 +21,7 @@ const routes = [
   },
   {
     path: "/Compare",
-    name: "compare",
+    name: "Compare",
     // route level code-splitting
     // this generates a separate chunk (crossref.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
@@ -30,7 +30,7 @@ const routes = [
   },
   {
     path: "/Merge",
-    name: "merge",
+    name: "Merge",
     // route level code-splitting
     // this generates a separate chunk (extract.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
