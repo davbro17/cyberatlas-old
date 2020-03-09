@@ -96,7 +96,7 @@
       </b-table>
     </div>
     <!-- Configuration Area -->
-    <div style="max-height:530px;overflow:auto">
+    <div style="max-height:515px;overflow:auto;margin-bottom:10px; margin-top: 5px;">
       <CreateConfig
         v-if="createConfigOpen || configs.length == 0"
         v-bind.sync="{ configs, tracker, defaults, layout }"

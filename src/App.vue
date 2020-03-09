@@ -53,6 +53,14 @@
           </div>
         </div>
         <div class="navbar-end">
+          <!-- Performance Modal Button -->
+          <div class="navbar-item">
+            <button class="button is-info is-medium">
+              <strong>
+                Performance
+              </strong>
+            </button>
+          </div>
           <!-- Documentation Link Button -->
           <div class="navbar-item">
             <button class="button is-info is-medium" @click="openDocs">
@@ -93,7 +101,14 @@ export default {
   data() {
     return {
       selectedApp: "Map",
-      appOptions: ["Map", "Extract", "Compare", "Merge"],
+      appOptions: [
+        "Map",
+        "Extract",
+        "Compare",
+        "Merge",
+        "Interact",
+        "Automate"
+      ],
       burgerToggle: false
     };
   },

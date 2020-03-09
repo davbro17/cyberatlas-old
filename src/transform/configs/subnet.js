@@ -1,6 +1,7 @@
 import isIp from "is-ip";
 import isCidr from "is-cidr";
 import cidrTools from "cidr-tools";
+import { Netmask } from "netmask";
 import {
   transformBox,
   transformGroup,
@@ -86,7 +87,8 @@ function transformSubnet(subnet, data, state, confDevices) {
     // Expand the cidr, and add all the new devices to the devices Object
     createCommands.forEach(c => {
       if (isCidr(c.cidr) > 0) {
-        cidrTools.expand(c.cidr).forEach(ip => {
+        let block = new Netmask(c.cidr);
+        block.forEach(ip => {
           devices[ip] = devices[ip] || {};
         });
       }
