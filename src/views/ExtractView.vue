@@ -36,8 +36,27 @@
             <strong>Extract</strong>
           </span>
         </div>
-        <div class="level-item">
-          <strong>IP Addresses</strong>
+        <div class="level-item" @click="toggleSettings($event, true)">
+          <span>
+            <b-dropdown aria-role="list" v-model="settings.selected">
+              <button class="button is-info is-outlined" slot="trigger">
+                <span
+                  ><strong>{{ settings.selected }}</strong>
+                </span>
+                <b-icon icon="caret-down"></b-icon>
+              </button>
+              <b-dropdown-item
+                aria-role="listitem"
+                v-for="(item, index) in settings.options.filter(
+                  (e, i) => e != settings.selected
+                )"
+                :key="index"
+                :value="item"
+              >
+                {{ item }}
+              </b-dropdown-item>
+            </b-dropdown>
+          </span>
         </div>
         <div class="level-item" v-if="output.sheets.length > 0">
           <span class="button is-info is-outlined" @click="downloadConfigs">
@@ -94,7 +113,7 @@
           </div>
           <div class="column is-narrow">
             <div class="field">
-              <label class="label"> Extract From [Excel A] </label>
+              <label class="label"> Extract From [Input 1] </label>
             </div>
             <b-field grouped>
               <b-checkbox
@@ -173,7 +192,7 @@
             </b-field>
           </div>
           <div class="column is-narrow">
-            <label class="label"> Extract With [Excel B]</label>
+            <label class="label"> Extract With [Input 2]</label>
             <b-field grouped>
               <b-checkbox
                 v-model="settings.extractSheets"
@@ -209,20 +228,6 @@
                   v-model.number="settings.extractedColumns"
                 />
               </p>
-            </b-field>
-            <div class="field">
-              <label class="label"> Extract </label>
-            </div>
-            <b-field>
-              <b-radio-button
-                type="is-info"
-                v-model="settings.selected"
-                v-for="(option, index) in settings.options"
-                :native-value="option"
-                :key="index"
-              >
-                <span> {{ option }} </span>
-              </b-radio-button>
             </b-field>
             <div v-if="settings.selected === settings.options[0]">
               <b-field horizontal grouped label="Filter:">
@@ -360,8 +365,14 @@ export default {
       file: null,
       schema: null,
       settings: {
-        options: ["IPs/Cidr", "Strings", "Regex", "Replace"],
-        selected: "IPs/Cidr",
+        options: [
+          "IP Addresses",
+          "Strings",
+          "Regular Expression",
+          "Regex and Replace",
+          "Configurations"
+        ],
+        selected: "IP Addresses",
         allSheets: true,
         allColumns: true,
         fromSheets: "",
@@ -398,14 +409,14 @@ export default {
       if (this.ips.sheets.length == 0) {
         this.$buefy.notification.open({
           duration: 3000,
-          message: `Missing Data For Excel 1`,
+          message: `Missing Data For Input 1`,
           type: "is-danger",
           hasIcon: true
         });
       } else if (this.subnets.sheets.length == 0) {
         this.$buefy.notification.open({
           duration: 3000,
-          message: `Missing Data For Excel 2`,
+          message: `Missing Data For Input 2`,
           type: "is-danger",
           hasIcon: true
         });
@@ -480,11 +491,11 @@ export default {
       this.$refs.configdownloader.setAttribute("download", "configs.json");
       this.$refs.configdownloader.click();
     },
-    toggleSettings(event) {
+    toggleSettings(event, force) {
       if (this.outputOpen) {
         event.stopPropagation();
       }
-      this.settingsWidget = !this.settingsWidget;
+      this.settingsWidget = !this.settingsWidget || force;
     },
     loadJSON() {
       try {

@@ -32,7 +32,7 @@ function processLines(lines, device, ip, id) {
   }
   return output;
 }
-
+// Filter functions for ips and cidrs
 const filterFunctions = {
   Subnet: entry => isIp(entry),
   Networks: entry => isCidr(entry)
@@ -86,7 +86,7 @@ function transformSubnet(subnet, data, state, confDevices) {
     const createCommands = subnet.commands.filter(c => c.action === "Create");
     // Expand the cidr, and add all the new devices to the devices Object
     createCommands.forEach(c => {
-      if (isCidr(c.cidr) > 0) {
+      if (isCidr(c.cidr) > 0 || isIp(c.cidr)) {
         let block = new Netmask(c.cidr);
         block.forEach(ip => {
           devices[ip] = devices[ip] || {};
