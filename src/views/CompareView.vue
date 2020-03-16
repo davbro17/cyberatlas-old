@@ -11,7 +11,7 @@
           Step 1: Upload Excel 1
         </template>
         <template #content>
-          <DataWidget :data.sync="excelA" />
+          <DataWidget :data.sync="excelA" :actions="actions" />
         </template>
       </PanelBlock>
       <!-- Subnet Ranges Data Widget -->
@@ -23,7 +23,7 @@
           Step 2: Upload Excel 2
         </template>
         <template #content>
-          <DataWidget :data.sync="excelB" />
+          <DataWidget :data.sync="excelB" :actions="actions" />
         </template>
       </PanelBlock>
       <!-- Output Data Widget -->
@@ -72,7 +72,7 @@
           >
             Empty &#128577;
           </div>
-          <DataWidget :data.sync="output" outputOnly />
+          <DataWidget :data.sync="output" outputOnly :actions="actions" />
         </template>
       </PanelBlock>
     </div>
@@ -90,6 +90,20 @@ export default {
     DataWidget,
     PanelBlock
   },
+  props: {
+    actions: {
+      type: Object,
+      default() {
+        return {};
+      }
+    },
+    transfer: {
+      type: Object,
+      default() {
+        return {};
+      }
+    }
+  },
   data() {
     return {
       excelA: {
@@ -97,6 +111,7 @@ export default {
         headers: [],
         customHeaders: [],
         sheetIndex: 0,
+        fileName: "",
         files: []
       },
       excelB: {
@@ -104,6 +119,7 @@ export default {
         headers: [],
         customHeaders: [],
         sheetIndex: 0,
+        fileName: "",
         files: []
       },
       output: {
@@ -111,6 +127,7 @@ export default {
         headers: [],
         customHeaders: [],
         sheetIndex: 0,
+        fileName: "",
         files: []
       },
       myWorker: null,
@@ -181,6 +198,42 @@ export default {
         type: "is-danger",
         hasIcon: true
       });
+    },
+    // @vuese
+    // Transfer both data inputs to parent App
+    transferData(destination) {
+      this.actions.openWith(destination, {
+        input1: this.excelA,
+        input2: this.excelB
+      });
+    }
+  },
+  mounted() {
+    // Add action to transfer two inputs, instead of just one
+    this.$set(this.actions, "transferBothInputs", this.transferData);
+    if (this.transfer.input1 != null) {
+      let data = this.excelA;
+      let input = this.transfer.input1;
+      this.$set(data, "sheets", input.sheets);
+      this.$set(data, "headers", input.headers);
+      this.$set(data, "customHeaders", input.customHeaders);
+      this.$set(data, "sheetIndex", input.sheetIndex);
+      this.$set(data, "files", input.files);
+      this.$set(data, "fileName", input.fileName);
+      // Delete the old references to the transferred data
+      this.$set(this.transfer, "input1", null);
+    }
+    if (this.transfer.input2 != null) {
+      let data = this.excelB;
+      let input = this.transfer.input2;
+      this.$set(data, "sheets", input.sheets);
+      this.$set(data, "headers", input.headers);
+      this.$set(data, "customHeaders", input.customHeaders);
+      this.$set(data, "sheetIndex", input.sheetIndex);
+      this.$set(data, "files", input.files);
+      this.$set(data, "fileName", input.fileName);
+      // Delete the old references to the transferred data
+      this.$set(this.transfer, "input2", null);
     }
   },
   created() {

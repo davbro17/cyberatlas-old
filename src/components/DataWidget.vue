@@ -19,7 +19,11 @@
       </section>
     </b-upload>
     <!-- Toolbar -->
-    <div class="level" v-if="data.sheets.length > 0">
+    <div
+      class="level"
+      v-if="data.sheets.length > 0"
+      style="margin-bottom:0.75em"
+    >
       <div class="level-left">
         <!-- Filename -->
         <div class="level-item clickable">
@@ -58,25 +62,6 @@
           </div>
         </div>
       </div>
-      <div class="level-item">
-        <span
-          class="button is-info is-outlined"
-          :disabled="data.sheetIndex == 0"
-          @click="decrementSheetIndex"
-        >
-          <b-icon icon="angle-left" />
-        </span>
-        <span style="margin:0px 10px 0px 10px">
-          {{ data.files[data.sheetIndex] }}
-        </span>
-        <span
-          class="button is-info is-outlined"
-          :disabled="data.sheetIndex == data.sheets.length - 1"
-          @click="incrementSheetIndex"
-        >
-          <b-icon icon="angle-right" />
-        </span>
-      </div>
       <div class="level-right">
         <!-- Custom Headers Checkbox -->
         <div class="level-item">
@@ -88,10 +73,72 @@
             Headers
           </b-checkbox>
         </div>
+        <!-- Open in Different App -->
         <div class="level-item">
-          <button class="button is-info is-outlined" @click="exportExcel">
-            <b-icon icon="download" />
-          </button>
+          <b-tooltip type="is-light" position="is-bottom" label="Open With">
+            <b-dropdown
+              aria-role="list"
+              v-model="openWithApp.app"
+              trap-focus
+              position="is-bottom-left"
+              @active-change="openWithApp.click = 'null'"
+              :close-on-click="false"
+            >
+              <button class="button is-info is-outlined" slot="trigger">
+                <b-icon icon="external-link-alt" />
+              </button>
+              <b-dropdown-item
+                aria-role="listitem"
+                value="Map"
+                v-if="$route.name != 'Map'"
+              >
+                Map
+              </b-dropdown-item>
+              <div
+                v-for="opt in openWithApp.options.filter(o => o != $route.name)"
+                :key="opt"
+              >
+                <b-dropdown-item
+                  aria-role="listitem"
+                  has-link
+                  @click="openMenu(opt)"
+                >
+                  <a>
+                    {{ opt }}
+                  </a>
+                </b-dropdown-item>
+                <b-dropdown-item
+                  aria-role="listitem"
+                  v-if="openWithApp.click === opt"
+                  style="padding-left:3em"
+                  :value="opt.concat('_Input1')"
+                  >Input 1</b-dropdown-item
+                >
+                <b-dropdown-item
+                  aria-role="listitem"
+                  v-if="openWithApp.click === opt"
+                  style="padding-left:3em"
+                  :value="opt.concat('_Input2')"
+                  >Input 2</b-dropdown-item
+                >
+                <b-dropdown-item
+                  aria-role="listitem"
+                  v-if="openWithApp.click === opt && $route.name != 'Map'"
+                  style="padding-left:3em"
+                  :value="opt.concat('_Both')"
+                  >Both</b-dropdown-item
+                >
+              </div>
+            </b-dropdown>
+          </b-tooltip>
+        </div>
+        <!-- Download -->
+        <div class="level-item">
+          <b-tooltip type="is-light" position="is-left" label="Download">
+            <button class="button is-info is-outlined" @click="exportExcel">
+              <b-icon icon="download" />
+            </button>
+          </b-tooltip>
         </div>
       </div>
     </div>
@@ -164,17 +211,36 @@
         <div class="level-item">
           <span style="margin-right:10px;">Rows/Page</span>
           <div class="field">
-            <p class="control">
+            <div class="control" style="width:45px;">
               <input
                 class="input is-info has-text-centered"
                 type="text"
                 placeholder="25"
                 v-model.number="perPage"
-                style="width:27%"
               />
-            </p>
+            </div>
           </div>
         </div>
+      </div>
+      <!-- Sheet Pagination -->
+      <div class="level-item">
+        <span
+          class="button is-info is-outlined"
+          :disabled="data.sheetIndex == 0"
+          @click="decrementSheetIndex"
+        >
+          <b-icon icon="angle-left" />
+        </span>
+        <span style="margin:0px 10px 0px 10px">
+          {{ data.files[data.sheetIndex] }}
+        </span>
+        <span
+          class="button is-info is-outlined"
+          :disabled="data.sheetIndex == data.sheets.length - 1"
+          @click="incrementSheetIndex"
+        >
+          <b-icon icon="angle-right" />
+        </span>
       </div>
       <div class="level-right">
         <div class="level-item">
@@ -215,6 +281,12 @@ export default {
           files: []
         };
       }
+    },
+    actions: {
+      type: Object,
+      default() {
+        return {};
+      }
     }
   },
   data() {
@@ -225,7 +297,12 @@ export default {
       myWorker: null,
       currentPage: 1,
       perPage: 25,
-      fileNameModalActive: false
+      fileNameModalActive: false,
+      openWithApp: {
+        click: null,
+        app: null,
+        options: ["Extract", "Compare", "Merge"]
+      }
     };
   },
   methods: {
@@ -284,6 +361,15 @@ export default {
         XLSX.writeFile(wb, this.data.fileName);
       }
     },
+    // @vuese
+    // Opens submenu in OpenWithApp Dropdown
+    openMenu(menuName) {
+      if (this.openWithApp.click != menuName) {
+        this.openWithApp.click = menuName;
+      } else {
+        this.openWithApp.click = null;
+      }
+    },
     loadExcel(event) {
       /*eslint no-console: ["error", {"allow": ["log"]}] */
       this.isLoading = true;
@@ -326,6 +412,27 @@ export default {
           }
         }
         this.files.splice(0, this.files.length);
+      }
+    },
+    // @vuese
+    // Transfer data to another CyberAtlas tool leveraging props.actions
+    "openWithApp.app": function() {
+      let app = this.openWithApp.app;
+      if ("openWith" in this.actions && app != null) {
+        if (app === "Map") {
+          this.actions.openWith("Map", { input1: this.data });
+        } else {
+          let parts = app.split("_");
+          if (parts[1] === "Input1") {
+            this.actions.openWith(parts[0], { input1: this.data });
+          } else if (parts[1] === "Input2") {
+            this.actions.openWith(parts[0], { input2: this.data });
+          } else {
+            this.actions.transferBothInputs(parts[0]);
+          }
+        }
+      } else {
+        console.log("HELP!");
       }
     }
   },

@@ -55,11 +55,53 @@
         <div class="navbar-end">
           <!-- Performance Modal Button -->
           <div class="navbar-item">
-            <button class="button is-info is-medium">
+            <button
+              class="button is-info is-medium"
+              @click="performanceModalActive = true"
+            >
               <strong>
                 Performance
               </strong>
             </button>
+          </div>
+          <!-- Performance Modal -->
+          <div
+            class="modal"
+            v-bind:class="{ 'is-active': performanceModalActive }"
+          >
+            <div class="modal-background"></div>
+            <div class="modal-card">
+              <header class="modal-card-head">
+                <p class="modal-card-title">Performance</p>
+                <button
+                  class="delete"
+                  aria-label="close"
+                  @click="performanceModalActive = false"
+                />
+              </header>
+              <section class="modal-card-body">
+                <!-- Content ... -->
+                <b-field
+                  label="Worker Count (Constraints: Browser, Max # of Threads)"
+                >
+                  <b-slider
+                    :min="1"
+                    :max="workers.concurrencyMax"
+                    ticks
+                    v-model.number="workers.count"
+                    type="is-info"
+                  >
+                  </b-slider>
+                </b-field>
+                <b-field label="Chunk Size (KB)">
+                  <input
+                    class="input is-info"
+                    placeholder="50"
+                    v-model.number="workers.chunkSize"
+                  />
+                </b-field>
+              </section>
+            </div>
           </div>
           <!-- Documentation Link Button -->
           <div class="navbar-item">
@@ -72,7 +114,7 @@
         </div>
       </div>
     </nav>
-    <router-view />
+    <router-view :transfer="transferData" :actions.sync="actions" />
     <!-- Footer -->
     <footer class="footer">
       <div class="content has-text-centered">
@@ -109,7 +151,19 @@ export default {
         "Interact",
         "Automate"
       ],
-      burgerToggle: false
+      burgerToggle: false,
+      actions: {},
+      transferData: {
+        input1: null,
+        input2: null,
+        mapConfigs: null
+      },
+      workers: {
+        concurrencyMax: 1,
+        count: 1,
+        chunkSize: 50
+      },
+      performanceModalActive: false
     };
   },
   methods: {
@@ -126,7 +180,27 @@ export default {
       } else {
         this.$router.push("/" + path);
       }
+    },
+    // @vuese
+    // Allow tools to transfer data between each other
+    openWith(appName, data) {
+      if ("input1" in data) {
+        this.$set(this.transferData, "input1", data.input1);
+      }
+      if ("input2" in data) {
+        this.$set(this.transferData, "input2", data.input2);
+      }
+      if ("mapConfigs" in data) {
+        this.$set(this.transferData, "mapConfigs", data.mapConfigs);
+      }
+      this.route(appName);
     }
+  },
+  mounted() {
+    this.actions["openWith"] = this.openWith;
+    this.workers.concurrencyMax = parseInt(
+      window.navigator.hardwareConcurrency
+    );
   }
 };
 </script>

@@ -11,7 +11,7 @@
           Step 1: Upload Scan File
         </template>
         <template #content>
-          <DataWidget :data.sync="data" />
+          <DataWidget :data.sync="data" :actions="actions" />
         </template>
       </PanelBlock>
       <!-- Configuration Widget -->
@@ -74,7 +74,21 @@ import options from "../transform/defaults/configs.js";
 import defaultLayout from "../transform/defaults/layout.js";
 
 export default {
-  name: "app",
+  name: "Map",
+  props: {
+    actions: {
+      type: Object,
+      default() {
+        return {};
+      }
+    },
+    transfer: {
+      type: Object,
+      default() {
+        return {};
+      }
+    }
+  },
   components: {
     DataWidget,
     ConfigWidget,
@@ -94,6 +108,7 @@ export default {
         headers: [],
         customHeaders: [],
         sheetIndex: 0,
+        fileName: "",
         files: []
       },
       configOpen: true,
@@ -135,6 +150,26 @@ export default {
       this.myWorker = new MapWorker();
       this.myWorker.onmessage = this.receiveXML;
     }
+  },
+  mounted() {
+    if (this.transfer.input1 != null) {
+      let data = this.data;
+      let input = this.transfer.input1;
+      this.$set(data, "sheets", input.sheets);
+      this.$set(data, "headers", input.headers);
+      this.$set(data, "customHeaders", input.customHeaders);
+      this.$set(data, "sheetIndex", input.sheetIndex);
+      this.$set(data, "files", input.files);
+      this.$set(data, "fileName", input.fileName);
+      // Delete the old references to the transferred data
+      this.$set(this.transfer, "input1", null);
+    }
+    // Double check for unintended data transfers
+    if ("input2" in this.transfer) {
+      // Delete the data
+      this.$set(this.transfer, "input2", null);
+    }
+    window.scrollTo(0, 0);
   },
   beforeDestroy() {
     this.myWorker.terminate();
