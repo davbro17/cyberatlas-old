@@ -26,16 +26,25 @@ const routes = [
     // this generates a separate chunk (crossref.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () =>
-      import(/* webpackChunkName: "about" */ "../views/CompareView.vue")
+      import(/* webpackChunkName: "extract" */ "../views/CompareView.vue")
   },
   {
     path: "/Merge",
     name: "Merge",
-    // route level code-splitting
-    // this generates a separate chunk (extract.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
     component: () =>
-      import(/* webpackChunkName: "extract" */ "../views/MergeView.vue")
+      import(/* webpackChunkName: "merge" */ "../views/MergeView.vue")
+  },
+  {
+    path: "/Interact",
+    name: "Interact",
+    component: () =>
+      import(/* webpackChunkName: "interact" */ "../views/InteractView.vue")
+  },
+  {
+    path: "/Automate",
+    name: "Automate",
+    component: () =>
+      import(/* webpackChunkName: "automate" */ "../views/AutomateView.vue")
   }
 ];
 
