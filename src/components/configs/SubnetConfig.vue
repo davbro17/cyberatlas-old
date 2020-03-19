@@ -164,39 +164,40 @@
     </template>
     <!-- Style Tab -->
     <template #style>
-      <div class="field">
-        <label class="label">
-          Background Color
-        </label>
-        <input
-          class="input is-info"
-          type="text"
-          placeholder="green"
+      <div v-if="!self.singleton">
+        <config-title
+          label="Background Color"
+          config="style.fillColor"
+          :defaults.sync="defaults"
+        />
+        <color-select
           v-model="self.style.fillColor"
+          :rounded="self.style.rounded"
         />
-      </div>
-      <div class="field">
-        <label class="label">
-          Border Color
-        </label>
-        <input
-          class="input is-info"
-          type="text"
-          placeholder="green"
+        <config-title
+          label="Border Color"
+          config="style.strokeColor"
+          :defaults.sync="defaults"
+        />
+        <border-color
+          :fillColor="self.style.fillColor"
           v-model="self.style.strokeColor"
+          :rounded="self.style.rounded"
         />
-      </div>
-      <div class="field">
-        <label class="label">
-          Rounded Border
-        </label>
-        <b-switch
-          v-model.number="self.style.rounded"
-          type="is-info"
-          true-value="1"
-          false-value="0"
-        >
-        </b-switch>
+        <config-title
+          label="Rounded Border"
+          config="style.rounded"
+          :defaults.sync="defaults"
+        />
+        <div class="field">
+          <b-switch
+            v-model="self.style.rounded"
+            type="is-info"
+            true-value="1"
+            false-value="0"
+          >
+          </b-switch>
+        </div>
       </div>
       <div class="field">
         <label class="label">
@@ -243,28 +244,22 @@
           </div>
         </div>
       </div>
-      <div class="field">
-        <label class="label">
-          Device Background Color
-        </label>
-        <input
-          class="input is-info"
-          type="text"
-          placeholder="mxgraph.citrix.thin_client"
-          v-model="self.device.background.fillColor"
-        />
-      </div>
-      <div class="field">
-        <label class="label">
-          Device Border Color
-        </label>
-        <input
-          class="input is-info"
-          type="text"
-          placeholder="mxgraph.citrix.thin_client"
-          v-model="self.device.background.strokeColor"
-        />
-      </div>
+      <config-title
+        label="Device Background Color"
+        config="device.background.fillColor"
+        :defaults.sync="defaults"
+      />
+      <color-select v-model="self.device.background.fillColor" rounded />
+      <config-title
+        label="Device Border Color"
+        config="device.background.strokeColor"
+        :defaults.sync="defaults"
+      />
+      <border-color
+        :fillColor="self.device.background.fillColor"
+        v-model="self.device.background.strokeColor"
+        rounded
+      />
     </template>
     <!-- Layout Tab -->
     <template #layout>
@@ -381,6 +376,8 @@
 import TemplateConfig from "./TemplateConfig.vue";
 import TextEditor from "./TextEditor.vue";
 import ConfigTitle from "../templates/ConfigTitle.vue";
+import ColorSelect from "../templates/ColorSelect.vue";
+import BorderColor from "../templates/BorderColor.vue";
 
 export default {
   props: {
@@ -440,7 +437,9 @@ export default {
   components: {
     TemplateConfig,
     TextEditor,
-    ConfigTitle
+    ConfigTitle,
+    BorderColor,
+    ColorSelect
   },
   mounted() {
     if (!this.self.lines) {

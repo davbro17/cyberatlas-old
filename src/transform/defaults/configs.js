@@ -10,7 +10,7 @@ let subnetConfig = {
   conditionalRender: false,
   style: {
     fillColor: "#d5e8d4",
-    rounded: 0,
+    rounded: "0",
     verticalAlign: "top",
     fontStyle: 1,
     strokeColor: "#000000"
