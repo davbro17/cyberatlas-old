@@ -44,7 +44,7 @@
       :is="selected.component"
       v-if="selected"
       :self.sync="selected"
-      :defaults="defaults[selected.name]"
+      :defaults.sync="defaults[selected.name]"
     />
   </div>
 </template>
@@ -81,10 +81,6 @@ export default {
     defaults: {
       type: Object,
       required: true
-    },
-    force: {
-      type: Boolean,
-      default: false
     },
     configs: {
       type: Array,

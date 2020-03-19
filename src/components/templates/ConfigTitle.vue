@@ -3,7 +3,8 @@
     <b-checkbox
       type="is-info"
       v-if="defaults && initialized"
-      v-model="defaults[config]"
+      v-model="force"
+      @input="updateTracker"
     />
     <label
       class="label is-marginless"
@@ -29,17 +30,22 @@ export default {
     config: {
       type: String,
       required: true
-    },
-    force: Boolean
+    }
   },
   data() {
     return {
-      initialized: false
+      initialized: false,
+      force: false
     };
+  },
+  methods: {
+    updateTracker() {
+      this.$set(this.defaults, this.config, this.force);
+    }
   },
   mounted() {
     if (this.defaults) {
-      this.$set(this.defaults, this.config, this.force);
+      this.force = this.defaults[this.config];
     }
     this.initialized = true;
   },
