@@ -58,12 +58,6 @@
             </b-dropdown>
           </span>
         </div>
-        <div class="level-item" v-if="output.sheets.length > 0">
-          <span class="button is-info is-outlined" @click="downloadConfigs">
-            <strong>Download Map Configurations</strong>
-            <b-icon icon="download" />
-          </span>
-        </div>
         <div class="level-item">
           <span class="button is-info is-outlined" @click="toggleSettings">
             <b-icon :icon="settingsWidget ? 'align-justify' : 'sliders-h'" />
@@ -409,19 +403,23 @@ export default {
         if (this.outputOpen) {
           event.stopPropagation();
         }
-        this.isLoading = true;
-        this.settingsWidget = false;
-        this.output.files.splice(0, this.output.files.length);
-        this.output.fileName = "";
-        this.output.sheetIndex = 0;
-        this.output.sheets.splice(0, this.output.sheets.length);
-        this.output.customHeaders.splice(0, this.output.customHeaders.length);
-        this.output.headers.splice(0, this.output.headers.length);
-        this.myWorker.postMessage([
-          this.settings,
-          this.subnets.sheets,
-          this.ips
-        ]);
+        if (this.settings.selected === "Map Configurations") {
+          this.downloadConfigs();
+        } else {
+          this.isLoading = true;
+          this.settingsWidget = false;
+          this.output.files.splice(0, this.output.files.length);
+          this.output.fileName = "";
+          this.output.sheetIndex = 0;
+          this.output.sheets.splice(0, this.output.sheets.length);
+          this.output.customHeaders.splice(0, this.output.customHeaders.length);
+          this.output.headers.splice(0, this.output.headers.length);
+          this.myWorker.postMessage([
+            this.settings,
+            this.subnets.sheets,
+            this.ips
+          ]);
+        }
       }
     },
     updateOutput(result) {
@@ -461,12 +459,7 @@ export default {
         });
         configs.push(tmp);
       }
-      const dataStr =
-        "data:text/json;charset=utf-8," +
-        encodeURIComponent(JSON.stringify(configs));
-      this.$refs.configdownloader.setAttribute("href", dataStr);
-      this.$refs.configdownloader.setAttribute("download", "configs.json");
-      this.$refs.configdownloader.click();
+      this.mapConfigs.configs.push(...configs);
     },
     downloadSettings() {
       const dataStr =
@@ -482,6 +475,8 @@ export default {
       }
       this.settingsWidget = !this.settingsWidget || force;
     },
+    // @vuese
+    // Load Setting Configurations for Extraction, JSON files
     loadJSON() {
       try {
         let newConfigs = JSON.parse(event.target.result);

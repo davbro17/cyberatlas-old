@@ -9,5 +9,9 @@ export default {
   margin: {
     bottom: 10,
     right: 10
+  },
+  cup: {
+    minimum: 3,
+    order: ["left", "bottom", "right"]
   }
 };

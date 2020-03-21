@@ -199,17 +199,12 @@
           </b-switch>
         </div>
       </div>
-      <div class="field">
-        <label class="label">
-          Device Image
-        </label>
-        <input
-          class="input is-info"
-          type="text"
-          placeholder="mxgraph.citrix.thin_client"
-          v-model="self.device.style.shape"
-        />
-      </div>
+      <config-title
+        label="Device Image"
+        config="device.style.shape"
+        :defaults.sync="defaults"
+      />
+      <device-stencil v-model="self.device.style.shape" />
       <div class="field is-horizontal">
         <div class="field-label is-normal">
           <label class="label">width</label>
@@ -378,6 +373,7 @@ import TextEditor from "./TextEditor.vue";
 import ConfigTitle from "../templates/ConfigTitle.vue";
 import ColorSelect from "../templates/ColorSelect.vue";
 import BorderColor from "../templates/BorderColor.vue";
+import DeviceStencil from "../templates/DeviceStencil.vue";
 
 export default {
   props: {
@@ -439,7 +435,8 @@ export default {
     TextEditor,
     ConfigTitle,
     BorderColor,
-    ColorSelect
+    ColorSelect,
+    DeviceStencil
   },
   mounted() {
     if (!this.self.lines) {
