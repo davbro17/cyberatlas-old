@@ -76,7 +76,7 @@ const sortFunctions = {
 };
 
 function transformSubnet(subnet, data, state, confDevices) {
-  let output = "";
+  let output = { xml: "", width: 0, height: 0 };
   /*eslint no-console: ["error", {"allow": ["log"]}] */
   // Copy confDevices to devices, shallow copy
   let devices = Object.assign({}, confDevices);
@@ -186,7 +186,7 @@ function transformSubnet(subnet, data, state, confDevices) {
   const xpos = subnet.autoposition ? state.offsetx : subnet.geometry.x;
   const ypos = subnet.autoposition ? state.offsety : subnet.geometry.y;
   // Create Group for Entire Subnet
-  output += transformGroup(
+  output.xml += transformGroup(
     state,
     {
       x: xpos + subnet.margin.left,
@@ -196,9 +196,13 @@ function transformSubnet(subnet, data, state, confDevices) {
     },
     state.docparent
   );
+  // Set output width and height
+  output.width = width;
+  output.height = height;
+  // Remember Group Parent ID
   let oldParent = state.id;
   // Create big box
-  output += transformBox(
+  output.xml += transformBox(
     state,
     {
       x: 0,
@@ -235,7 +239,7 @@ function transformSubnet(subnet, data, state, confDevices) {
       height: height
     };
     // Create Group
-    output += transformGroup(state, geometry, oldParent);
+    output.xml += transformGroup(state, geometry, oldParent);
     geometry.x = 0;
     geometry.y = 0;
 
@@ -251,7 +255,7 @@ function transformSubnet(subnet, data, state, confDevices) {
     const image = subnet.device.style.image !== "none";
     const backgroundValue = image ? "" : value;
     // Create Device Background
-    output += transformBox(
+    output.xml += transformBox(
       state,
       geometry,
       subnet.device.background,
@@ -260,7 +264,12 @@ function transformSubnet(subnet, data, state, confDevices) {
     );
     // Create Device
     if (image) {
-      output += transformDevice(state, geometry, subnet.device.style, value);
+      output.xml += transformDevice(
+        state,
+        geometry,
+        subnet.device.style,
+        value
+      );
     }
     // Change Geometry
     if (deviceCount < devicesPerRow) {

@@ -1,15 +1,23 @@
 <template>
-  <div class="column" v-bind:class="widthClass" style="padding-bottom:0em;">
+  <div
+    class="column"
+    ref="widget"
+    v-bind:class="widthClass"
+    style="padding: 1em 0.5em 0em .5em"
+  >
     <article class="panel">
       <!-- Panel Header -->
       <div class="panel-heading pointer" @click="isOpen = !isOpen">
         <div class="level">
           <div class="level-left">
+            <!-- Normal Title Slot-->
             <div class="level-item">
               <strong><slot name="title"/></strong>
             </div>
+            <!-- Dynamic Title Slot -->
             <slot name="dynamicTitle" />
           </div>
+          <!-- Toggle Open Icon -->
           <div class="level-right">
             <div class="level-item">
               <b-icon
@@ -32,10 +40,6 @@
 <script>
 export default {
   props: {
-    height: {
-      type: Number,
-      default: 530
-    },
     widthClass: {
       type: String,
       default: "is-full"
@@ -50,11 +54,6 @@ export default {
       isOpen: true
     };
   },
-  methods: {
-    togglePanel() {
-      this.isOpen = !this.isOpen;
-    }
-  },
   watch: {
     // @vuese
     // Monitor the isOpen Boolean and emit events for parent components
@@ -65,10 +64,10 @@ export default {
   },
   mounted() {
     this.isOpen = this.Open;
-  }
+  },
 };
 </script>
-<style>
+<style scoped>
 .panel-heading.pointer {
   cursor: pointer;
 }

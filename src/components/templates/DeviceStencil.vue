@@ -20,7 +20,7 @@ export default {
   data() {
     return {
       deviceStencils,
-      name: this.value
+      name: ""
     };
   },
   methods: {
@@ -36,7 +36,7 @@ export default {
           option
             .toString()
             .toLowerCase()
-            .indexOf(this.name) >= 0
+            .indexOf(this.name.toString().toLowerCase()) >= 0
         );
       });
     }
@@ -47,6 +47,16 @@ export default {
     );
     if (val) {
       this.name = val;
+    }
+  },
+  watch: {
+    value() {
+      const val = Object.keys(this.deviceStencils).find(
+        c => this.deviceStencils[c] === this.value
+      );
+      if (val) {
+        this.name = val;
+      }
     }
   }
 };

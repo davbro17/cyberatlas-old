@@ -73,6 +73,18 @@ export default {
     } else {
       this.selected = "custom";
     }
+  },
+  watch: {
+    value() {
+      const val = Object.keys(this.borderColors).find(
+        c => this.borderColors[c] === this.value
+      );
+      if (val) {
+        this.selected = val;
+      } else {
+        this.selected = "custom";
+      }
+    }
   }
 };
 </script>

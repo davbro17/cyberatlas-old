@@ -192,15 +192,24 @@
             v-bind:key="rowindex"
           >
             <th>{{ (currentPage - 1) * perPage + rowindex + 1 }}</th>
-            <td v-for="(entry, colindex) in row" v-bind:key="colindex">
-              <span
-                contenteditable="true"
-                @blur="
-                  updateDataCell(rowindex, colindex, $event.target.innerText)
+            <td
+              class="is-paddingless"
+              v-for="(entry, colindex) in row"
+              v-bind:key="colindex"
+            >
+              <textarea
+                :rows="entry.toString().split(/\r\n|\r|\n/).length"
+                :cols="
+                  Math.max(
+                    ...entry
+                      .toString()
+                      .split(/\r\n|\r|\n/)
+                      .map(e => e.length),
+                    1
+                  )
                 "
-              >
-                {{ entry }}
-              </span>
+                v-model="row[colindex]"
+              />
             </td>
           </tr>
         </tbody>
@@ -461,5 +470,14 @@ v-deep .pagination-previous:focus,
 .pagination-next:focus,
 .pagination-link:focus {
   border-color: #167df0;
+}
+td textarea {
+  background-color: inherit;
+  min-width: 100%;
+  padding: 0.6em 0.75em;
+  border-width: 0px;
+  font-size: 1em;
+  resize: none;
+  vertical-align: middle;
 }
 </style>

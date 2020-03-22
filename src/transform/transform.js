@@ -12,6 +12,14 @@ let pageStartTag =
 
 let pageEndTag = "</root></mxGraphModel>";
 
+const thresholdBuilder = (limit, operator) => {
+  if (operator === ">") {
+    return value => value > limit;
+  } else {
+    return value => value < limit;
+  }
+};
+
 function updateLayout(layout, state) {
   const shiftLeft =
     layout.spacing === "Fixed" ? layout.fixedWidth : state.prevWidth;
@@ -64,7 +72,7 @@ export default function(configs, layout, data, unknownHandler) {
     prevHeight: 0,
     colWidth: layout.spacing === "Fixed" ? layout.fixedWidth : 0,
     rowHeight: layout.spacing === "Fixed" ? layout.fixedHeight : 0,
-    layoutCounter: layout.count
+    layoutCounter: 1
   };
   // Create Filter object w/ Array for each sheet
   let filters = new Array(data.sheets.length);
@@ -123,15 +131,13 @@ export default function(configs, layout, data, unknownHandler) {
       }
     }
   }
-  // Copy configurations for possible modification during build process
-  let confs = JSON.parse(JSON.stringify(configs));
+  let configOutput = [];
   // Build Diagram Objects
-  for (let i = 0; i < confs.length; i++) {
-    let conf = confs[i];
+  for (let i = 0; i < configs.length; i++) {
+    let conf = configs[i];
     const component = conf.component;
-    updateLayout(layout, state);
     if (component === "TextBoxConfig") {
-      output += transformTextBox(conf, data, state, unknownHandler);
+      configOutput.push(transformTextBox(conf, data, state, unknownHandler));
     }
     if (component === "SubnetConfig") {
       let confDevices = {};
@@ -140,9 +146,35 @@ export default function(configs, layout, data, unknownHandler) {
           confDevices[device] = devices[device];
         }
       }
-      output += transformSubnet(conf, data, state, confDevices);
+      const tmp = transformSubnet(conf, data, state, confDevices);
+      conf.calcWidth = tmp.width;
+      conf.calcHeight = tmp.height;
+      configOutput.push(tmp.xml);
     }
   }
+  if (layout.formationType === "cup") {
+    layout.cupHeight =
+      layout.units === "rows" ? layout.count : layout.cup.minimum;
+    layout.cupWidth =
+      layout.units === "columns" ? layout.count : layout.cup.minimum;
+    layout.cupThresholds = {
+      Left: thresholdBuilder(layout.cupHeight),
+      Bottom: thresholdBuilder(layout.cupWidth),
+      Right: thresholdBuilder(layout.cupHeight)
+    };
+  }
+  // Configure Layout
+  output += configOutput.reduce((accum, curr, index) => {
+    const test = configs[index].autoposition;
+    const ret = test
+      ? (accum += curr
+          .replace(/ x="[0-9]+"/, ` x="${state.offsetx}"`)
+          .replace(/ y="[0-9]+"/, ` y="${state.offsety}"`))
+      : (accum += curr);
+    if (test) updateLayout(layout, state);
+    return ret;
+  }, "");
+
   // Close out the Drawio xml
   output += pageEndTag;
   /*eslint no-console: ["error", {"allow": ["log"]}] */

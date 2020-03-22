@@ -12,6 +12,6 @@ export default {
   },
   cup: {
     minimum: 3,
-    order: ["left", "bottom", "right"]
+    order: ["Left", "Bottom", "Right"]
   }
 };

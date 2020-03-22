@@ -69,6 +69,18 @@ export default {
     } else {
       this.selected = "custom";
     }
+  },
+  watch: {
+    value() {
+      const val = Object.keys(this.colors).find(
+        c => this.colors[c] === this.value
+      );
+      if (val) {
+        this.selected = val;
+      } else {
+        this.selected = "custom";
+      }
+    }
   }
 };
 </script>
