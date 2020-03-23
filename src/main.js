@@ -38,7 +38,11 @@ import {
   faHammer,
   faAlignJustify,
   faExchangeAlt,
-  faFrown
+  faFrown,
+  faBars,
+  faRocket,
+  faChevronDown,
+  faTrashAlt
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
@@ -78,7 +82,11 @@ library.add(
   faHammer,
   faAlignJustify,
   faExchangeAlt,
-  faFrown
+  faFrown,
+  faBars,
+  faRocket,
+  faChevronDown,
+  faTrashAlt
 );
 Vue.component("vue-fontawesome", FontAwesomeIcon);
 
