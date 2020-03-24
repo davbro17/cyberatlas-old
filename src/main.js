@@ -105,6 +105,10 @@ import "vue-virtual-scroller/dist/vue-virtual-scroller.css";
 import "buefy/dist/buefy.css";
 import router from "./router";
 
+import LoadScript from "vue-plugin-load-script";
+Vue.use(LoadScript);
+Vue.loadScript("mxClient.min.js");
+
 new Vue({
   router,
   render: h => h(App)

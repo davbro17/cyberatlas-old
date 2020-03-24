@@ -6,15 +6,20 @@
       <template #title>
         Generate An Interactive Map
       </template>
+      <template #content>
+        <diagram-widget />
+      </template>
     </PanelBlock>
   </div>
 </template>
 <script>
 import PanelBlock from "../components/templates/PanelBlock.vue";
+import DiagramWidget from "../components/DiagramWidget.vue";
 
 export default {
   components: {
-    PanelBlock
+    PanelBlock,
+    DiagramWidget
   }
 };
 </script>
