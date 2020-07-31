@@ -6,14 +6,13 @@
       var xml = null;
 
       let params = new URLSearchParams(document.location.search.substring(1));
-      console.log(params.get("name"));
+      // console.log(params.get("name"));
       
       var sheet = null;
 
       function mxClientOnLoad(stylesheet)
       {
         sheet = stylesheet;
-        console.log("LOADED");
       }
 
       function createGraph(input)
@@ -62,6 +61,21 @@
           var dec = new mxCodec(xmlDoc);
           dec.decode(xmlDoc.documentElement, graph.getStylesheet());
         }
+
+        // Loads the stencils into the registry
+				var req = mxUtils.load("./webapp/stencils/citrix.xml");
+				var root = req.getDocumentElement();
+				var shape = root.firstChild;
+				
+				while (shape != null)
+				{
+					if (shape.nodeType == mxConstants.NODETYPE_ELEMENT)
+					{
+						mxStencilRegistry.addStencil("mxgraph.citrix.".concat(shape.getAttribute('name').toLowerCase().replace(/ /g, "_")), new mxStencil(shape));
+					}
+					
+					shape = shape.nextSibling;
+				}
 
         var xmlDoc = mxUtils.parseXml(xml);
         var codec = new mxCodec(xmlDoc);

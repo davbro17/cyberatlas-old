@@ -1,177 +1,115 @@
 <template>
-  <!-- Add NEW OBJECT Interface -->
   <div class="column">
-    <div class="field">
-      <span class="decision">
-        Create A New
-      </span>
-      <!-- Dropdown Select -->
-      <div class="select is-info">
-        <select v-model="selected">
-          <option
-            v-for="(option, index) in options"
-            v-bind:key="index"
-            :value="index"
+    <!-- Tabs -->
+    <b-tabs type="is-boxed">
+      <!-- Create New Diagram Object Interface -->
+      <b-tab-item label="Create" icon="hammer">
+        <div class="field">
+          <span class="decision">
+            Create A New
+          </span>
+          <!-- Dropdown Select -->
+          <div class="select is-info">
+            <select v-model="selected">
+              <option
+                v-for="(option, index) in defaults"
+                v-bind:key="index"
+                :value="index"
+              >
+                {{ option.name }}
+              </option>
+            </select>
+          </div>
+          <!-- ADD Button -->
+          <span
+            class="button is-info is-outlined decision"
+            @click="createDiagramObject"
           >
-            {{ option.name }}
-          </option>
-        </select>
-      </div>
-      <!-- ADD Button -->
-      <span
-        class="button is-info is-outlined decision"
-        @click="createDiagramObject"
-      >
-        <strong>Add</strong>
-      </span>
-    </div>
-    <!-- Drag N Drop Interface -->
-    <div class="container has-text-centered" style="margin-top:1.5em;">
-      <b-upload v-model="files" drag-drop multiple type="is-info">
-        <div
-          class="content has-text-centered"
-          width="100%"
-          style="padding-bottom:2.28em"
-        >
-          <p>
-            <b-icon icon="upload" size="is-large"> </b-icon>
-          </p>
-          <p>OR Upload a Configuration File</p>
+            <b-icon icon="plus" />
+          </span>
         </div>
-      </b-upload>
-    </div>
+        <!-- Drag N Drop Interface -->
+        <div class="container has-text-centered" style="margin-top:0.75em;">
+          <b-upload
+            v-model="files"
+            drag-drop
+            multiple
+            type="is-info"
+            accept=".json"
+          >
+            <div class="content has-text-centered" width="100%">
+              <span>
+                <b-icon icon="upload" size="is-large" />
+              </span>
+              <span>OR Upload a Configuration File</span>
+            </div>
+          </b-upload>
+        </div>
+      </b-tab-item>
+      <!-- Defaults Tab -->
+      <b-tab-item label="Defaults" icon="sliders-h">
+        <DefaultWidget
+          :configDefaults.sync="defaults"
+          :configs.sync="configs"
+          :defaults.sync="tracker"
+        />
+      </b-tab-item>
+      <!-- Layout Tab -->
+      <b-tab-item label="Layout" icon="object-group">
+        <MapLayout :layout.sync="layout" />
+      </b-tab-item>
+    </b-tabs>
   </div>
 </template>
 
 <script>
 import GenerateSchema from "generate-schema";
 import JSONschema from "jsonschema";
+import MapLayout from "../templates/MapLayout.vue";
+import DefaultWidget from "../templates/DefaultsWidget.vue";
 
 export default {
-  props: ["configs"],
+  props: {
+    configs: {
+      type: Array,
+      required: true
+    },
+    defaults: {
+      type: Array,
+      required: true
+    },
+    tracker: {
+      type: Object,
+      required: true
+    },
+    layout: {
+      type: Object,
+      required: true
+    }
+  },
+  components: { DefaultWidget, MapLayout },
   data() {
     return {
       files: [],
-      options: [
-        {
-          name: "Subnet",
-          icon: "network-wired",
-          component: "SubnetConfig",
-          id: Date.now(),
-          lines: [],
-          commands: [],
-          style: {
-            fillColor: "#d5e8d4",
-            rounded: 0,
-            verticalAlign: "top",
-            fontStyle: 1
-          },
-          label: "",
-          geometry: {
-            x: 0,
-            y: 0,
-            width: 810,
-            height: 100
-          },
-          margin: {
-            left: 0,
-            top: 0,
-            bottom: 0,
-            right: 0
-          },
-          padding: {
-            top: 10,
-            left: 10
-          },
-          device: {
-            columns: 10,
-            width: 70,
-            height: 70,
-            padding: {
-              top: 30,
-              left: 10
-            },
-            style: {
-              shape: "mxgraph.citrix.desktop",
-              verticalLabelPosition: "bottom",
-              aspect: "fixed",
-              html: 1,
-              verticalAlign: "top",
-              align: "center",
-              outlineConnect: 0
-            },
-            background: {
-              verticalLabelPosition: "bottom",
-              aspect: "fixed",
-              html: 1,
-              verticalAlign: "top",
-              fillColor: "none",
-              strokeColor: "none",
-              align: "center",
-              outlineConnect: 0
-            }
-          }
-        },
-        {
-          name: "Text Box",
-          icon: "comment-alt",
-          component: "TextBoxConfig",
-          id: Date.now(),
-          elements: [],
-          geometry: {
-            x: 0,
-            y: 0,
-            width: 200,
-            height: 100
-          },
-          style: {
-            rounded: 1,
-            whitespace: "wrap",
-            html: 1
-          }
-        },
-        {
-          name: "Cloud",
-          icon: "cloud",
-          component: "CloudConfig",
-          id: Date.now()
-        },
-        {
-          name: "Network Device",
-          icon: "ethernet",
-          component: "NetDeviceConfig",
-          id: Date.now()
-        },
-        {
-          name: "Networks",
-          icon: "project-diagram",
-          component: "NetworksConfig",
-          id: Date.now()
-        },
-        {
-          name: "Collection",
-          icon: "th",
-          component: "CollectionConfig",
-          id: Date.now()
-        }
-      ],
       selected: 0,
-      schema: null
+      schemas: {}
     };
   },
   methods: {
     createDiagramObject() {
       /* eslint-disable no-console */
-      let tmp = JSON.parse(JSON.stringify(this.options[this.selected]));
+      let tmp = JSON.parse(JSON.stringify(this.defaults[this.selected]));
       tmp.id = Date.now();
-      tmp.title = tmp.name;
       this.configs.push(tmp);
     },
     loadJSON(event) {
       try {
         let newConfigs = JSON.parse(event.target.result);
-        let validation = JSONschema.validate(newConfigs, this.schema);
-        if (validation.valid) {
+        let validation = newConfigs.reduce(
+          (a, c) => a || JSONschema.validate(c, this.schemas[c.name]).valid,
+          true
+        );
+        if (validation) {
           for (let i = 0; i < newConfigs.length; i++) {
             this.sanitizeConfig(newConfigs[i], i);
           }
@@ -204,18 +142,22 @@ export default {
   },
   watch: {
     files() {
-      for (let i = 0; i < this.files.length; i++) {
-        let file = this.files[i];
-        let reader = new FileReader();
-        reader.onload = this.loadJSON;
-        reader.readAsText(file);
-        this.files.splice(i, 1);
+      if (this.files.length > 0) {
+        for (let i = 0; i < this.files.length; i++) {
+          let file = this.files[i];
+          let reader = new FileReader();
+          reader.onload = this.loadJSON;
+          reader.readAsText(file);
+        }
+        this.files.splice(0, this.files.length);
       }
     }
   },
   mounted() {
-    // Generate JSON schema from this.options
-    this.schema = GenerateSchema.json("Configurations", this.options);
+    // Generate JSON schema from this.defaults
+    for (let conf of this.defaults) {
+      this.schemas[conf.name] = GenerateSchema.json(conf.name, conf);
+    }
   }
 };
 </script>
@@ -225,5 +167,8 @@ export default {
   padding-top: calc(0.4em - 1px);
   margin-right: 0.4em;
   margin-left: 0.4em;
+}
+::v-deep .tabs li.is-active a {
+  color: #167df0;
 }
 </style>
